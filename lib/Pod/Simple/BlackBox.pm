@@ -1599,6 +1599,9 @@ sub pretty { # adopted from Class::Classless
     } elsif(ref($_) eq 'ARRAY' or ref($_) eq 'Pod::Simple::LinkSection') {
       $x = "[ " . pretty(@$_) . " ]" ;
       $x;
+    } elsif(ref($_) eq 'SCALAR') {
+      $x = "\\" . pretty($$_) ;
+      $x;
     } elsif(ref($_) eq 'HASH') {
       my $hr = $_;
       $x = "{" . join(", ",

@@ -129,4 +129,4 @@ t/test_old_perlvar_out.txt
 t/verbatim_formatted.t
 t/verbatims.t
 t/x_nixer.t
-META.yml                                Module meta-data (added by MakeMaker)
+META.yml                                 Module meta-data (added by MakeMaker)

@@ -8,20 +8,25 @@ my(@testfiles, %xmlfiles, %wouldxml);
 #use Pod::Simple::Debug (10);
 BEGIN { 
 
-  my $testdir = File::Spec::->catdir( File::Spec::->curdir, 't' );
-  if(-e $testdir) {
-    chdir $testdir or die "Can't chdir to $testdir : $!";
+  my @bits;
+  if(-e( File::Spec::->catdir( @bits =
+    (File::Spec::->curdir, 't', 'corpus') ) )
+  ) {
+    # OK
+    print "# 1Bits: @bits\n";
+  } elsif( -e (File::Spec::->catdir( @bits =
+    (File::Spec::->curdir, 'corpus') ) )
+  ) {
+    # OK
+    print "# 2Bits: @bits\n";
+  } else {
+    die "Can't find the corpusdir";
   }
+  my $corpusdir = File::Spec::->catdir( @bits );
+  print "#Corpusdir: $corpusdir\n";
 
-  my $corpusdir = File::Spec::->catdir( File::Spec::->curdir, 'corpus' );
-  if(-e $corpusdir) {
-    chdir $corpusdir or die "Can't chdir to $corpusdir : $!";
-  }
-
-
-  my $thisdir = File::Spec::->curdir;
-  opendir(INDIR, $thisdir) or die "Can't opendir $thisdir : $!";
-  my @f = map File::Spec::->catfile($thisdir, $_), readdir(INDIR);
+  opendir(INDIR, $corpusdir) or die "Can't opendir corpusdir : $!";
+  my @f = map File::Spec::->catfile(@bits, $_), readdir(INDIR);
   closedir(INDIR);
   my %f;
   @f{@f} = ();
@@ -36,6 +41,8 @@ BEGIN {
       last;
     }
   }
+  die "Too few test files (".@testfiles.")" unless @ARGV or @testfiles > 20;
+
   @testfiles = @ARGV if @ARGV and !grep !m/\.txt/, @ARGV;
 
   plan tests => (2 + 2*@testfiles - 1);

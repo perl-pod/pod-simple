@@ -13,22 +13,28 @@ use Pod::Simple::DumpAsXML;
 
 my $thefile;
 
+
+
 BEGIN { 
+  if( -e
+    ($thefile = File::Spec::->catfile( File::Spec::->curdir, 't', 'corpus', 'nonesuch.txt' ))
+   #or (print("# Nope, not $thefile\n"), 0)
+  ) {
+    # okay,
 
-  my $testdir = File::Spec::->catdir( File::Spec::->curdir, 't' );
-  if(-e $testdir) {
-    chdir $testdir or die "Can't chdir to $testdir : $!";
+  } elsif( -e
+    ($thefile = File::Spec::->catfile( File::Spec::->curdir, 'corpus', 'nonesuch.txt' ))
+   #or (print("# Nope, not $thefile\n"), 0)
+  ) {
+    # okay,
+
+  } else {
+    die "Can't find the corpus directory\n Aborting";
   }
 
-  my $corpusdir = File::Spec::->catdir( File::Spec::->curdir, 'corpus' );
-  if(-e $corpusdir) {
-    chdir $corpusdir or die "Can't chdir to $corpusdir : $!";
-  }
-  $thefile = File::Spec::->catfile( File::Spec::->curdir, 'nonesuch.txt');
-  die "Where is nonesuch.txt?!" unless -e $thefile;
 }
 
-print "# Testing that nonesuch.txt parses right.\n";
+print "# Testing that $thefile parses right.\n";
 my $outstring;
 {
   my $p = Pod::Simple::DumpAsXML->new;

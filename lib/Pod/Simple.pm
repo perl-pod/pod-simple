@@ -14,15 +14,17 @@ use vars qw(
   $VERSION @ISA
   @Known_formatting_codes  @Known_directives
   %Known_formatting_codes  %Known_directives
+  $NL
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '2.03';
+$VERSION = '2.04';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
 @Known_directives       = qw(head1 head2 head3 head4 item over back); 
 %Known_directives       = map(($_=>'Plain'), @Known_directives);
+$NL = $/ unless defined $NL;
 
 #-----------------------------------------------------------------------------
 # Set up some constants:
@@ -392,6 +394,7 @@ sub parse_file {
   until( $self->{'source_dead'} ) {
     splice @lines;
     for($i = MANY_LINES; $i--;) {  # read those many lines at a time
+      local $/ = $NL;
       push @lines, scalar(<$source>);  # readline
       last unless defined $lines[-1];
        # but pass thru the undef, which will set source_dead to true

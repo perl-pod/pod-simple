@@ -1,6 +1,17 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-07 01:41:21 ADT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-10-10 15:46:36 ADT"
 #---------------------------------------------------------------------------
 
+2003-10-10  Sean M. Burke <sburke@cpan.org>
+	* Release 2.04 -- minor bugfix version
+
+	* Added some code to insulate Pod::Simple to runtime changes in
+	the value of $/.  Thanks to Iain Truskett for catching this.
+	* Added FILENO method to TiedOutFH.pm, to work quietly under some
+	perls.  Thanks to Jochen Stenzel for catching this.
+	* Fixed some tests that erroneously failed under some 5.6's
+	because of chdir()s in *.t files messing up @INC  Thanks to many
+	who caught this, including Rocco Caputo.
+	
 2003-09-07  Sean M. Burke <sburke@cpan.org>
 	* Release 2.03 -- minor upgrade
 	* A =head[1234] command now closes any currently open =over, and

@@ -54,6 +54,8 @@ sub PRINTF {
   return 1;
 }
 
+sub FILENO { ${ $_[0] } + 100 } # just to produce SOME number
+
 sub CLOSE { 1 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -171,7 +171,7 @@ sub do_middle {      # the main work
       DEBUG > 1 and print "  $type " , $token->text, "\n";
       
       $scratch = $token->text;
-      $scratch =~ tr/\t\cb\cc/ /d; # and turn tabs to spaces while we're at it
+      $scratch =~ tr/\t\cb\cc/ /d;
       
       $self->{'no_proofing_exemptions'} or $scratch =~
        s/(?:
