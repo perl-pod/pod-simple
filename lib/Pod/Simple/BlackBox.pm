@@ -443,8 +443,8 @@ sub _ponder_paragraph_buffer {
 
       $para->[0] = '=for';  # Just what we happen to call these, internally
       $para->[1]{'~really'} ||= '=begin';
-      $para->[1]{'~ignore'}   = ! $dont_ignore;
-      $para->[1]{'~resolve'}  = $to_resolve;
+      $para->[1]{'~ignore'}   = (! $dont_ignore) || 0;
+      $para->[1]{'~resolve'}  = $to_resolve || 0;
 
       DEBUG > 1 and print " Making note to ", $dont_ignore ? 'not ' : '',
         "ignore contents of this region\n";
@@ -800,7 +800,7 @@ sub _ponder_paragraph_buffer {
               "You have '=item " . $para->[1]{'number'} .
               "' instead of the expected '=item $expected_value'"
             );
-            $para->[1]{'number'} = $expected_value;  # correcting
+            $para->[1]{'number'} = $expected_value;  # correcting!!
           }
             
           if(@$para == 2) {

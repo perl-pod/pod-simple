@@ -28,12 +28,44 @@ __PACKAGE__->_accessorize(
 sub filter {
   my($self, $source) = @_;
   $self = $self->new unless ref $self;
-  my $d;
-  $self->output_string(\$d);
+
+  $source = *STDIN{IO} unless defined $source;
   $self->set_source($source);
+  $self->output_fh(*STDOUT{IO});
+
   $self->run; # define run() in a subclass if you want to use filter()!
-  return $d;
+  return $self;
 }
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+sub parse_string_document {
+  my $this = shift;
+  $this->set_source(\ $_[0]);
+  $this->run;
+}
+
+sub parse_file {
+  my($this, $filename) = @_;
+  $this->set_source($filename);
+  $this->run;
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#  In case anyone tries to use them:
+
+sub parse_lines {
+  use Carp ();
+  Carp::croak "Use set_source with ", __PACKAGE__,
+    " and subclasses, not parse_lines";
+}
+
+sub parse_line {
+  use Carp ();
+  Carp::croak "Use set_source with ", __PACKAGE__,
+    " and subclasses, not parse_line";
+}
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub new {
@@ -51,6 +83,7 @@ sub new {
   return $self;
 }
 
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
 sub get_token {
   my $self = shift;
@@ -86,21 +119,21 @@ sub get_token {
         }
          # but pass thru the undef, which will set source_dead to true
       }
-      $self->parse_lines(@lines);
+      $self->SUPER::parse_lines(@lines);
       
     } elsif(exists $self->{'source_arrayref'}) {
       DEBUG and print "$self 's source is arrayref $self->{'source_arrayref'}, with ",
        scalar(@{$self->{'source_arrayref'}}), " items left in it.\n";
 
       DEBUG > 3 and print "  Fetching ", Pod::Simple::MANY_LINES, " lines.\n";
-      $self->parse_lines(
+      $self->SUPER::parse_lines(
         splice @{ $self->{'source_arrayref'} },
         0,
         Pod::Simple::MANY_LINES
       );
       unless( @{ $self->{'source_arrayref'} } ) {
         DEBUG and print "That's it for that source arrayref!  Killing.\n";
-        $self->parse_lines(undef);
+        $self->SUPER::parse_lines(undef);
         delete $self->{'source_arrayref'}; # so it can be GC'd
       }
        # to make sure that an undef is always sent to signal end-of-stream
@@ -117,14 +150,14 @@ sub get_token {
         m/([^\n\r]*)((?:\r?\n)?)/g
       ) {
         #print(">> $1\n"),
-        $self->parse_lines($1)
+        $self->SUPER::parse_lines($1)
          if length($1) or length($2)
           or pos(     ${ $self->{'source_scalar_ref'} })
            != length( ${ $self->{'source_scalar_ref'} });
          # I.e., unless it's a zero-length "empty line" at the very
          #  end of "foo\nbar\n" (i.e., between the \n and the EOS).
       } else { # that's the end.  Byebye
-        $self->parse_lines(undef);
+        $self->SUPER::parse_lines(undef);
         delete $self->{'source_scalar_ref'};
         DEBUG and print "That's it for that source scalarref!  Killing.\n";
       }
@@ -188,7 +221,7 @@ sub set_source {
     DEBUG and print "$self 's source is fh-obj $_[0]\n";
   } elsif(!length $_[0]) {
     Carp::croak("Can't use empty-string as a source for set_source");
-  } else {  # it's a filename
+  } else {  # It's a filename!
     DEBUG and print "$self 's source is filename $_[0]\n";
     {
       local *PODSOURCE;
@@ -204,6 +237,88 @@ sub set_source {
   $self->{'source_fh'} = $handle;
   DEBUG and print "  Its handle is $handle\n";
   return 1;
+}
+
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+sub get_title_short {  shift->get_short_title(@_)  } # alias
+
+sub get_short_title {
+  my $title = shift->get_title(@_);
+  $title = $1 if $title =~ m/^(\S+)\s+--?\s+./s;
+    # turn "Foo::Bar -- bars for your foo" into "Foo::Bar"
+  return $title;
+}
+
+
+sub get_title {
+  my $self = $_[0];
+  my $title;
+  my @to_unget;
+
+  while(1) {
+    push @to_unget, $self->get_token;
+    unless(defined $to_unget[-1]) { # whoops, short doc!
+      pop @to_unget;
+      last;
+    }
+
+    DEBUG and print "-Got token ", $to_unget[-1]->dump, "\n";
+
+    (DEBUG and print "Too much in the buffer.\n"),
+     last if @to_unget > 25; # sanity
+    
+    my $pattern = '';
+    if( #$to_unget[-1]->type eq 'end'
+        #and $to_unget[-1]->tagname eq 'Para'
+        #and
+        ($pattern = join('',
+         map {;
+            ($_->type eq 'start') ? ("<" . $_->tagname .">")
+          : ($_->type eq 'end'  ) ? ("</". $_->tagname .">")
+          : ($_->type eq 'text' ) ? ($_->text =~ m<^([A-Z]+)$>s ? $1 : 'X')
+          : "BLORP"
+         } @to_unget
+       )) =~ m{<head1>NAME</head1><Para>(X|</?[BCIFLS]>)+</Para>$}s
+    ) {
+      # Whee, it fits the pattern
+      DEBUG and print "Seems to match =head1 NAME pattern.\n";
+      $title = '';
+      foreach my $t (reverse @to_unget) {
+        last if $t->type eq 'start' and $t->tagname eq 'Para';
+        $title = $t->text . $title if $t->type eq 'text';
+      }
+      undef $title if $title =~ m<^\s*$>; # make sure it's contentful!
+      last;
+
+    } elsif ($pattern =~ m{<head(\d)>(.+)</head\d>$}
+      and !( $1 eq '1' and $2 eq 'NAME' )
+    ) {
+      # Well, it fits a fallback pattern
+      DEBUG and print "Seems to match NAMEless pattern.\n";
+      $title = '';
+      foreach my $t (reverse @to_unget) {
+        last if $t->type eq 'start' and $t->tagname =~ m/^head\d$/s;
+        $title = $t->text . $title if $t->type eq 'text';
+      }
+      undef $title if $title =~ m<^\s*$>; # make sure it's contentful!
+      last;
+      
+    } else {
+      DEBUG and $pattern and print "Leading pattern: $pattern\n";
+    }
+  }
+  
+  # Put it all back:
+  $self->unget_token(@to_unget);
+  
+  if(DEBUG) {
+    if(defined $title) { print "  Returing title <$title>\n" }
+    else { print "Returning title <>\n" }
+  }
+  
+  return '' unless defined $title;
+  return $title;
 }
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

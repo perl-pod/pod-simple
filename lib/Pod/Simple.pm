@@ -16,7 +16,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.90';
+$VERSION = '0.91';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -70,6 +70,9 @@ __PACKAGE__->_accessorize(
 
   'doc_has_started',   # whether we've fired the open-Document event yet
 
+  'bare_output',       # For some subclasses: whether to prepend
+                       #  header-code and postpend footer-code
+
   'nix_X_codes',       # whether to ignore X<...> codes
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events
@@ -114,7 +117,8 @@ sub output_string {
   # Works by faking out output_fh.  Simplifies our code.
   #
   my $this = shift;
-  return $this->{'output_string'} unless @_;  # GET.  Yes, the FH.
+  return $this->{'output_string'} unless @_;  # GET.
+  
   require Pod::Simple::TiedOutFH;
   my $x = (defined($_[0]) and ref($_[0])) ? $_[0] : \( $_[0] );
   $$x = '' unless defined $$x;
@@ -634,8 +638,8 @@ sub _ponder_extend {
       $self->whine(
         $para->[1]{'start_line'},
         "Format for second =extend parameter must be like"
-        . " M or 1 or 0 or M,N or M,N,O but like "
-        . $content
+        . " M or 1 or 0 or M,N or M,N,O but you have it like "
+        . $fallbacks_one
       );
       return;
     }
@@ -1247,7 +1251,7 @@ sub filter {
 
 sub _out {
   # For use in testing: Class->_out($source)
-  #  returns the parse tree of $source
+  #  returns the transformation of $source
   
   my $class = shift(@_);
 
@@ -1266,9 +1270,9 @@ sub _out {
   
   $mutor->($parser) if $mutor;
 
-  $parser->parse_string_document( shift( @_ ) );
+  $parser->parse_string_document( $_[0] );
   # use Data::Dumper; print Dumper($parser), "\n";
-  return $out
+  return $out;
 }
 
 

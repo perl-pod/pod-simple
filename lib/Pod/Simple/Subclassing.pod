@@ -78,6 +78,9 @@ TODO intro... mention that events are supplied for implicits, like for
 missing closures.
 
 
+In the following section, we use XML to represent the event structure
+associated with a particular construct.  That is, TODO
+
 =over
 
 =item C<< $parser->_handle_element_start( I<element_name>, I<attr_hashref> ) >>
@@ -90,71 +93,509 @@ missing closures.
 
 TODO describe
 
+
 =over
 
 =item events with an element_name of Document
 
-TODO...
+Parsing a document produces this event structure:
+
+  <Document start_line="543">
+    ...all events...
+  </Document>
+
+The value of the I<start_line> attribute will be the line number of the first
+Pod directive in the document.
+
+If there is no Pod in the given document, then the 
+event structure will be this:
+
+  <Document contentless="1" start_line="543">
+  </Document>
+
+In that case, the value of the I<start_line> attribute will not be meaningful;
+under current implementations, it will probably be the line number of the
+last line in the file.
 
 =item events with an element_name of Para
 
-TODO...
+Parsing a plain (non-verbatim, non-directive, non-data) paragraph in
+a Pod document produces this event structure:
+
+    <Para start_line="543">
+      ...all events in this paragraph...
+    </Para>
+
+The value of the I<start_line> attribute will be the line number of the start
+of the paragraph.
+
+For example, parsing this paragraph of Pod:
+
+  The value of the I<start_line> attribute will be the
+  line number of the start of the paragraph.
+
+produces this event structure:
+
+    <Para start_line="129">
+      The value of the 
+      <I>
+        start_line
+      </I>
+       attribute will be the line number of the first Pod directive
+      in the document.
+    </Para>
 
 =item events with an element_name of B, C, F, or I.
 
-TODO...
+Parsing a BE<lt>...E<gt> formatting code (or of course any of its
+semantically identical syntactic variants
+S<BE<lt>E<lt> ... E<gt>E<gt>>,
+or S<BE<lt>E<lt>E<lt>E<lt> ... E<gt>E<gt>E<gt>E<gt>>, etc.)
+produces this event structure:
+
+      <B>
+        ...stuff...
+      </B>
+
+Currently, there are no attributes conveyed.
+
+Parsing C, F, or I codes produce the same structure, with only a
+different element name.
+
+If your parser object has been set to accept other formatting codes,
+then they will be presented like these B/C/F/I codes -- i.e., without
+any attributes.
 
 =item events with an element_name of S
 
-TODO...
+Normally, parsing an SE<lt>...E<gt> sequence produces this event
+structure, just as if it were a B/C/F/I code:
+
+      <S>
+        ...stuff...
+      </S>
+
+However, Pod::Simple (and presumably all derived parsers) offers the
+C<nbsp_for_S> option which, if enabled, will suppress all S events, and
+instead change all spaces in the content to non-breaking spaces. This is
+intended for formatters that output to a format that has no code that
+means the same as SE<lt>...E<gt>, but which has a code/character that
+means non-breaking space.
 
 =item events with an element_name of X
 
-TODO...
+Normally, parsing an XE<lt>...E<gt> sequence produces this event
+structure, just as if it were a B/C/F/I code:
+
+      <X>
+        ...stuff...
+      </X>
+
+However, Pod::Simple (and presumably all derived parsers) offers the
+C<nix_X_codes> option which, if enabled, will suppress all X events
+and ignore their content.  For formatters/processors that don't use
+X events, this is presumably quite useful.
+
 
 =item events with an element_name of L
 
-TODO...
+Because the LE<lt>...E<gt> is the most complex construct in the
+language, it should not surprise you that the events it generates are
+the most complex in the language. Most of complexity is hidden away in
+the attribute values, so for those of you writing a Pod formatter that
+produces a non-hypertextual format, you can just ignore the attributes
+and treat an L event structure like a formatting element that
+(presumably) doesn't actually produce a change in formatting.  That is,
+the content of the L event structure (as opposed to its
+attributes) is always what text should be displayed.
+
+There are, at first glance, three kinds of L links: URL, man, and pod.
+
+When a LE<lt>I<some_url>E<gt> code is parsed, it produces this event
+structure:
+
+  <L content-implicit="yes" to="that_url" type="url">
+    that_url
+  </L>
+
+The C<type="url"> attribute is always specified for this type of
+L code.
+
+For example, this Pod source:
+
+  L<http://www.perl.com/CPAN/authors/>
+
+produces this event structure:
+
+  <L content-implicit="yes" to="http://www.perl.com/CPAN/authors/" type="url">
+    http://www.perl.com/CPAN/authors/
+  </L>
+
+When a LE<lt>I<manpage(section)>E<gt> code is parsed (and these are
+fairly rare and not terribly useful), it produces this event structure:
+
+  <L content-implicit="yes" to="manpage(section)" type="man">
+    manpage(section)
+  </L>
+
+The C<type="man"> attribute is always specified for this type of
+L code.
+
+For example, this Pod source:
+
+  L<crontab(5)>
+
+produces this event structure:
+
+  <L content-implicit="yes" to="crontab(5)" type="man">
+    crontab(5)
+  </L>
+
+In the rare cases where a man page link has a specified, that text appears
+in a I<section> attribute. For example, this Pod source:
+
+  L<crontab(5)/"ENVIRONMENT">
+
+will produce this event structure:
+
+  <L content-implicit="yes" section="ENVIRONMENT" to="crontab(5)" type="man">
+    "ENVIRONMENT" in crontab(5)
+  </L>
+
+In the rare case where the Pod document has code like
+LE<lt>I<sometext>|I<manpage(section)>E<gt>, then the I<sometext> will appear
+as the content of the element, the I<manpage(section)> text will appear
+only as the value of the I<to> attribute, and there will be no
+C<content-implicit="yes"> attribute (whose presence means that the Pod parser
+had to infer what text should appear as the link text -- as opposed to
+cases where that attribute is absent, which means that the Pod parser did
+I<not> have to infer the link text, because that L code explicitly specified
+some link text.)
+
+For example, this Pod source:
+
+  L<hell itself!|crontab(5)>
+  
+will produce this event structure:
+
+  <L to="crontab(5)" type="man">
+    hell itself!
+  </L>
+
+The last type of L structure is for links to/within Pod documents. It is
+the most complex because it can have a I<to> attribute, I<or> a
+I<section> attribute, or both. The C<type="pod"> attribute is always
+specified for this type of L code.
+
+In the most common case, the simple case of a LE<lt>podpageE<gt> code
+produces this event structure:
+
+  <L content-implicit="yes" to="Net::Ping" type="pod">
+    podpage
+  </L>
+
+For example, this Pod source:
+
+  L<Net::Ping>
+
+produces this event structure:
+
+  <L content-implicit="yes" to="Net::Ping" type="pod">
+    Net::Ping
+  </L>
+
+In cases where there is link-text explicitly specified, it
+is to be found in the content of the element (and not the
+attributes), just as with the LE<lt>I<sometext>|I<manpage(section)>E<gt>
+case discussed above.  For example, this Pod source:
+
+  L<Perl Error Messages|perldiag>
+
+produces this event structure:
+
+  <L to="perldiag" type="pod">
+    Perl Error Messages
+  </L>
+
+In cases of links to a section in the current Pod document,
+there is a I<section> attribute instead of a L<to> attribute.
+For example, this Pod source:
+
+  L</"Member Data">
+
+produces this event structure:
+
+  <L content-implicit="yes" section="Member Data" type="pod">
+    "Member Data"
+  </L>
+
+As another example, this Pod source:
+
+  L<the various attributes|/"Member Data">
+
+produces this event structure:
+
+  <L section="Member Data" type="pod">
+    the various attributes
+  </L>
+
+In cases of links to a section in a different Pod document,
+there are both a I<section> attribute and a L<to> attribute.
+For example, this Pod source:
+
+  L<perlsyn/"Basic BLOCKs and Switch Statements">
+
+produces this event structure:
+
+  <L content-implicit="yes" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
+    "Basic BLOCKs and Switch Statements" in perlsyn
+  </L>
+
+As another example, this Pod source:
+
+  L<SWITCH statements|perlsyn/"Basic BLOCKs and Switch Statements">
+
+produces this event structure:
+
+  <L section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
+    SWITCH statements
+  </L>
+
+Incidentally, note that we do not distinguish between these syntaxes:
+
+  L</"Member Data">
+  L<"Member Data">
+  L</Member Data>
+  L<Member Data>    [deprecated syntax]
+
+That is, they all produce the same event structure, namely:
+
+  <L content-implicit="yes" section="Member Data" type="pod">
+    &#34;Member Data&#34;
+  </L>
 
 =item events with an element_name of E or Z
 
-TODO...
+While there are Pod codes EE<lt>...E<gt> and ZE<lt>E<gt>, these
+I<do not> produce any E or Z events -- that is, there are no such
+events as E or Z.
 
 =item events with an element_name of Verbatim
 
-TODO...
+When a Pod verbatim paragraph (AKA "codeblock") is parsed, it
+produces this event structure:
+
+  <Verbatim start_line="543" xml:space="preserve">
+    ...text...
+  </Verbatim>
+
+The value of the I<start_line> attribute will be the line number of the
+first line of this verbatim block.  The I<xml:space> attribute is always
+present, and always has the value "preserve".
+
+The text content will have tabs already expanded.
+
 
 =item events with an element_name of head1 .. head4
 
-TODO...
+When a "=head1 ..." directive is parsed, it produces this event
+structure:
+
+  <head1>
+    ...stuff...
+  </head1>
+
+For example, a directive consisting of this:
+
+  =head1 Options to C<new> et al.
+
+will produce this event structure:
+
+  <head1 start_line="543">
+    Options to 
+    <C>
+      new
+    </C>
+     et al.
+  </head1>
+
+"=head2" thru "=head4" directives are the same, except for the element
+names in the event structure.
 
 =item events with an element_name of over-bullet
 
-TODO...
+When an "=over ... Z<>=back" block is parsed where the items are
+a bulletted list, it will produce this event structure:
+
+  <over-bullet indent="4" start_line="543">
+    <item-bullet start_line="545">
+      ...Stuff...
+    </item-bullet>
+    ...more item-bullets...
+  </over-bullet>
+
+The value of the I<indent> attribute is whatever value is after the
+"=over" directive, as in "=over 8".  If no such value is specified
+in the directive, then the I<indent> attribute has the value "4".
+
+For example, this Pod source:
+
+  =over
+
+  =item *
+
+  Stuff
+
+  =item *
+
+  Bar I<baz>!
+
+  =back
+
+produces this event structure:
+
+  <over-bullet indent="4" start_line="10">
+    <item-bullet start_line="12">
+      Stuff
+    </item-bullet>
+    <item-bullet start_line="14">
+      Bar <I>baz</I>!
+    </item-bullet>
+  </over-bullet>
 
 =item events with an element_name of over-number
 
-TODO...
+When an "=over ... Z<>=back" block is parsed where the items are
+a numbered list, it will produce this event structure:
+
+  <over-number indent="4" start_line="543">
+    <item-number number="1" start_line="545">
+      ...Stuff...
+    </item-number>
+    ...more item-number...
+  </over-bullet>
+
+This is like the "over-bullet" event structure; but note that the contents
+are "item-number" instead of "item-bullet", and note that they will have
+a "number" attribute, which some formatters/processors may ignore
+(since, for example, there's no need for it in HTML when producing
+an "<UL><LI>...</LI>...</UL>" structure), but which any processor may use.
+
+Note that the values for the I<number> attributes of "item-number"
+elements in a given "over-number" area I<will> start at 1 and go up by
+one each time.  If the Pod source doesn't follow that order (even though
+it really should should!), whatever numbers it has will be ignored (with
+the correct values being put in the I<number> attributes), and an error
+message might be issued to the user.
 
 =item events with an element_name of over-text
 
-TODO...
+These events are are somewhat unlike the other over-*
+structures, as far as what their contents are.  When
+an "=over ... Z<>=back" block is parsed where the items are
+a list of text "subheadings", it will produce this event structure:
+
+  <over-text indent="4" start_line="543">
+    <item-text>
+      ...stuff...
+    </item-text>
+    ...stuff (generally Para or Verbatim elements)...
+    <item-text>
+    ...more item-text and/or stuff...
+  </over-text>
+
+The I<indent> attribute is as with the other over-* events.
+
+For example, this Pod source:
+
+  =over
+  
+  =item Foo
+  
+  Stuff
+  
+  =item Bar I<baz>!
+  
+  Quux
+  
+  =back
+
+produces this event structure:
+
+  <over-text indent="4" start_line="20">
+    <item-text start_line="22">
+      Foo
+    </item-text>
+    <Para start_line="24">
+      Stuff
+    </Para>
+    <item-text start_line="26">
+      Bar
+        <I>
+          baz
+        </I>
+      !
+    </item-text>
+    <Para start_line="28">
+      Quux
+    </Para>
+  </over-text>
+
+
 
 =item events with an element_name of over-block
 
-TODO...
+These events are are somewhat unlike the other over-*
+structures, as far as what their contents are.  When
+an "=over ... Z<>=back" block is parsed where there are no items,
+it will produce this event structure:
+
+  <over-block indent="4" start_line="543">
+    ...stuff (generally Para or Verbatim elements)...
+  </over-block>
+
+The I<indent> attribute is as with the other over-* events.
+
+For example, this Pod source:
+
+  =over
+  
+  For cutting off our trade with all parts of the world
+  
+  For transporting us beyond seas to be tried for pretended offenses
+  
+  He is at this time transporting large armies of foreign mercenaries to
+  complete the works of death, desolation and tyranny, already begun with
+  circumstances of cruelty and perfidy scarcely paralleled in the most
+  barbarous ages, and totally unworthy the head of a civilized nation.
+  
+  =cut
+  
+will produce this event structure:
+
+  <over-block indent="4" start_line="2">
+    <Para start_line="4">
+      For cutting off our trade with all parts of the world
+    </Para>
+    <Para start_line="6">
+      For transporting us beyond seas to be tried for pretended offenses
+    </Para>
+    <Para start_line="8">
+      He is at this time transporting large armies of [...more text...]
+    </Para>
+  </over-block>
 
 =item events with an element_name of item-bullet
 
-TODO...
+See L</"events with an element_name of over-bullet">, above.
 
 =item events with an element_name of item-number
 
-TODO...
+See L</"events with an element_name of over-number">, above.
 
 =item events with an element_name of item-text
 
-TODO...
+See L</"events with an element_name of over-text">, above.
 
 =item events with an element_name of for
 
@@ -368,6 +809,35 @@ C<die>!
 Some subclasses that indescriminately dump event attributes (well,
 except for ones beginning with "~") can use this object attribute for
 refraining to dump the "start_line" attribute.
+
+=item C<< $parser->no_whining( I<SOMEVALUE> ) >>
+
+This attribute, if set to true, will suppress reports of non-fatal
+error messages.  The default value is false, meaning that complaints
+I<are> reported.  How they get reported depends on the values of
+the attributes C<no_errata_section> and C<complain_stderr>.
+
+=item C<< $parser->no_errata_section( I<SOMEVALUE> ) >>
+
+This attribute, if set to true, will suppress generation of an errata
+section.  The default value is false -- i.e., an errata section will be
+generated.
+
+=item C<< $parser->complain_stderr( I<SOMEVALUE> ) >>
+
+This attribute, if set to true will send complaints to STDERR.  The
+default value is false -- i.e., complaints do not go to STDERR.
+
+=item C<< $parser->bare_output( I<SOMEVALUE> ) >>
+
+Some formatter subclasses use this as a flag for whether output should
+have prologue and epilogue code omitted. For example, setting this to
+true for an HTML formatter class should omit the
+"<html><head><title>...</title><body>..." prologue and the
+"</body></html>" epilogue.
+
+If you want to set this to true, you should probably also set
+C<no_whining> or at least C<no_errata_section> to true.
 
 =back
 

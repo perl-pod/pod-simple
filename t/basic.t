@@ -12,7 +12,9 @@ ok 1;
 
 require Pod::Simple; ok 1;
 
-Pod::Simple->VERSION(.9); ok 1;
+Pod::Simple->VERSION(.90); ok 1;
+
+#print "# Pod::Simple version $Pod::Simple::VERSION\n";
 
 require Pod::Simple::DumpAsXML; ok 1;
 

@@ -54,12 +54,15 @@ sub new {
   $new->nix_X_codes(1);
   $new->nbsp_for_S(1);
   $new->accept_directive_as_data( 'html', 'HTML' );
+    # TODO: fix implementation
+  
   $new->{'Tagmap'} = {%Tagmap};
   return $new;
 }
 
 sub run {
   my $self = $_[0];
+  return $self->do_middle if $self->bare_output;
   return
    $self->do_beginning && $self->do_middle && $self->do_end;
 }
@@ -123,55 +126,14 @@ sub do_middle {      # the main work
 sub do_beginning {			# tricky!
   my $self = $_[0];
 
-  # Try to find the title
-  my $title;
-  {
-    my @to_unget;
-    while(1) {
-      push @to_unget, $self->get_token;
-      unless(defined $to_unget[-1]) { # whoops, short doc!
-        pop @to_unget;
-        if(@to_unget < 3) {
-          DEBUG and print "Aborting do_beginning...\n";
-          return 0;
-        }
-        last;
-      }
+  my $title = $self->get_short_title();
 
-      DEBUG and print "-Got token ", $to_unget[-1]->dump, "\n";
-
-      (DEBUG and print "Too much in the buffer.\n"),
-       last if @to_unget > 25; # sanity
-      
-      my $pattern = '';
-      if( #$to_unget[-1]->type eq 'end'
-          #and $to_unget[-1]->tagname eq 'Para'
-          #and
-          ($pattern = join('',
-           map {;
-              ($_->type eq 'start') ? ("<" . $_->tagname .">")
-            : ($_->type eq 'end'  ) ? ("</". $_->tagname .">")
-            : ($_->type eq 'text' ) ? ($_->text =~ m<^([A-Z]+)$>s ? $1 : 'X')
-            : "BLORP"
-           } @to_unget
-         )) =~ m{<head1>NAME</head1><Para>X+</Para>$}s
-      ) {
-        # Whee, it fits the pattern
-        $title = '';
-        foreach my $t (reverse @to_unget) {
-          last if $t->type eq 'start';
-          $title = $t->text . $title if $t->type eq 'text';
-        }
-        undef $title if $title =~ m<^\s*$>; # make sure it's contentful!
-        last;
-      } else {
-        DEBUG and $pattern and print "Leading pattern: $pattern\n";
-      }
-    }
-    $self->unget_token(@to_unget);
+  unless($self->content_seen) {
+    DEBUG and print "No content seen in search for title.\n";
+    return;
   }
-  
-  $title = '' unless defined $title;
+
+
   $self->{'Title'} = $title;
 
   esc($title);

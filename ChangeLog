@@ -1,4 +1,22 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-09-11 01:19:39 MDT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-09-29 00:21:59 MDT"
+
+2002-09-29  Sean M. Burke <sburke@cpan.org>
+	* Release 0.91
+	* Beta release.  Much documentation still to write, many features
+	still to add.  The APIs might change in future versions.
+
+	* Pod::Simple::PullParserTextToken -- added 'text_r'
+
+	* Pod::Simple::PullParser -- added 'get_title' and
+	'get_title_short' to 
+
+	* Pod::Simple -- corrected wording of "Format for second =extend
+	parameter" error message.
+
+	* Pod::PullParser -- made its filter() run as intended, like
+	Pod::Simple's filter.
+
+	* Pod::Subclassing -- more docs
 
 2002-09-11  Sean M. Burke <sburke@cpan.org>
 	* Release 0.90
