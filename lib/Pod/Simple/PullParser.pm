@@ -1,7 +1,7 @@
 
 require 5;
 package Pod::Simple::PullParser;
-$VERSION = '1.01';
+$VERSION = '1.02';
 use Pod::Simple ();
 BEGIN {@ISA = ('Pod::Simple')}
 
@@ -53,6 +53,18 @@ sub parse_file {
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #  In case anyone tries to use them:
+
+sub run {
+  use Carp ();
+  if( __PACKAGE__ eq ref($_[0]) || $_[0]) { # I'm not being subclassed!
+    Carp::croak "You can call run() only on subclasses of "
+     . __PACKAGE__;
+  } else {
+    Carp::croak join '',
+      "You can't call run() because ",
+      ref($_[0]) || $_[0], " didn't define a run() method";
+  }
+}
 
 sub parse_lines {
   use Carp ();
@@ -247,13 +259,13 @@ sub get_title_short {  shift->get_short_title(@_)  } # alias
 
 sub get_short_title {
   my $title = shift->get_title(@_);
-  $title = $1 if $title =~ m/^(\S+)\s+--?\s+./s;
+  $title = $1 if $title =~ m/^(\S{1,60})\s+--?\s+./s;
     # turn "Foo::Bar -- bars for your foo" into "Foo::Bar"
   return $title;
 }
 
 
-sub get_title {
+sub get_title {  # some witchery in here
   my $self = $_[0];
   my $title;
   my @to_unget;
@@ -361,22 +373,187 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::PullParser -- a pull-parser interface to parsing Pod
 
 =head1 SYNOPSIS
 
- TODO
+ my $parser = SomePodProcessor->new;
+ $parser->set_source( "whatever.pod" );
+ $parser->run;
+
+Or:
+
+ my $parser = SomePodProcessor->new;
+ $parser->set_source( $some_filehandle_object );
+ $parser->run;
+
+Or:
+
+ my $parser = SomePodProcessor->new;
+ $parser->set_source( \$document_source );
+ $parser->run;
+
+Or:
+
+ my $parser = SomePodProcessor->new;
+ $parser->set_source( \@document_lines );
+ $parser->run;
+
+And elsewhere:
+
+ require 5;
+ package SomePodProcessor;
+ use strict;
+ use base qw(Pod::Simple::PullParser);
+ 
+ sub run {
+   my $self = shift;
+  Token:
+   while(my $token = $self->get_token) {
+     ...process each token...
+   }
+ }
 
 =head1 DESCRIPTION
 
-This class is for TODO.
+This class is for using Pod::Simple to build a Pod processor -- but
+one that uses an interface based on a stream of token objects,
+instead of based on events.
+
 This is a subclass of L<Pod::Simple> and inherits all its methods.
 
-TODO
+A subclass of Pod::Simple::PullParser should define a C<run> method
+that calls C<< $token = $parser->get_token >> to pull tokens.
+
+See the source for Pod::Simple::RTF for an example of a formatter
+that uses Pod::Simple::PullParser.
+
+=head1 METHODS
+
+=over
+
+=item my $token = $parser->get_token
+
+This returns the next token object (which will be of a subclass of
+L<Pod::Simple::PullParserToken>), or undef if the parser-stream has hit
+the end of the document.
+
+=item $parser->unget_token( $token )
+
+=item $parser->unget_token( $token1, $token2, ... )
+
+This restores the token object(s) to the front of the parser stream.
+
+=back
+
+The source has to be set before you can parse anything.  The lowest-level
+way is to call C<set_source>:
+
+=over
+
+=item $parser->set_source( $filename )
+
+=item $parser->set_source( $filehandle_object )
+
+=item $parser->set_source( \$document_source )
+
+=item $parser->set_source( \@document_lines )
+
+=back
+
+Or you can call these methods, which Pod::Simple::PullParser has defined
+to work just like Pod::Simple's same-named methods:
+
+=over
+
+=item $parser->parse_file(...)
+
+=item $parser->parse_string_document(...)
+
+=item $parser->filter(...)
+
+=item $parser->parse_from_file(...)
+
+=back
+
+For those to work, the Pod-processing subclass of
+Pod::Simple::PullParser has to have defined a $parser->run method --
+so it is advised that all Pod::Simple::PullParser subclasses do so.
+See the Synopsis above, or the source for Pod::Simple::RTF.
+
+Authors of formatter subclasses might find these methods useful to
+call on a parser object that you haven't started pulling tokens
+from yet:
+
+=over
+
+=item my $title_string = $parser->get_title
+
+This tries to get the title string out of $parser, by getting some tokens,
+and scanning them for the title, and then ungetting them so that you can
+process the token-stream from the beginning.
+
+For example, suppose you have a document that starts out:
+
+  =head1 NAME
+  
+  Hoo::Boy::Wowza -- Stuff B<wow> yeah!
+
+$parser->get_title on that document will return "Hoo::Boy::Wowza --
+Stuff wow yeah!".
+
+In cases where get_title can't find the title, it will return empty-string
+("").
+
+=item my $title_string = $parser->get_short_title
+
+This is just like get_title, except that it returns just the modulename, if
+the title seems to be of the form "SomeModuleName -- description".
+
+For example, suppose you have a document that starts out:
+
+  =head1 NAME
+  
+  Hoo::Boy::Wowza -- Stuff B<wow> yeah!
+
+then $parser->get_short_title on that document will return
+"Hoo::Boy::Wowza".
+
+But if the document starts out:
+
+  =head1 NAME
+  
+  Hooboy, stuff B<wow> yeah!
+
+then $parser->get_short_title on that document will return "Hooboy,
+stuff wow yeah!".
+
+If the title can't be found, then get_short_title returns empty-string
+("").
+
+=back
+
+=head1 NOTE
+
+You don't actually I<have> to define a C<run> method.  If you're
+writing a Pod-formatter class, you should define a C<run> just so
+that users can call C<parse_file> etc, but you don't I<have> to.
+
+And if you're not writing a formatter class, but are instead just
+writing a program that does something simple with a Pod::PullParser
+object (and not an object of a subclass), then there's no reason to
+bother subclassing to add a C<run> method.
 
 =head1 SEE ALSO
 
 L<Pod::Simple>
+
+L<Pod::Simple::PullParserToken> -- and its subclasses
+L<Pod::Simple::PullParserStartToken>,
+L<Pod::Simple::PullParserTextToken>, and
+L<Pod::Simple::PullParserEndToken>.
+
+L<HTML::TokeParser>, which inspired this.
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

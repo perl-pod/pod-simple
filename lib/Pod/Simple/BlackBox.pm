@@ -1050,9 +1050,24 @@ sub _verbatim_format {
   for(my $i = $#$p; $i > 2; $i--) {
     # work backwards over the lines, except the first (#2)
     
-    next unless $p->[$i]   =~ m{^#:([ \^\/\%]*)\n?$}s
-            and $p->[$i-1] !~ m{^#:[ \^\/\%]*\n?$}s;
+    #next unless $p->[$i]   =~ m{^#:([ \^\/\%]*)\n?$}s
+    #        and $p->[$i-1] !~ m{^#:[ \^\/\%]*\n?$}s;
      # look at a formatty line preceding a nonformatty one
+    DEBUG > 5 and print "Scrutinizing line $i: $$p[$i]\n";
+    if($p->[$i]   =~ m{^#:([ \^\/\%]*)\n?$}s) {
+      DEBUG > 5 and print "  It's a formatty line.  ",
+       "Peeking at previous line ", $i-1, ": $$p[$i-1]: \n";
+      
+      if( $p->[$i-1] =~ m{^#:[ \^\/\%]*\n?$}s ) {
+        DEBUG > 5 and print "  Previous line is formatty!  Skipping this one.\n";
+        next;
+      } else {
+        DEBUG > 5 and print "  Previous line is non-formatty!  Yay!\n";
+      }
+    } else {
+      DEBUG > 5 and print "  It's not a formatty line.  Ignoring\n";
+      next;
+    }
 
     # A formatty line has to have #: in the first two columns, and uses
     # "^" to mean bold, "/" to mean underline, and "%" to mean bold italic.
@@ -1102,7 +1117,10 @@ sub _verbatim_format {
       }
     }
     splice @$p, $i-1, 2, @new_line; # replace myself and the next line
-    $i -= @new_line; # Skip however many things we've just added!
+    DEBUG > 6 and print "New tokens: ", map( ref($_)?"<@$_> ":"<$_>", @new_line ), "\n";
+    $i -= @new_line - 2
+      # Skip however many things we've just added,
+      #  minus the two tokens we just nixed.
   }
 
   $p->[0] = 'VerbatimFormatted';

@@ -63,22 +63,74 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::Debug -- put Pod::Simple into trace/debug mode
 
 =head1 SYNOPSIS
 
- TODO
+ use Pod::Simple::Debug (5);  # or some integer
+
+Or:
+
+ my $debuglevel;
+ use Pod::Simple::Debug (\$debuglevel, 0);
+ ...some stuff that uses Pod::Simple to do stuff, but which
+  you don't want debug output from...
+
+ $debug_level = 4;
+ ...some stuff that uses Pod::Simple to do stuff, but which
+  you DO want debug output from...
+
+ $debug_level = 0;
 
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+This is an internal module for controlling the debug level (a.k.a. trace
+level) of Pod::Simple.  This is of interest only to Pod::Simple
+developers.
 
-TODO
+
+=head1 CAVEATS
+
+Note that you should load this module I<before> loading Pod::Simple (or
+any Pod::Simple-based class).  If you try loading Pod::Simple::Debug
+after &Pod::Simple::DEBUG is already defined, Pod::Simple::Debug will
+throw a fatal error to the effect that
+"it's s too late to call Pod::Simple::Debug".
+
+Note that the C<use Pod::Simple::Debug (\$x, I<somenum>)> mode will make
+Pod::Simple (et al) run rather slower, since &Pod::Simple::DEBUG won't
+be a constant sub anymore, and so Pod::Simple (et al) won't compile with
+constant-folding.
+
+
+=head1 GUTS
+
+Doing this:
+
+  use Pod::Simple::Debug (5);  # or some integer
+
+is basically equivalent to:
+
+  BEGIN { sub Pod::Simple::DEBUG () {5} }  # or some integer
+  use Pod::Simple ();
+
+And this:
+
+  use Pod::Simple::Debug (\$debug_level,0);  # or some integer
+
+is basically equivalent to this:
+
+  my $debug_level;
+  BEGIN { $debug_level = 0 }
+  BEGIN { sub Pod::Simple::DEBUG () { $debug_level }
+  use Pod::Simple ();
 
 =head1 SEE ALSO
 
 L<Pod::Simple>
+
+The article "Constants in Perl", in I<The Perl Journal> issue
+21.  See L<http://www.sysadminmag.com/tpj/issues/vol5_5/>
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

@@ -46,7 +46,7 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::TextContent -- get the text content of Pod
 
 =head1 SYNOPSIS
 
@@ -58,14 +58,15 @@ TODO - TODO
 
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+This class is that parses Pod and dumps just the text content.  It is
+mainly meant for use by the Pod::Simple test suite, but you may find
+some other use for it.
 
-TODO
+This is a subclass of L<Pod::Simple> and inherits all its methods.
 
 =head1 SEE ALSO
 
-L<Pod::Simple>
+L<Pod::Simple>, L<Pod::Simple::Text>, L<Pod::Spell>
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

@@ -1,7 +1,7 @@
 
 require 5;
 package Pod::Simple::DumpAsText;
-$VERSION = '1.01';
+$VERSION = '1.02';
 use Pod::Simple ();
 BEGIN {@ISA = ('Pod::Simple')}
 
@@ -15,6 +15,7 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
+  $new->accept_codes('VerbatimFormatted');
   return $new;
 }
 
@@ -87,7 +88,7 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::DumpAsText -- dump Pod-parsing events as text
 
 =head1 SYNOPSIS
 
@@ -97,12 +98,16 @@ TODO - TODO
 
 =head1 DESCRIPTION
 
-This class is for TODO.
+This class is for dumping, as text, the events gotten from parsing a Pod
+document.  This class is of interest to people writing Pod formatters
+based on Pod::Simple. It is useful for seeing exactly what events you
+get out of some Pod that you feed in.
+
 This is a subclass of L<Pod::Simple> and inherits all its methods.
 
-TODO
-
 =head1 SEE ALSO
+
+L<Pod::Simple::DumpAsXML>
 
 L<Pod::Simple>
 

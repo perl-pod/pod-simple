@@ -1,17 +1,13 @@
 
 require 5;
 package Pod::Simple::DumpAsXML;
-$VERSION = '1.02';
+$VERSION = '1.01';
 use Pod::Simple ();
 BEGIN {@ISA = ('Pod::Simple')}
 
 use strict;
 
 use Carp ();
-
-# TODO: note that this is padding with WS
-# TODO: make a setting for leaving off the line number attributes?
-
 
 BEGIN { *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG }
 
@@ -95,11 +91,9 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::DumpAsXML -- turn Pod into XML
 
 =head1 SYNOPSIS
-
- TODO
 
   perl -MPod::Simple::DumpAsXML -e \
    "exit Pod::Simple::DumpAsXML->filter(shift)->any_errata_seen" \
@@ -107,14 +101,31 @@ TODO - TODO
 
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+Pod::Simple::DumpAsXML is a subclass of L<Pod::Simple> that parses Pod
+and turns it into indented and wrapped XML.  This class is of
+interest to people writing Pod formatters based on Pod::Simple.
 
-TODO
+Pod::Simple::DumpAsXML inherits methods from
+L<Pod::Simple>.
+
 
 =head1 SEE ALSO
 
-L<Pod::Simple>
+L<Pod::Simple::XMLOutStream> is rather like this class.
+Pod::Simple::XMLOutStream's output is space-padded in a way
+that's better for sending to an XML processor (that is, it has
+no ignoreable whitespace). But
+Pod::Simple::DumpAsXML's output is much more human-readable, being
+(more-or-less) one token per line, with line-wrapping.
+
+L<Pod::Simple::DumpAsText> is rather like this class,
+except that it doesn't dump with XML syntax.  Try them and see
+which one you like best!
+
+L<Pod::Simple>, L<Pod::Simple::DumpAsXML>
+
+The older libraries L<Pod::PXML>, L<Pod::XML>, L<Pod::SAX>
+
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

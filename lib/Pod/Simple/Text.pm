@@ -6,7 +6,7 @@ use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
 use vars qw( @ISA $VERSION $FREAKYMODE);
-$VERSION = '1.01';
+$VERSION = '1.02';
 @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG
@@ -111,27 +111,27 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::Text -- format Pod as plaintext
 
 =head1 SYNOPSIS
-
- TODO
 
   perl -MPod::Simple::Text -e \
    "exit Pod::Simple::Text->filter(shift)->any_errata_seen" \
    thingy.pod
 
-
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+This class is a formatter that takes Pod and renders it as
+wrapped plaintext.
 
-TODO
+Its wrapping is done by L<Text::Wrap>, so you can change
+C<$Text::Wrap::columns> as you like.
+
+This is a subclass of L<Pod::Simple> and inherits all its methods.
 
 =head1 SEE ALSO
 
-L<Pod::Simple>
+L<Pod::Simple>, L<Pod::Simple::TextContent>, L<Pod::Text>
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

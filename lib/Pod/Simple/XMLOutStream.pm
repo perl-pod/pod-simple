@@ -5,7 +5,7 @@ use strict;
 use Carp ();
 use Pod::Simple ();
 use vars qw( $ATTR_PAD @ISA $VERSION $SORT_ATTRS);
-$VERSION = '1.01';
+$VERSION = '1.02';
 BEGIN {
   @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;
@@ -20,6 +20,7 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
+  #$new->accept_codes('VerbatimFormatted');
   return $new;
 }
 
@@ -90,27 +91,32 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::XMLOutStream -- turn Pod into XML
 
 =head1 SYNOPSIS
-
- TODO
 
   perl -MPod::Simple::XMLOutStream -e \
    "exit Pod::Simple::XMLOutStream->filter(shift)->any_errata_seen" \
    thingy.pod
 
-
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+Pod::Simple::XMLOutStream is a subclass of L<Pod::Simple> that parses
+Pod and turns it into XML.
 
-TODO
+Pod::Simple::XMLOutStream inherits methods from
+L<Pod::Simple>.
+
 
 =head1 SEE ALSO
 
-L<Pod::Simple>
+L<Pod::Simple::DumpAsXML> is rather like this class; see its
+documentation for a discussion of the differences.
+
+L<Pod::Simple>, L<Pod::Simple::DumpAsXML>
+
+The older libraries L<Pod::PXML>, L<Pod::XML>, L<Pod::SAX>
+
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

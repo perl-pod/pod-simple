@@ -25,7 +25,7 @@ sub _handle_element_start { # self, tagname, attrhash
     push    @{ $_[0]{'_currpos'}[0] }, $x; # insert in parent's child-list
     unshift @{ $_[0]{'_currpos'} },    $x; # prefix to stack
   } else {
-    DEBUG and print " And oo, it getsto be root!\n";
+    DEBUG and print " And oo, it gets to be root!\n";
     $_[0]{'_currpos'} = [   $_[0]{'root'} = $x   ];
       # first event!  set to stack, and set as root.
   }
@@ -60,27 +60,81 @@ sub _traverse_treelet_bit {
 1;
 __END__
 
-
-__END__
-
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::SimpleTree -- parse Pod into a simple parse tree 
 
 =head1 SYNOPSIS
 
- TODO
+  % cat ptest.pod
+  
+  =head1 PIE
+  
+  I like B<pie>!
+  
+  % perl -MPod::Simple::SimpleTree -MData::Dumper -e \
+     "print Dumper(Pod::Simple::SimpleTree->new->parse_file(shift)->root)" \
+     ptest.pod
+  
+  $VAR1 = [
+            'Document',
+            { 'start_line' => 1 },
+            [
+              'head1',
+              { 'start_line' => 1 },
+              'PIE'
+            ],
+            [
+              'Para',
+              { 'start_line' => 3 },
+              'I like ',
+              [
+                'B',
+                {},
+                'pie'
+              ],
+              '!'
+            ]
+          ];
 
 =head1 DESCRIPTION
 
-This class is for TODO.
+This class is of interest to people writing a Pod processor/formatter.
+
+This class takes Pod and parses it, returning a parse tree made just
+of arrayrefs, and hashrefs, and strings.
+
 This is a subclass of L<Pod::Simple> and inherits all its methods.
 
-TODO
+This class is inspired by XML::Parser's "Tree" parsing-style, although
+it doesn't use exactly the same LoL format.
+
+=head1 METHODS
+
+At the end of the parse, call C<< $parser->root >> to get the
+tree's top node.
+
+=head1 Tree Contents
+
+Every element node in the parse tree is represented by an arrayref of
+the form: C<[ I<elementname>, \%attributes, I<...subnodes...> ]>.
+See the example tree dump in the Synopsis, above.
+
+Every text node in the tree is represented by a simple (non-ref)
+string scalar.  So you can test C<ref($node)> to see whather you have
+an element node or just a text node.
+
+The top node in the tree is C<[ 'Document', \%attributes,
+I<...subnodes...> ]>
+
 
 =head1 SEE ALSO
 
 L<Pod::Simple>
+
+L<perllol>
+
+L<The "Tree" subsubsection in XML::Parser|XML::Parser/"Tree">
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

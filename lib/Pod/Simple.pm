@@ -16,7 +16,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.95';
+$VERSION = '0.96';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -87,6 +87,12 @@ __PACKAGE__->_accessorize(
  #  $cut_handler->($line, $self->{'line_count'}, $self) if $cut_handler;
   
 );
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+sub any_errata_seen {  # good for using as an exit() value...
+  return shift->{'errors_seen'} || 0;
+}
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Pull in some functions that, for some reason, I expect to see here too:
@@ -321,6 +327,7 @@ sub parse_file {
 
 sub parse_from_file {
   # An emulation of Pod::Parser's interface, for the sake of Perldoc.
+  # Basically just a wrapper around parse_file.
 
   my($self, $source, $to) = @_;
   $self = $self->new unless ref($self); # so we tolerate being a class method

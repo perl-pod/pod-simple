@@ -1,5 +1,19 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-11-10 01:47:14 MST"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-11-20 00:28:53 MST"
 
+2002-11-19  Sean M. Burke <sburke@cpan.org>
+	* Release 0.96
+	* Still kinda sorta beta.
+
+	* Much much more docs in this version.  Only a few feature
+	changes:
+
+	* Added any_errata_seen to Pod::Simple.  Should've been in there
+	ages ago.  Oops!
+	* Fixed some errors in the experimental VerbatimFormatted code.
+	* Added is_tagname / is_tag to Pod::Simple::PullParserStartToken
+	and Pod::Simple::PullParserEndToken
+	* Added RTFDEFLANG stuff to Pod::Simple::RTF.
+	
 2002-11-10  Sean M. Burke <sburke@cpan.org>
 	* Release 0.95
 	* Beta release.  Much documentation still to write, many features

@@ -10,7 +10,7 @@ package Pod::Simple::RTF;
 
 use strict;
 use vars qw($VERSION @ISA %Escape $WRAP %Tagmap);
-$VERSION = '1.02';
+$VERSION = '1.03';
 use Pod::Simple::PullParser ();
 BEGIN {@ISA = ('Pod::Simple::PullParser')}
 
@@ -104,6 +104,14 @@ sub new {
   $new->accept_codes(@_to_accept);
   $new->accept_codes('VerbatimFormatted');
   DEBUG > 2 and print "To accept: ", join(' ',@_to_accept), "\n";
+  $new->doc_lang(
+    (  $ENV{'RTFDEFLANG'} || '') =~ m/^(\d{1,10})$/s ? $1
+    : ($ENV{'RTFDEFLANG'} || '') =~ m/^0?x([a-fA-F0-9]{1,10})$/s ? hex($1)
+                                      # yes, tolerate hex!
+    : ($ENV{'RTFDEFLANG'} || '') =~ m/^([a-fA-F0-9]{4})$/s ? hex($1)
+                                      # yes, tolerate even more hex!
+    : '1033'
+  );
 
   $new->head1_halfpoint_size(32);
   $new->head2_halfpoint_size(28);
@@ -118,9 +126,8 @@ sub new {
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# TODO: document these
-
 __PACKAGE__->_accessorize(
+ 'doc_lang',
  'head1_halfpoint_size',
  'head2_halfpoint_size',
  'head3_halfpoint_size',
@@ -454,14 +461,14 @@ sub doc_start {
    if $is_obviously_module_name;
 
   return sprintf <<'END', 
-\deflang1033\widowctrl
+\deflang%s\plain\lang%s\widowctrl
 {\header\pard\qr\plain\f2\fs%s
 %s
 p.\chpgn\par}
 \fs%s
 
 END
-
+    ($self->doc_lang) x 2,
     $self->header_halfpoint_size,
     $title,
     $self->normal_halfpoint_size,
@@ -471,7 +478,6 @@ END
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #-------------------------------------------------------------------------
 
-# TODO: escaping Unicode characters?
 use integer;
 sub rtf_esc {
   my $x; # scratch
@@ -497,7 +503,11 @@ sub rtf_esc {
 }
 
 sub rtf_esc_codely {
-  # Doesn't change "-" to hard-hyphen, nor apply computerese style
+  # Doesn't change "-" to hard-hyphen, nor apply computerese style-smarts.
+  # We don't want to change the "-" to hard-hyphen, because we want to
+  #  be able to paste this into a file and run it without there being
+  #  dire screaming about the mysterious hard-hyphen character (which
+  #  looks just like a normal dash character).
   
   my $x; # scratch
   if(!defined wantarray) { # void context: alter in-place!
@@ -551,24 +561,113 @@ sub rtf_esc_codely {
 
 __END__
 
-How do do a comment in rtf
+=head1 NAME
 
-{\*\qqqqqqqq
-    I like cookies!!!!!
-}
+Pod::Simple::RTF -- format Pod as RTF
 
-From the spec:
+=head1 SYNOPSIS
 
-Destinations added after the RTF Specification published in the March
-1987 Microsoft Systems Journal may be preceded by the control symbol \*.
-This control symbol identifies destinations whose related text should be
-ignored if the RTF reader does not recognize the destination.
-[...]
-If the \* control symbol precedes a control word, then it defines a
-destination group and was itself preceded by an opening brace ({). The
-RTF reader should discard all text up to and including the closing brace
-(}) that closes this group.
+  perl -MPod::Simple::RTF -e \
+   "exit Pod::Simple::RTF->filter(shift)->any_errata_seen" \
+   thingy.pod > thingy.rtf
 
+=head1 DESCRIPTION
 
+This class is a formatter that takes Pod and renders it as RTF, good for
+viewing/printing in MSWord, WordPad/write.exe, TextEdit, etc.
 
+This is a subclass of L<Pod::Simple> and inherits all its methods.
+
+=head1 FORMAT CONTROL ATTRIBUTES
+
+You can set these attributes on the parser object before you
+call C<parse_file> (or a similar method) on it:
+
+=over
+
+=item $parser->head1_halfpoint_size( I<halfpoint_integer> );
+
+=item $parser->head2_halfpoint_size( I<halfpoint_integer> );
+
+=item $parser->head3_halfpoint_size( I<halfpoint_integer> );
+
+=item $parser->head4_halfpoint_size( I<halfpoint_integer> );
+
+These methods set the size (in half-points, like 52 for 26-point)
+that these heading levels will appear as.
+
+=item $parser->codeblock_halfpoint_size( I<halfpoint_integer> );
+
+This method sets the size (in half-points, like 21 for 10.5-point)
+that codeblocks ("verbatim sections") will appear as.
+
+=item $parser->header_halfpoint_size( I<halfpoint_integer> );
+
+This method sets the size (in half-points, like 15 for 7.5-point)
+that the header on each page will appear in.  The header
+is usually just "I<modulename> p. I<pagenumber>".
+
+=item $parser->normal_halfpoint_size( I<halfpoint_integer> );
+
+This method sets the size (in half-points, like 26 for 13-point)
+that normal paragraphic text will appear in.
+
+=item $parser->no_proofing_exemptions( I<true_or_false> );
+
+Set this value to true if you don't want the formatter to try
+putting a hidden code on all Perl symbols (as best as it can
+notice them) that labels them as being not in English, and
+so not worth spellchecking.
+
+=item $parser->doc_lang( I<microsoft_decimal_language_code> )
+
+This sets the language code to tag this document as being in. By
+default, it is currently the value of the environment variable
+C<RTFDEFLANG>, or if that's not set, then the value
+1033 (for US English).
+
+Setting this appropriately is useful if you want to use the RTF
+to spellcheck, and/or if you want it to hyphenate right.
+
+Here are some notable values:
+
+  1033  US English
+  2057  UK English
+  3081  Australia English
+  4105  Canada English
+  1034  Spain Spanish
+  2058  Mexico Spanish
+  1031  Germany German
+  1036  France French
+  3084  Canada French
+  1035  Finnish
+  1044  Norwegian (Bokmal)
+  2068  Norwegian (Nynorsk)
+
+=back
+
+If you are particularly interested in customizing this module's output
+even more, see the source and/or write to me.
+
+=head1 SEE ALSO
+
+L<Pod::Simple>, L<RTF::Writer>, L<RTF::Cookbook>, L<RTF::Document>,
+L<RTF::Generator>
+
+=head1 COPYRIGHT AND DISCLAIMERS
+
+Copyright (c) 2002 Sean M. Burke.  All rights reserved.
+
+This library is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+This program is distributed in the hope that it will be useful, but
+without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
+
+=head1 AUTHOR
+
+Sean M. Burke C<sburke@cpan.org>
+
+=cut
 

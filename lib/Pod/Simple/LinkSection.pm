@@ -70,18 +70,57 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::LinkSection -- represent "section" attributes of L codes
 
 =head1 SYNOPSIS
 
- TODO
+ # a long story
 
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+This class is not of interest to general users.
 
-TODO
+Pod::Simple uses this class for representing the value of the
+"section" attribute of "L" start-element events.  Most applications
+can just use the normal stringification of objects of this class;
+they stringify to just the text content of the section,
+such as "foo" for
+C<< LZ<><Stuff/foo> >>, and "bar" for 
+C<< LZ<><Stuff/bIZ<><ar>> >>.
+
+However, anyone particularly interested in getting the full value of
+the treelet, can just traverse the content of the treeleet
+@$treelet_object.  To wit:
+
+
+  % perl -MData::Dumper -e
+    "use base qw(Pod::Simple::Methody);
+     sub start_L { print Dumper($_[1]{'section'} ) }
+     __PACKAGE__->new->parse_string_document('=head1 L<Foo/bI<ar>baz>>')
+    "
+Output:
+  $VAR1 = bless( [
+                   '',
+                   {},
+                   'b',
+                   bless( [
+                            'I',
+                            {},
+                            'ar'
+                          ], 'Pod::Simple::LinkSection' ),
+                   'baz'
+                 ], 'Pod::Simple::LinkSection' );
+  
+But stringify it and you get just the text content:
+
+  % perl -MData::Dumper -e
+    "use base qw(Pod::Simple::Methody);
+     sub start_L { print Dumper( '' . $_[1]{'section'} ) }
+     __PACKAGE__->new->parse_string_document('=head1 L<Foo/bI<ar>baz>>')
+    "
+Output:
+  $VAR1 = 'barbaz';
+
 
 =head1 SEE ALSO
 

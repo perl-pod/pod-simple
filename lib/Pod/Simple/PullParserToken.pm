@@ -44,22 +44,82 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::PullParserToken -- tokens from Pod::Simple::PullParser
 
 =head1 SYNOPSIS
 
- TODO
+Given a $parser that's an object of class Pod::Simple::PullParser
+(or a subclass)...
+
+  while(my $token = $parser->get_token) {
+    $DEBUG and print "Token: ", $token->dump, "\n";
+    if($token->is_start) {
+      ...access $token->tagname, $token->attr, etc...
+
+    } elsif($token->is_text) {
+      ...access $token->text, $token->text_r, etc...
+    
+    } elsif($token->is_end) {
+      ...access $token->tagname...
+    
+    }
+  }
+
+(Also see L<Pod::Simple::PullParser>)
 
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+When you do $parser->get_token on a L<Pod::Simple::PullParser>, you should
+get an object of a subclass of Pod::Simple::PullParserToken.
 
-TODO
+Subclasses will add methods, and will also inherit these methods:
+
+=over
+
+=item $token->type
+
+This returns the type of the token.  This will be either the string
+"start", the string "text", or the string "end".
+
+Once you know what the type of an object is, you then know what
+subclass it belongs to, and therefore what methods it supports.
+
+Yes, you could probably do the same thing with code like
+$token->isa('Pod::Simple::PullParserEndToken'), but that's not so
+pretty as using just $token->type, or even the following shortcuts:
+
+=item $token->is_start
+
+This is a shortcut for C<< $token->type() eq "start" >>
+
+=item $token->is_text
+
+This is a shortcut for C<< $token->type() eq "text" >>
+
+=item $token->is_end
+
+This is a shortcut for C<< $token->type() eq "end" >>
+
+=item $token->dump
+
+This returns a handy stringified value of this object.  This
+is useful for debugging, as in:
+
+  while(my $token = $parser->get_token) {
+    $DEBUG and print "Token: ", $token->dump, "\n";
+    ...
+  }
+
+=back
 
 =head1 SEE ALSO
 
-L<Pod::Simple>
+My subclasses:
+L<Pod::Simple::PullParserStartToken>,
+L<Pod::Simple::PullParserTextToken>, and
+L<Pod::Simple::PullParserEndToken>.
+
+L<Pod::Simple::PullParser> and L<Pod::Simple>
 
 =head1 COPYRIGHT AND DISCLAIMERS
 

@@ -9,7 +9,7 @@ use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
 use vars qw( @ISA $VERSION );
-$VERSION = '1.01';
+$VERSION = '1.02';
 @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG
@@ -131,27 +131,26 @@ __END__
 
 =head1 NAME
 
-TODO - TODO
+Pod::Simple::Checker -- check the Pod syntax of a document
 
 =head1 SYNOPSIS
-
- TODO
 
   perl -MPod::Simple::Checker -e \
    "exit Pod::Simple::Checker->filter(shift)->any_errata_seen" \
    thingy.pod
 
-
 =head1 DESCRIPTION
 
-This class is for TODO.
-This is a subclass of L<Pod::Simple> and inherits all its methods.
+This class is for checking the syntactic validity of Pod.
+It works by basically acting like a simple-minded version of
+L<Pod::Simple::Text> that formats only the "Pod Errors" section
+(if Pod::Simple even generates one for the given document).
 
-TODO
+This is a subclass of L<Pod::Simple> and inherits all its methods.
 
 =head1 SEE ALSO
 
-L<Pod::Simple>
+L<Pod::Simple>, L<Pod::Simple::Text>, L<Pod::Checker>
 
 =head1 COPYRIGHT AND DISCLAIMERS
 
