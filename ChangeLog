@@ -1,5 +1,13 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-02 23:51:39 ADT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-07 01:41:21 ADT"
 #---------------------------------------------------------------------------
+
+2003-09-07  Sean M. Burke <sburke@cpan.org>
+	* Release 2.03 -- minor upgrade
+	* A =head[1234] command now closes any currently open =over, and
+	warns.
+	* Fixing a few obscure bugs, including one to do with the
+	Makefile.
+	* Added some tests for those bugs.
 	
 2003-09-02  Sean M. Burke <sburke@cpan.org>
 	* Release 2.02 -- fixing a testing bug

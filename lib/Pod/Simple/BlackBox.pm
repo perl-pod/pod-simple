@@ -83,7 +83,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
        # tr/// modding the (potentially read-only) original source line!
     
     } else {
-      DEBUG > 2 and print "First line: [$line]\n";
+      DEBUG > 2 and print "First line: [$source_line]\n";
 
       if( ($line = $source_line) =~ s/^\xEF\xBB\xBF//s ) {
         DEBUG and print "UTF-8 BOM seen.  Faking a '=encode utf8'.\n";
@@ -289,8 +289,7 @@ sub _handle_encoding_line {
       $enc_error = '';
        # But that doesn't necessarily mean that the earlier one went okay
     } else {
-      $enc_error = "Can't do '=encoding $orig' because encoding is already "
-       . $self->{'encoding'};
+      $enc_error = "Encoding is already set to " . $self->{'encoding'};
       DEBUG > 1 and print $enc_error;
     }
   } elsif (
@@ -344,8 +343,8 @@ sub _handle_encoding_line {
       $suggestion, "  [$encmodver\'s supported encodings are: @supported]"
     ;
 
+    $self->scream( $self->{'line_count'}, $enc_error );
   }
-  $enc_error and $self->scream( $self->{'line_count'}, $enc_error );
   push @{ $self->{'encoding_command_statuses'} }, $enc_error;
 
   return '=encoding ALREADYDONE';
@@ -369,11 +368,11 @@ sub _handle_encoding_second_level {
     if(! $self->{'encoding_command_statuses'} ) {
       DEBUG > 2 and print " CRAZY ERROR: It wasn't really handled?!\n";
     } elsif( $self->{'encoding_command_statuses'}[-1] ) {
-      #$self->whine( $para->[1]{'start_line'},
-      #  sprintf "Couldn't do %s: %s",
-      #    $self->{'encoding_command_reqs'  }[-1],
-      #    $self->{'encoding_command_statuses'}[-1],
-      #);
+      $self->whine( $para->[1]{'start_line'},
+        sprintf "Couldn't do %s: %s",
+          $self->{'encoding_command_reqs'  }[-1],
+          $self->{'encoding_command_statuses'}[-1],
+      );
     } else {
       DEBUG > 2 and print " (Yup, it was successfully handled already.)\n";
     }
@@ -729,27 +728,7 @@ sub _ponder_paragraph_buffer {
           $self->_dump_curr_open(), ")\n";
           
         DEBUG > 9 and print "Stack: ", pretty($curr_open), "\n";
-        foreach my $still_open (@$curr_open) {
-          my @copy = @$still_open;
-          $copy[1] = {%{ $copy[1] }};
-          #$copy[1]{'start_line'} = -1;
-          if($copy[0] eq '=for') {
-            $copy[0] = '=end';
-          } elsif($copy[0] eq '=over') {
-            $copy[0] = '=back';
-          } else {
-            die "I don't know how to auto-close an open $copy[0] region";
-          }
-
-          unless( @copy > 2 ) {
-            push @copy, $copy[1]{'target'};
-            $copy[-1] = '' unless defined $copy[-1];
-             # since =over's don't have targets
-          }
-          
-          DEBUG and print "Queuing up fake-o event: ", pretty(\@copy), "\n";
-          unshift @$paras, \@copy;
-        }
+        unshift @$paras, $self->_closers_for_all_curr_open;
         # Make sure there is exactly one ~end in the parastack, at the end:
         @$paras = grep $_->[0] ne '~end', @$paras;
         push @$paras, $para, $para;
@@ -891,7 +870,23 @@ sub _ponder_paragraph_buffer {
       DEBUG > 1 and print "Pondering non-magical $para_type\n";
 
       my $i;
-      
+
+      # Enforce some =headN discipline
+      if($para_type =~ m/^=head\d$/s
+         and ! $self->{'accept_heads_anywhere'}
+         and @$curr_open
+         and $curr_open->[-1][0] eq '=over'
+      ) {
+        DEBUG > 2 and print "'=$para_type' inside an '=over'!\n";
+        $self->whine(
+          $para->[1]{'start_line'},
+          "You forgot a '=back' before '$para_type'"
+        );
+        unshift @$paras, ['=back', {}, ''], $para;   # close the =over
+        next;
+      }
+
+
       if($para_type eq '=item') {
 
         my $over;
@@ -1215,6 +1210,35 @@ sub _traverse_treelet_bit {  # for use only by the routine above
 }
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+sub _closers_for_all_curr_open {
+  my $self = $_[0];
+  my @closers;
+  foreach my $still_open (@{  $self->{'curr_open'} || return  }) {
+    my @copy = @$still_open;
+    $copy[1] = {%{ $copy[1] }};
+    #$copy[1]{'start_line'} = -1;
+    if($copy[0] eq '=for') {
+      $copy[0] = '=end';
+    } elsif($copy[0] eq '=over') {
+      $copy[0] = '=back';
+    } else {
+      die "I don't know how to auto-close an open $copy[0] region";
+    }
+
+    unless( @copy > 2 ) {
+      push @copy, $copy[1]{'target'};
+      $copy[-1] = '' unless defined $copy[-1];
+       # since =over's don't have targets
+    }
+    
+    DEBUG and print "Queuing up fake-o event: ", pretty(\@copy), "\n";
+    unshift @closers, \@copy;
+  }
+  return @closers;
+}
+
+#--------------------------------------------------------------------------
 
 sub _verbatim_format {
   my($it, $p) = @_;

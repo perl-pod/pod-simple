@@ -1,6 +1,6 @@
 # This -*- perl -*- script writes the Makefile for Pod::Simple
 #
-# Time-stamp: "2003-09-01 22:39:09 ADT"
+# Time-stamp: "2003-09-07 01:26:12 ADT"
 #
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
@@ -14,8 +14,8 @@ use ExtUtils::MakeMaker;
 WriteMakefile
     (
      NAME		=> 'Pod::Simple',
-     VERSION_FROM	=> './lib/Pod/Simple.pm',
-     ABSTRACT_FROM	=> './lib/Pod/Simple.pod',
+     VERSION_FROM	=> 'lib/Pod/Simple.pm',
+     ABSTRACT_FROM	=> 'lib/Pod/Simple.pod',
      PREREQ_PM	  	=> {
 			     'Text::Wrap' => '98.112902',
 			     'Pod::Escapes' => '1.03',

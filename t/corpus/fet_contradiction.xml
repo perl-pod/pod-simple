@@ -35,8 +35,8 @@
       Around line 13:
     </item-text>
     <Para start_line="-321">
-      Can&#39;t do &#39;=encoding Shift-JIS&#39; because encoding
-      is already koi8-r
+      Couldn&#39;t do =encoding Shift-JIS: Encoding is already
+      set to koi8-r
     </Para>
   </over-text>
 </Document>
