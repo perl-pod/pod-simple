@@ -43,6 +43,7 @@ t/html-para.t
 t/html-styles.t
 t/html-title.t
 t/items.t
+t/itemstar.t
 t/linkclass.t
 t/puller.t
 t/pulltitle.t

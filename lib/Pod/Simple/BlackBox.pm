@@ -726,7 +726,6 @@ sub _ponder_paragraph_buffer {
            . $over->[1]{'start_line'};
 
         } elsif($over_type eq 'block') {
-          # It's bad to have an =item inside an =over-block!
           unless($curr_open->[-1][1]{'~bitched_about'}) {
             $curr_open->[-1][1]{'~bitched_about'} = 1;
             $self->whine(
@@ -759,6 +758,8 @@ sub _ponder_paragraph_buffer {
           } else {
             die "Unhandled item type $item_type"; # should never happen
           }
+          
+          # =item-text thingies don't need any assimilation, it seems.
 
         } elsif($over_type eq 'number') {
           my $item_type = $self->_get_item_type($para);
@@ -804,6 +805,7 @@ sub _ponder_paragraph_buffer {
           }
             
           if(@$para == 2) {
+            # For the cases where we /didn't/ push to @$para
             if($paras->[0][0] eq '~Para') {
               DEBUG and print "Assimilating following ~Para content into $over_type item\n";
               push @$para, splice @{shift @$paras},2;
@@ -821,6 +823,12 @@ sub _ponder_paragraph_buffer {
           
           if($item_type eq 'bullet') {
             # as expected!
+
+            if( $para->[1]{'~_freaky_para_hack'} ) {
+              DEBUG and print "Accomodating '=item * Foo' tolerance hack.\n";
+              push @$para, delete $para->[1]{'~_freaky_para_hack'};
+            }
+
           } elsif($item_type eq 'number') {
             $self->whine(
               $para->[1]{'start_line'},
@@ -843,6 +851,7 @@ sub _ponder_paragraph_buffer {
           }
 
           if(@$para == 2) {
+            # For the cases where we /didn't/ push to @$para
             if($paras->[0][0] eq '~Para') {
               DEBUG and print "Assimilating following ~Para content into $over_type item\n";
               push @$para, splice @{shift @$paras},2;

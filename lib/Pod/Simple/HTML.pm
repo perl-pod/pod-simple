@@ -2,14 +2,21 @@
 require 5;
 package Pod::Simple::HTML;
 use strict;
-use Pod::Simple::PullParser (); # for its _xml_esc
-use vars qw(@ISA %Tagmap $Computerese $Lame);
+use Pod::Simple::PullParser ();
+use vars qw(@ISA %Tagmap $Computerese $Lame $Linearization_Limit $VERSION);
 @ISA = ('Pod::Simple::PullParser');
+$VERSION = '1.03';
 
+use UNIVERSAL ();
 sub DEBUG () {0}
+
+#use utf8;
 
 $Computerese =  " lang='und' xml:lang='und'" unless defined $Computerese;
 $Lame = ' class="pad"' unless defined $Lame;
+
+$Linearization_Limit = 90 unless defined $Linearization_Limit;
+ # headings/items longer than that won't get an <a name="...">
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 my @_to_accept;
@@ -19,9 +26,22 @@ my @_to_accept;
   '/Verbatim' => "</pre>\n",
   'Data'  => "\n",
   '/Data' => "\n",
+  
+  'head1' => "\n<h1>",  # And also stick in an <a name="...">
+  'head2' => "\n<h2>",  #  ''
+  'head3' => "\n<h3>",  #  ''
+  'head4' => "\n<h4>",  #  ''
+  '/head1' => "</a></h1>\n",
+  '/head2' => "</a></h2>\n",
+  '/head3' => "</a></h3>\n",
+  '/head4' => "</a></h4>\n",
+
+  'X'  => "<!--\n\tINDEX: ",
+  '/X' => "\n-->",
+
   changes(qw(
     Para=p
-    head1=h1 head2=h2 head3=h3 head4=h4 B=b I=i
+    B=b I=i
     over-bullet=ul
     over-number=ol
     over-text=dl
@@ -51,7 +71,7 @@ my @_to_accept;
   
   '/item-bullet' => "</li><p$Lame></p>\n",
   '/item-number' => "</li><p$Lame></p>\n",
-  '/item-text'   => "</li><p$Lame></p>\n",
+  '/item-text'   => "</a></dt><p$Lame></p>\n",
   'Para_item'    => "\n<dd>",
   '/Para_item'   => "</dd><p$Lame></p>\n",
 
@@ -74,9 +94,11 @@ sub changes2 {
   } @_;
 }
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 sub new {
   my $new = shift->SUPER::new(@_);
-  $new->nix_X_codes(1);
+  #$new->nix_X_codes(1);
   $new->nbsp_for_S(1);
   $new->accept_targets( 'html', 'HTML' );
 
@@ -96,9 +118,61 @@ sub run {
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-sub do_pod_link { return "TODO" }
+sub do_pod_link {
+  my($self, $link) = @_;
+  my $to = $link->attr('to');
+  my $section = $link->attr('section');
+  return undef unless(  # should never happen
+    (defined $to and length $to) or
+    (defined $section and length $section)
+  );
+
+  if(defined $to and length $to) {
+    $to = $self->resolve_pod_page_link($to, $section);
+    return undef unless defined $to and length $to;
+     # resolve_pod_page_link returning undef is how it
+     #  can signal that it gives up on making a link
+     # (I pass it the section value, but I don't see a
+     #  particular reason it'd use it.)
+  }
+  
+  if(defined $section and length($section .= '')) {
+    $section =~ tr/ /_/;
+    $section =~ tr/\x00-\x1F\x80-\x9F//d if 'A' eq chr(65);
+    $section = $self->unicode_escape_url($section);
+     # Turn char 1234 into "(1234)"
+    $section = '_' unless length $section;
+  }
+  
+  foreach my $it ($to, $section) {
+    $it =~ s/([^\._abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/sprintf('%%%02X',ord($1))/eg
+     if defined $it;
+      # Yes, stipulate the list without a range, so that this can work right on
+      #  all charsets that this module happens to run under.
+      # Altho, hmm, what about that ord?  Presumably that won't work right
+      #  under non-ASCII charsets.  Something should be done about that.
+  }
+  
+  my $out = $to if defined $to and length $to;
+  $out .= "#" . $section if defined $section and length $section;
+  return undef unless length $out;
+  return $out;  
+}
+
+
+sub resolve_pod_page_link {
+  my($self, $to) = @_;
+  
+  return 'TODO';
+}
+
 sub do_url_link { return $_[1]->attr('to') }
-sub do_man_link { return "TODO" }
+
+sub do_man_link { return undef }
+ # But subclasses are welcome to override this if they have man
+ #  pages somewhere URL-accessible.
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub do_link {
   my($self, $token) = @_;
@@ -114,17 +188,48 @@ sub do_link {
   return 'FNORG';
 }
 
+
 sub do_middle {      # the main work
   my $self = $_[0];
   my $fh = $self->{'output_fh'};
   
   my($token, $type, $tagname);
   my @stack;
+  my $dont_wrap = 0;
   while($token = $self->get_token) {
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if( ($type = $token->type) eq 'start' ) {
       if(($tagname = $token->tagname) eq 'L') {
         esc($type = $self->do_link($token)); # reuse it, why not
-        print $fh "<a href='$type'>";
+        if(defined $type and length $type) {
+          print $fh "<a href='$type'>";
+        } else {
+          print $fh "<a>"; # Yes, an 'a' element with no attributes!
+        }
+
+      } elsif ($tagname eq 'item-text' or $tagname =~ m/^head\d$/s) {
+        print $fh $self->{'Tagmap'}{$tagname} || next;
+
+        my @to_unget;
+        while(1) {
+          push @to_unget, $self->get_token;
+          last if $to_unget[-1]->is_end
+              and $to_unget[-1]->tagname eq $tagname;
+        }
+        my $name = $self->linearize_tokens(@to_unget);
+        
+        if(defined $name) { # ludicrously long, so nevermind
+          $name =~ tr/ /_/;
+          print $fh "<a name=\"", esc($name), "\"\n>";
+          DEBUG and print "Linearized ", scalar(@to_unget),
+           " tokens as \"$name\".\n";
+        } else {
+          print $fh "<a\n>";  # Yes, an 'a' element with no attributes!
+          DEBUG and print "Linearized ", scalar(@to_unget),
+           " tokens, but it was too long, so nevermind.\n";
+        }
+        $self->unget_token(@to_unget);
 
       } elsif ($tagname eq 'Data') {
         my $next = $self->get_token;
@@ -136,7 +241,7 @@ sub do_middle {      # the main work
         DEBUG and print "    raw text ", $next->text, "\n";
         printf $fh "\n" . $next->text . "\n";
         next;
-
+       
       } else {
         if( $tagname =~ m/^over-(.+)$/s ) {
           push @stack, $1;
@@ -144,7 +249,10 @@ sub do_middle {      # the main work
           $tagname = 'Para_item' if @stack and $stack[-1] eq 'text';
         }
         print $fh $self->{'Tagmap'}{$tagname} || next;
+        ++$dont_wrap if $tagname eq 'Verbatim' or $tagname eq 'X';
       }
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     } elsif( $type eq 'end' ) {
       if( ($tagname = $token->tagname) =~ m/^over-/s ) {
         pop @stack;
@@ -152,10 +260,15 @@ sub do_middle {      # the main work
         $tagname = 'Para_item' if @stack and $stack[-1] eq 'text';
       }
       print $fh $self->{'Tagmap'}{"/$tagname"} || next;
+      --$dont_wrap if $tagname eq 'Verbatim' or $tagname eq 'X';
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     } elsif( $type eq 'text' ) {
-      esc($type = $token->text); # reuse it, why not
+      esc($type = $token->text);  # reuse $type, why not
+      $type =~ s/([\?\!\"\'\.\,]) /$1\n/g unless $dont_wrap;
       print $fh $type;
     }
+
   }
   return 1;
 }
@@ -175,12 +288,23 @@ sub do_beginning {
   esc($title);
   print {$self->{'output_fh'}}
    "<html><head>\n<title>$title</title>\n</head>\n<body>\n", 
+   $self->version_tag_comment,
    "<!-- start doc -->\n",
   ;
    # TODO: more configurability there
 
   DEBUG and print "Returning from do_beginning...\n";
   return 1;
+}
+
+sub version_tag_comment {
+  my $self = shift;
+  return sprintf
+   "<!-- generated by %s v%s, using %s v%s, under Perl v%s at %s GMT -->\n",
+    # None of the following things should need escaping, I dare say!
+    ref($self), $self->VERSION(), $ISA[0], $ISA[0]->VERSION(),
+    $], scalar(gmtime),
+  ;  
 }
 
 
@@ -198,13 +322,16 @@ sub esc {
       @_ = splice @_; # break aliasing
     } else {
       my $x = shift;
-      $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg;
+      $x =~ s/([^\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg;
       return $x;
     }
   }
   foreach my $x (@_) {
     # Escape things very cautiously:
-    $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg;
+    $x =~ s/([^\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg;
+    # Leave out "- so that "--" won't make it thru in X-generated comments
+    #  with text in them.
+
     # Yes, stipulate the list without a range, so that this can work right on
     #  all charsets that this module happens to run under.
     # Altho, hmm, what about that ord?  Presumably that won't work right
@@ -214,6 +341,48 @@ sub esc {
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+sub linearize_tokens {  # self, tokens
+  my $self = shift;
+  my $out = '';
+  
+  my $t;
+  while($t = shift @_) {
+    if(!ref $t or !UNIVERSAL::can($t, 'is_text')) {
+      $out .= $t;
+    } elsif($t->is_text) {
+      $out .= $t->text;
+    } elsif($t->is_start and $t->tag eq 'X') {
+      # ignore until the end of this X<...> sequence
+      my $x_open = 1;
+      while($x_open) {
+        next if( ($t = shift @_)->is_text );
+        if(   $t->is_start and $t->tag eq 'X') { ++$x_open }
+        elsif($t->is_end   and $t->tag eq 'X') { --$x_open }
+      }
+    }
+  }
+  
+  $out =~ tr/\x00-\x1F\x80-\x9F//d if 'A' eq chr(65);
+  return undef if length $out > $Linearization_Limit;
+  
+  $out = $self->unicode_escape_url($out);
+  $out = '_' unless length $out;
+  
+  return $out;
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+sub unicode_escape_url {
+  my($self, $string) = @_;
+  $string =~ s/([^\x00-\xFF])/'('.ord($1).')'/eg;
+    #  Turn char 1234 into "(1234)"
+  return $string;
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 1;
 __END__
 

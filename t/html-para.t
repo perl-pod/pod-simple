@@ -41,25 +41,25 @@ ok( x(qq{This is a paragraph}),
 
 ok(x(
 '=head1 This is a heading')
- => qq{\n<h1>This is a heading</h1>\n},
+ => qq{\n<h1><a name="This_is_a_heading"\n>This is a heading</a></h1>\n},
   "heading building"
 );
 
 ok(x(
 '=head2 This is a heading')
- => qq{\n<h2>This is a heading</h2>\n},
+ => qq{\n<h2><a name="This_is_a_heading"\n>This is a heading</a></h2>\n},
   "heading building"
 );
 
 ok(x(
 '=head3 This is a heading')
- => qq{\n<h3>This is a heading</h3>\n},
+ => qq{\n<h3><a name="This_is_a_heading"\n>This is a heading</a></h3>\n},
   "heading building"
 );
 
 ok(x(
 '=head4 This is a heading')
- => qq{\n<h4>This is a heading</h4>\n},
+ => qq{\n<h4><a name="This_is_a_heading"\n>This is a heading</a></h4>\n},
   "heading building"
 );
 

@@ -16,7 +16,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.93';
+$VERSION = '0.94';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -364,13 +364,25 @@ sub _complain_errata {
 sub _get_item_type {       # mutates the item!!
   my($self, $para) = @_;
   return $para->[1]{'~type'} if $para->[1]{'~type'};
+
+
+  # Otherwise we haven't yet been to this node.  Maybe alter it...
+  
   my $content = join "\n", @{$para}[2 .. $#$para];
 
   if($content =~ m/^\s*\*\s*$/s or $content =~ m/^\s*$/s) {
     # Like: "=item *", "=item   *   ", "=item"
-    
     splice @$para, 2; # so it ends up just being ['=item', { attrhash } ]
     $para->[1]{'~orig_content'} = $content;
+    return $para->[1]{'~type'} = 'bullet';
+
+  } elsif($content =~ m/^\s*\*\s+(.+)/s) {  # tolerance
+  
+    # Like: "=item * Foo bar baz";
+    $para->[1]{'~orig_content'}      = $content;
+    $para->[1]{'~_freaky_para_hack'} = $1;
+    DEBUG > 2 and print " Tolerating $$para[2] as =item *\\n\\n$1\n";
+    splice @$para, 2; # so it ends up just being ['=item', { attrhash } ]
     return $para->[1]{'~type'} = 'bullet';
 
   } elsif($content =~ m/^\s*(\d+)\.?\s*$/s) {

@@ -19,9 +19,6 @@ BEGIN { *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG }
 
 $WRAP = 1 unless defined $WRAP;
 
-
-# TODO:  use the if-foreign code from SMB::Pod::Tree::RTF
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub _openclose {
@@ -106,7 +103,7 @@ sub new {
   $new->head3_halfpoint_size(25);
   $new->head4_halfpoint_size(22);
   $new->codeblock_halfpoint_size(18);
-  $new->header_halfpoint_size(20);
+  $new->header_halfpoint_size(17);
   $new->normal_halfpoint_size(22);
 
   return $new;
@@ -413,8 +410,10 @@ sub doc_start {
   DEBUG and print "Short Title: <$title>\n";
   $title .= ' ' if length $title;
   
-  $title =~ s/ *$/ /s; $title =~ s/^ //s;
-   # make sure it ends in a space, unless it's 0-length
+  $title =~ s/ *$/ /s;
+  $title =~ s/^ //s;
+  $title =~ s/ $/, /s;
+   # make sure it ends in a comma and a space, unless it's 0-length
 
   my $is_obviously_module_name;
   $is_obviously_module_name = 1
@@ -429,7 +428,7 @@ sub doc_start {
 
   return sprintf <<'END', 
 \deflang1033\widowctrl
-{\header\pard\qr\plain\f0\fs%s
+{\header\pard\qr\plain\f2\fs%s
 %s
 p.\chpgn\par}
 \fs%s
@@ -542,5 +541,7 @@ If the \* control symbol precedes a control word, then it defines a
 destination group and was itself preceded by an opening brace ({). The
 RTF reader should discard all text up to and including the closing brace
 (}) that closes this group.
+
+
 
 

@@ -1,5 +1,20 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-09-29 22:54:35 MDT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-10-16 12:31:43 MDT"
 
+2002-10-16  Sean M. Burke <sburke@cpan.org>
+	* Release 0.94
+	* Beta release.  Much documentation still to write, many features
+        still to add.  The APIs might change in future versions.
+
+	* Pod::Simple::RTF -- minor style tweaks
+	* Pod::Simple::PullParserEndToken and ::PullParserStartToken --
+	added ->tag as an alias for ->tagname.
+	* Pod::Simple and Pod::Simple::BlackBox -- added tolerance for
+	"=item * Foo" as a variant syntax for "=item *\n\nFoo".  Tests
+	added/changed accordingly.
+	* Pod::Simple::HTML -- added <a name="..."> stuff, and a hack at
+	doing something with X<...>'s.
+
+	
 2002-09-29  Sean M. Burke <sburke@cpan.org>
 	* Release 0.93
 	* Beta release.  Much documentation still to write, many features

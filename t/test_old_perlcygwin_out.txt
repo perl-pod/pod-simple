@@ -14,11 +14,11 @@ NOTE: At this point, minimal effort has been made to provide compatibility with 
 Cygwin Configuration
 While building Perl some changes may be necessary to your Cygwin setup so that Perl builds cleanly. These changes are not required for normal Perl usage.
 NOTE: The binaries that are built will run on all Win32 versions. They do not depend on your host system (Win9x/WinME, WinNT/Win2K) or your Cygwin configuration (ntea, ntsec, binary/text mounts). The only dependencies come from hard-coded pathnames like /usr/local. However, your host system and Cygwin configuration will affect Perl's runtime behavior (see "TEST").
-* PATH
+PATH
 Set the PATH environment variable so that Configure finds the Cygwin versions of programs. Any Windows directories should be removed or moved to the end of your PATH.
-* nroff
+nroff
 If you do not have nroff (which is part of the groff package), Configure will not prompt you to install man pages.
-* Permissions
+Permissions
 On WinNT with either the ntea or ntsec CYGWIN settings, directory and file permissions may not be set correctly. Since the build process creates directories and files, to be safe you may want to run a `chmod -R +w *' on the entire Perl source tree.
 Also, it is a well known WinNT "feature" that files created by a login that is a member of the Administrators group will be owned by the Administrators group. Depending on your umask, you may find that you can not write to files that you just created (because you are no longer the owner). When using the ntsec CYGWIN setting, this is not an issue because it "corrects" the ownership to what you would expect on a UNIX system.
 CONFIGURE
@@ -35,7 +35,7 @@ It is possible to strip the EXEs and DLLs created by the build process. The resu
 or you can edit hints/cygwin.sh and uncomment the relevant variables near the end of the file.
 Optional Libraries
 Several Perl functions and modules depend on the existence of some optional libraries. Configure will find them if they are installed in one of the directories listed as being used for library searches. Pre-built packages for most of these are available at http://cygutils.netpedia.net/.
-* -lcrypt
+-lcrypt
 The crypt package distributed with Cygwin is a Linux compatible 56-bit DES crypt port by Corinna Vinschen.
 Alternatively, the crypt libraries in GNU libc have been ported to Cygwin.
 The DES based Ultra Fast Crypt port was done by Alexey Truhan:
@@ -43,43 +43,43 @@ The DES based Ultra Fast Crypt port was done by Alexey Truhan:
 NOTE: There are various export restrictions on DES implementations, see the glibc README for more details.
 The MD5 port was done by Andy Piper:
   ftp://ftp.franken.de/pub/win32/develop/gnuwin32/cygwin/porters/Okhapkin_Sergey/libcrypt.tgz
-* -lgdbm (use GDBM_File)
+-lgdbm (use GDBM_File)
 GDBM is available for Cygwin. GDBM's ndbm/dbm compatibility feature also makes NDBM_File and ODBM_File possible (although they add little extra value).
 NOTE: The ndbm/dbm emulations only completely work on NTFS partitions.
-* -ldb (use DB_File)
+-ldb (use DB_File)
 BerkeleyDB is available for Cygwin. Some details can be found in ext/DB_File/DB_File.pm.
 NOTE: The BerkeleyDB library only completely works on NTFS partitions.
-* -lcygipc (use IPC::SysV)
+-lcygipc (use IPC::SysV)
 A port of SysV IPC is available for Cygwin.
 NOTE: This has not been extensively tested. In particular, d_semctl_semun is undefined because it fails a Configure test and on Win9x the shm*() functions seem to hang. It also creates a compile time dependency because perl.h includes <sys/ipc.h> and <sys/sem.h> (which will be required in the future when compiling CPAN modules).
 Configure-time Options
 The INSTALL document describes several Configure-time options. Some of these will work with Cygwin, others are not yet possible. Also, some of these are experimental. You can either select an option when Configure prompts you or you can define (undefine) symbols on the command line.
-* -Uusedl
+-Uusedl
 Undefining this symbol forces Perl to be compiled statically.
-* -Uusemymalloc
+-Uusemymalloc
 By default Perl uses the malloc() included with the Perl source. If you want to force Perl to build with the system malloc() undefine this symbol.
-* -Dusemultiplicity
+-Dusemultiplicity
 Multiplicity is required when embedding Perl in a C program and using more than one interpreter instance. This works with the Cygwin port.
-* -Duseperlio
+-Duseperlio
 The PerlIO abstraction works with the Cygwin port.
-* -Duse64bitint
+-Duse64bitint
 gcc supports 64-bit integers. However, several additional long long functions are necessary to use them within Perl ({strtol,strtoul}l). These are not yet available with Cygwin.
-* -Duselongdouble
+-Duselongdouble
 gcc supports long doubles (12 bytes). However, several additional long double math functions are necessary to use them within Perl ({atan2,cos,exp,floor,fmod,frexp,isnan,log,modf,pow,sin,sqrt}l,strtold). These are not yet available with Cygwin.
-* -Dusethreads
+-Dusethreads
 POSIX threads are not yet implemented in Cygwin.
-* -Duselargefiles
+-Duselargefiles
 Although Win32 supports large files, Cygwin currently uses 32-bit integers for internal size and position calculations.
 Suspicious Warnings
 You may see some messages during Configure that seem suspicious.
-* dlsym()
+dlsym()
 ld2 is needed to build dynamic libraries, but it does not exist when dlsym() checking occurs (it is not created until `make' runs). You will see the following message:
   Checking whether your dlsym() needs a leading underscore ...
   ld2: not found
   I can't compile and run the test program.
   I'm guessing that dlsym doesn't need a leading underscore.
 Since the guess is correct, this is not a problem.
-* Win9x and d_eofnblk
+Win9x and d_eofnblk
 Win9x does not correctly report EOF with a non-blocking read on a closed pipe. You will see the following messages:
   But it also returns -1 to signal EOF, so be careful!
   WARNING: you can't distinguish between EOF and no data!
@@ -87,7 +87,7 @@ Win9x does not correctly report EOF with a non-blocking read on a closed pipe. Y
       The recommended value for $d_eofnblk on this machine was "define"!
       Keep the recommended value? [y]
 At least for consistency with WinNT, you should keep the recommended value.
-* Compiler/Preprocessor defines
+Compiler/Preprocessor defines
 The following error occurs because of the Cygwin #define of _LONG_DOUBLE:
   Guessing which symbols your C compiler and preprocessor define...
   try.c:<line#>: parse error
@@ -157,20 +157,20 @@ Cygwin does not require /etc/group, in which case the op/grent.t test will be sk
   op/grent.t            1
 Script Portability
 Cygwin does an outstanding job of providing UNIX-like semantics on top of Win32 systems. However, in addition to the items noted above, there are some differences that you should know about. This is a very brief guide to portability, more information can be found in the Cygwin documentation.
-* Pathnames
+Pathnames
 Cygwin pathnames can be separated by forward (/) or backward (\) slashes. They may also begin with drive letters (C:) or Universal Naming Codes (//UNC). DOS device names (aux, con, prn, com*, lpt?, nul) are invalid as base filenames. However, they can be used in extensions (e.g., hello.aux). Names may contain all printable characters except these:
   : * ? " < > |
 File names are case insensitive, but case preserving. A pathname that contains a backslash or drive letter is a Win32 pathname (and not subject to the translations applied to POSIX style pathnames).
-* Text/Binary
+Text/Binary
 When a file is opened it is in either text or binary mode. In text mode a file is subject to CR/LF/Ctrl-Z translations. With Cygwin, the default mode for an open() is determined by the mode of the mount that underlies the file. Perl provides a binmode() function to set binary mode on files that otherwise would be treated as text. sysopen() with the O_TEXT flag sets text mode on files that otherwise would be treated as binary:
     sysopen(FOO, "bar", O_WRONLY|O_CREAT|O_TEXT)
 lseek(), tell() and sysseek() only work with files opened in binary mode.
 The text/binary issue is covered at length in the Cygwin documentation.
-* .exe
+.exe
 The Cygwin stat(), lstat() and readlink() functions make the .exe extension transparent by looking for foo.exe when you ask for foo (unless a foo also exists). Cygwin does not require a .exe extension, but gcc adds it automatically when building a program. However, when accessing an executable as a normal file (e.g., cp in a makefile) the .exe is not transparent. The install included with Cygwin automatically appends a .exe when necessary.
-* chown()
+chown()
 On WinNT chown() can change a file's user and group IDs. On Win9x chown() is a no-op, although this is appropriate since there is no security model.
-* Miscellaneous
+Miscellaneous
 File locking using the F_GETLK command to fcntl() is a stub that returns ENOSYS.
 Win9x can not rename() an open file (although WinNT can).
 The Cygwin chroot() implementation has holes (it can not restrict file access by native Win32 programs).

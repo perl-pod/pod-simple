@@ -13,6 +13,7 @@ sub new {  # Class->new(tagname, optional_attrhash);
 # Purely accessors:
 
 sub tagname   { (@_ == 2) ? ($_[0][1] = $_[1]) : $_[0][1] }
+sub tag { shift->tagname(@_) }
 
 sub attr_hash { $_[0][2] ||= {} }
 
