@@ -691,7 +691,7 @@ sub _ponder_paragraph_buffer {
             join(', ', map $_->[0], @$curr_open), ").\n";
         $self->whine(
           $para->[1]{'start_line'},
-          '=back without =open'
+          '=back without =over'
         );
         next; # and ignore it
       }
@@ -879,6 +879,17 @@ sub _ponder_paragraph_buffer {
       } elsif($para_type eq '=extend') {
         # Well, might as well implement it here.
         $self->_ponder_extend($para);
+        next;  # and skip
+      } elsif($para_type eq '=encoding') {
+        $self->scream(
+          $self->{'line_count'},
+          "This document probably"
+         ." does not appear as it should, because it contains an"
+         ." \"=encoding $$para[2]\" command.  The \"=encoding\" command"
+         ." is not yet implemented in this Pod::Simple"
+         ." version (v$Pod::Simple::VERSION)."
+        );
+
         next;  # and skip
       } elsif($para_type eq '~Verbatim') {
         $para->[0] = 'Verbatim';
@@ -1076,23 +1087,25 @@ sub _verbatim_format {
     # #:^^^^^^^^^^^^^^^^^              /////////////         
     
 
-    DEBUG > 4 and print "_verbatim_format considers:\n$p->[$i-1]\n$p->[$i]\n";
+    DEBUG > 4 and print "_verbatim_format considers:\n<$p->[$i-1]>\n<$p->[$i]>\n";
     
     $formatting = '  ' . $1;
     $formatting =~ s/\s+$//s; # nix trailing whitespace
-    unless(length $formatting and length $p->[$i-1]) {
+    unless(length $formatting and $p->[$i-1] =~ m/\S/) { # no-op
       splice @$p,$i,1; # remove this line
       $i--; # don't consider next line
       next;
     }
 
-    # Otherwise:
-    DEBUG > 4 and print "Formatting <$formatting>    on ", $p->[$i-1], "\n";
-    if( length($formatting) > length($p->[$i-1]) ) {
-      $formatting = substr($formatting, 0, length($p->[$i-1]));
-    } elsif( length($formatting) < length($p->[$i-1]) ) {
+    if( length($formatting) >= length($p->[$i-1]) ) {
+      $formatting = substr($formatting, 0, length($p->[$i-1]) - 1) . ' ';
+    } else {
       $formatting .= ' ' x (length($p->[$i-1]) - length($formatting));
     }
+    # Make $formatting and the previous line be exactly the same length,
+    # with $formatting having a " " as the last character.
+ 
+    DEBUG > 4 and print "Formatting <$formatting>    on <", $p->[$i-1], ">\n";
 
 
     my @new_line;
@@ -1116,11 +1129,15 @@ sub _verbatim_format {
         #print "Formatting <$new_line[-1][-1]> as $new_line[-1][0]\n";
       }
     }
-    splice @$p, $i-1, 2, @new_line; # replace myself and the next line
-    DEBUG > 6 and print "New tokens: ", map( ref($_)?"<@$_> ":"<$_>", @new_line ), "\n";
-    $i -= @new_line - 2
-      # Skip however many things we've just added,
-      #  minus the two tokens we just nixed.
+    my @nixed =    
+      splice @$p, $i-1, 2, @new_line; # replace myself and the next line
+    DEBUG > 10 and print "Nixed count: ", scalar(@nixed), "\n";
+    
+    DEBUG > 6 and print "New version of the above line is these tokens (",
+      scalar(@new_line), "):",
+      map( ref($_)?"<@$_> ":"<$_>", @new_line ), "\n";
+    $i--; # So the next line we scrutinize is the line before the one
+          #  that we just went and formatted
   }
 
   $p->[0] = 'VerbatimFormatted';
@@ -1138,8 +1155,12 @@ sub _verbatim_format {
   for( my $i = $#$p; $i >= 2; $i-- ) {
     # work backwards over the tokens, even the first
     if( !ref($p->[$i]) ) {
-      $p->[$i] =~ s/\n$//s;
-      DEBUG > 5 and print "_verbatim_format killed the terminal newline on #$i: {$p->[$i]}, after {$p->[$i-1]}\n";
+      if($p->[$i] =~ s/\n$//s) {
+        DEBUG > 5 and print "_verbatim_format killed the terminal newline on #$i: {$p->[$i]}, after {$p->[$i-1]}\n";
+      } else {
+        DEBUG > 5 and print
+         "No terminal newline on #$i: {$p->[$i]}, after {$p->[$i-1]} !?\n";
+      }
       last; # we only want the next one
     }
   }
@@ -1392,11 +1413,13 @@ sub pretty { # adopted from Class::Classless
     } else {
       if( chr(65) eq 'A' ) {
         s<([^\x20\x21\x23\x27-\x3F\x41-\x5B\x5D-\x7E])>
-         <$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
+         #<$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
+         <$pretty_form{$1} || '\\x{'.sprintf("%x", ord($1)).'}'>eg;
       } else {
         # We're in some crazy non-ASCII world!
         s<([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])>
-         <$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
+         #<$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
+         <$pretty_form{$1} || '\\x{'.sprintf("%x", ord($1)).'}'>eg;
       }
       qq{"$_"};
     }

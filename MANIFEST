@@ -34,6 +34,7 @@ t/basic.t
 t/beginend.t
 t/cbacks.t
 t/chunking.t
+t/encoding_not_error.t
 t/fcodes.t
 t/fcodes_ee.t
 t/fcodes_ell.t
@@ -62,5 +63,6 @@ t/test_old_perlfaq3.pod
 t/test_old_perlfaq3_out.txt
 t/test_old_perlvar.pod
 t/test_old_perlvar_out.txt
+t/verbatim_formatted.t
 t/verbatims.t
 t/x_nixer.t

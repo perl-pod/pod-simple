@@ -5,7 +5,7 @@ use strict;
 use Pod::Simple::PullParser ();
 use vars qw(@ISA %Tagmap $Computerese $Lame $Linearization_Limit $VERSION);
 @ISA = ('Pod::Simple::PullParser');
-$VERSION = '1.03';
+$VERSION = '1.04';
 
 use UNIVERSAL ();
 sub DEBUG () {0}
@@ -24,6 +24,16 @@ my @_to_accept;
 %Tagmap = (
   'Verbatim'  => "\n<pre$Computerese>",
   '/Verbatim' => "</pre>\n",
+  'VerbatimFormatted'  => "\n<pre$Computerese>",
+  '/VerbatimFormatted' => "</pre>\n",
+  'VerbatimB'  => "<b>",
+  '/VerbatimB' => "</b>",
+  'VerbatimI'  => "<i>",
+  '/VerbatimI' => "</i>",
+  'VerbatimBI'  => "<b><i>",
+  '/VerbatimBI' => "</i></b>",
+
+
   'Data'  => "\n",
   '/Data' => "\n",
   
@@ -101,7 +111,7 @@ sub new {
   #$new->nix_X_codes(1);
   $new->nbsp_for_S(1);
   $new->accept_targets( 'html', 'HTML' );
-
+  $new->accept_codes('VerbatimFormatted');
   $new->accept_codes(@_to_accept);
   DEBUG > 2 and print "To accept: ", join(' ',@_to_accept), "\n";
   
@@ -144,13 +154,17 @@ sub do_pod_link {
     $section = '_' unless length $section;
   }
   
+  
+
   foreach my $it ($to, $section) {
-    $it =~ s/([^\._abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/sprintf('%%%02X',ord($1))/eg
-     if defined $it;
-      # Yes, stipulate the list without a range, so that this can work right on
-      #  all charsets that this module happens to run under.
-      # Altho, hmm, what about that ord?  Presumably that won't work right
-      #  under non-ASCII charsets.  Something should be done about that.
+    if( defined $it ) {
+      $it =~ s/([^\x00-\xFF])/join '', map sprintf('%%%02X',$_), unpack 'C*', $1/eg;
+      $it =~ s/([^\._abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/sprintf('%%%02X',ord($1))/eg;
+       # Yes, stipulate the list without a range, so that this can work right on
+       #  all charsets that this module happens to run under.
+       # Altho, hmm, what about that ord?  Presumably that won't work right
+       #  under non-ASCII charsets.  Something should be done about that.
+    }
   }
   
   my $out = $to if defined $to and length $to;
@@ -249,7 +263,8 @@ sub do_middle {      # the main work
           $tagname = 'Para_item' if @stack and $stack[-1] eq 'text';
         }
         print $fh $self->{'Tagmap'}{$tagname} || next;
-        ++$dont_wrap if $tagname eq 'Verbatim' or $tagname eq 'X';
+        ++$dont_wrap if $tagname eq 'Verbatim' or $tagname eq "VerbatimFormatted"
+          or $tagname eq 'X';
       }
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

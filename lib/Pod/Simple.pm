@@ -16,7 +16,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.96';
+$VERSION = '0.97';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -196,6 +196,26 @@ sub _accept_directives {
   return;
 }
 
+#--------------------------------------------------------------------------
+# TODO: document these:
+
+sub unaccept_directive { shift->unaccept_directives(@_) };
+
+sub unaccept_directives {
+  my $this = shift;
+  foreach my $d (@_) {
+    next unless defined $d and length $d;
+    Carp::croak "\"$d\" isn't a valid directive name"
+     unless $d =~ m/^[a-zA-Z][a-zA-Z0-9]*$/s;
+    Carp::croak "But you must accept \"$d\" directives -- it's a builtin!"
+     if exists $Known_directives{$d};
+    delete $this->{'accept_directives'}{$d};
+    DEBUG > 2 and print "OK, won't accept \"=$d\" as directive.\n";
+  }
+  return sort keys %{ $this->{'accept_directives'} } if wantarray;
+  return
+}
+
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #
 # And now targets (not directives)
@@ -221,6 +241,20 @@ sub _accept_targets {
   return;
 }
 
+#--------------------------------------------------------------------------
+sub unaccept_target         { shift->unaccept_targets(@_) }
+
+sub unaccept_targets {
+  my $this = shift;
+  foreach my $t (@_) {
+    next unless defined $t and length $t;
+    # TODO: enforce some limitations on what a target name can be?
+    delete $this->{'accept_targets'}{$t};
+    DEBUG > 2 and print "OK, won't accept \"$t\" as target.\n";
+  }    
+  return sort keys %{ $this->{'accept_targets'} } if wantarray;
+  return;
+}
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #
@@ -259,6 +293,38 @@ sub accept_codes {  # Add some codes
   
   return;
 }
+
+#--------------------------------------------------------------------------
+sub unaccept_code { shift->unaccept_codes(@_) }
+
+sub unaccept_codes { # remove some codes
+  my $this = shift;
+  
+  foreach my $new_code (@_) {
+    next unless defined $new_code and length $new_code;
+    if(ASCII) {
+      # A good-enough check that it's good as an XML Name symbol:
+      Carp::croak "\"$new_code\" isn't a valid element name"
+        if $new_code =~
+          m/[\x00-\x2C\x2F\x39\x3B-\x40\x5B-\x5E\x60\x7B-\x7F]/
+            # Characters under 0x80 that aren't legal in an XML Name.
+        or $new_code =~ m/^[-\.0-9]/s
+        or $new_code =~ m/:[-\.0-9]/s;
+            # The legal under-0x80 Name characters that 
+            #  an XML Name still can't start with.
+    }
+    
+    Carp::croak "But you must accept \"$new_code\" codes -- it's a builtin!"
+     if grep $new_code eq $_, @Known_formatting_codes;
+
+    delete $this->{'accept_codes'}{$new_code};
+
+    DEBUG > 2 and print "OK, won't accept the code $new_code<...>.\n";
+  }
+  
+  return;
+}
+
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -313,9 +379,10 @@ sub parse_file {
   until( $self->{'source_dead'} ) {
     splice @lines;
     for($i = MANY_LINES; $i--;) {  # read those many lines at a time
-      push @lines, scalar(<$source>);
+      push @lines, scalar(<$source>);  # readline
       last unless defined $lines[-1];
        # but pass thru the undef, which will set source_dead to true
+      #TODO: encoding thing here, to do stuff if $lines[-1] =~ m/=encoding/
     }
     $self->parse_lines(@lines);
   }

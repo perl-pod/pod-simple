@@ -1,5 +1,33 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-11-20 00:28:53 MST"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-08-12 22:40:31 ADT"
 
+2003-08-12  Sean M. Burke <sburke@cpan.org>
+	* Release 0.97
+	* Loooking goooooood.  Not smelling so much like beta anymore!
+	* I think this might be the last version before I go
+	putting "use utf8" all over the place.
+
+	* Added placefolders for "=encoding" support.  If you use
+	"=encoding", you'll get an error about "not yet implemented"
+	instead of "unknown directive".
+
+	* Rewrote Pod::Simple::Pullparser's get_title, and added
+	get_version, get_author, and get_description.  Documented them.
+	Thanks to Graham Barr for contributing an initial get_title and
+	then being patient while I seemed to do nothing with it for months
+	on end!
+	
+	* More tests.
+	
+	Otherwise just minor changes since last version:
+	* Fixed error in Pod::Simple::RTF.
+	* Added new but undocumented methods to Pod::Simple:
+           unaccept_directive(s) unaccept_target(s) unaccept_code(s)
+	* Corrected '=back without =open' error to '=back without =over'
+	* A little tweaking to the _verbatim_format code.
+	* Dump routines may use \x{NN} instead of \xNN format.
+	* Pod::Simple::HTML now uses VerbatimFormatted
+	* A few changes ot DEBUG messages -- nothing you'd normally see.
+	
 2002-11-19  Sean M. Burke <sburke@cpan.org>
 	* Release 0.96
 	* Still kinda sorta beta.

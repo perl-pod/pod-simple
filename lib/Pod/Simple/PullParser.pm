@@ -1,7 +1,7 @@
 
 require 5;
 package Pod::Simple::PullParser;
-$VERSION = '1.02';
+$VERSION = '1.03';
 use Pod::Simple ();
 BEGIN {@ISA = ('Pod::Simple')}
 
@@ -122,8 +122,8 @@ sub get_token {
       DEBUG and print "$self 's source is filehandle $fh.\n";
       # Read those many lines at a time
       for(my $i = Pod::Simple::MANY_LINES; $i--;) {
-        DEBUG > 3 and print " Fetching a line from source file...\n";
-        push @lines, scalar(<$fh>);
+        DEBUG > 3 and print " Fetching a line from source filehandle $fh...\n";
+        push @lines, scalar(<$fh>); # readline
         DEBUG > 3 and print "  Line is: ",
           defined($lines[-1]) ? $lines[-1] : "<undef>\n";
         unless( defined $lines[-1] ) {
@@ -132,7 +132,24 @@ sub get_token {
           last;
         }
          # but pass thru the undef, which will set source_dead to true
+
+        # TODO: look to see if $lines[-1] is =encoding, and if so,
+        # do horribly magic things
+
       }
+      
+      if(DEBUG > 8) {
+        print "* I've gotten ", scalar(@lines), " lines:\n";
+        foreach my $l (@lines) {
+          if(defined $l) {
+            print "  line {$l}\n";
+          } else {
+            print "  line undef\n";
+          }
+        }
+        print "* end of ", scalar(@lines), " lines\n";
+      }
+
       $self->SUPER::parse_lines(@lines);
       
     } elsif(exists $self->{'source_arrayref'}) {
@@ -264,66 +281,174 @@ sub get_short_title {
   return $title;
 }
 
+sub get_title       { shift->_get_titled_section(
+  'NAME', max_token => 50, desperate => 1, @_)
+}
+sub get_version     { shift->_get_titled_section(
+   'VERSION',
+    max_token => 400,
+    accept_verbatim => 1,
+    max_content_length => 3_000,
+   @_,
+  );
+}
+sub get_description { shift->_get_titled_section(
+   'DESCRIPTION',
+    max_token => 400,
+    max_content_length => 3_000,
+   @_,
+) }
 
-sub get_title {  # some witchery in here
-  my $self = $_[0];
+sub get_authors     { shift->get_author(@_) }  # a harmless alias
+
+sub get_author      {
+  my $this = shift;
+  # Max_token is so high because these are
+  #  typically at the end of the document:
+  $this->_get_titled_section('AUTHOR' , max_token => 10_000, @_) ||
+  $this->_get_titled_section('AUTHORS', max_token => 10_000, @_);
+}
+
+#--------------------------------------------------------------------------
+
+sub _get_titled_section {
+  # Based on a get_title originally contributed by Graham Barr
+  my($self, $titlename, %options) = (@_);
+  
+  my $max_token            = delete $options{'max_token'};
+  my $desperate_for_title  = delete $options{'desperate'};
+  my $accept_verbatim      = delete $options{'accept_verbatim'};
+  my $max_content_length   = delete $options{'max_content_length'};
+  $max_content_length = 120 unless defined $max_content_length;
+
+  Carp::croak( "Unknown " . ((1 == keys %options) ? "option: " : "options: ")
+    . join " ", map "[$_]", sort keys %options
+  )
+   if keys %options;
+
+  my %content_containers;
+  $content_containers{'Para'} = 1;
+  if($accept_verbatim) {
+    $content_containers{'Verbatim'} = 1;
+    $content_containers{'VerbatimFormatted'} = 1;
+  }
+
+  my $token_count = 0;
   my $title;
   my @to_unget;
+  my $state = 0;
+  my $depth = 0;
 
-  while(1) {
-    push @to_unget, $self->get_token;
-    unless(defined $to_unget[-1]) { # whoops, short doc!
-      pop @to_unget;
-      last;
+  Carp::croak "What kind of titlename is \"$titlename\"?!" unless
+   defined $titlename and $titlename =~ m/^[A-Z ]{1,60}$/s; #sanity
+  my $titlename_re = quotemeta($titlename);
+
+  my $head1_text_content;
+  my $para_text_content;
+
+  while(
+    ++$token_count <= ($max_token || 1_000_000)
+    and defined(my $token = $self->get_token)
+  ) {
+    push @to_unget, $token;
+
+    if ($state == 0) { # seeking =head1
+      if( $token->is_start and $token->tagname eq 'head1' ) {
+        DEBUG and print "  Found head1.  Seeking content...\n";
+        ++$state;
+        $head1_text_content = '';
+      }
     }
 
-    DEBUG and print "-Got token ", $to_unget[-1]->dump, "\n";
-
-    (DEBUG and print "Too much in the buffer.\n"),
-     last if @to_unget > 25; # sanity
+    elsif($state == 1) { # accumulating text until end of head1
+      if( $token->is_text ) {
+        DEBUG and print "   Adding \"", $token->text, "\" to head1-content.\n";
+        $head1_text_content .= $token->text;
+      } elsif( $token->is_end and $token->tagname eq 'head1' ) {
+        DEBUG and print "  Found end of head1.  Considering content...\n";
+        if($head1_text_content eq $titlename
+          or $head1_text_content =~ m/\($titlename_re\)/s
+          # We accept "=head1 Nomen Modularis (NAME)" for sake of i18n
+        ) {
+          DEBUG and print "  Yup, it was $titlename.  Seeking next para-content...\n";
+          ++$state;
+        } elsif(
+          $desperate_for_title
+           # if we're so desperate we'll take the first
+           #  =head1's content as a title
+          and $head1_text_content =~ m/\S/
+          and $head1_text_content !~ m/^[ A-Z]+$/s
+          and $head1_text_content !~
+            m/\((?:
+             NAME | TITLE | VERSION | AUTHORS? | DESCRIPTION | SYNOPSIS
+             | COPYRIGHT | LICENSE | NOTES? | FUNCTIONS? | METHODS?
+             | CAVEATS? | BUGS? | SEE\ ALSO | SWITCHES | ENVIRONMENT
+            )\)/sx
+            # avoid accepting things like =head1 Thingy Thongy (DESCRIPTION)
+          and ($max_content_length
+            ? (length($head1_text_content) <= $max_content_length) # sanity
+            : 1)
+        ) {
+          DEBUG and print "  It looks titular: \"$head1_text_content\".\n",
+            "\n  Using that.\n";
+          $title = $head1_text_content;
+          last;
+        } else {
+          --$state;
+          DEBUG and print "  Didn't look titular ($head1_text_content).\n",
+            "\n  Dropping back to seeking-head1-content mode...\n";
+        }
+      }
+    }
     
-    my $pattern = '';
-    if( #$to_unget[-1]->type eq 'end'
-        #and $to_unget[-1]->tagname eq 'Para'
-        #and
-        ($pattern = join('',
-         map {;
-            ($_->type eq 'start') ? ("<" . $_->tagname .">")
-          : ($_->type eq 'end'  ) ? ("</". $_->tagname .">")
-          : ($_->type eq 'text' ) ? ($_->text =~ m<^([A-Z]+)$>s ? $1 : 'X')
-          : "BLORP"
-         } @to_unget
-       )) =~ m{<head1>NAME</head1><Para>(X|</?[BCIFLS]>)+</Para>$}s
-    ) {
-      # Whee, it fits the pattern
-      DEBUG and print "Seems to match =head1 NAME pattern.\n";
-      $title = '';
-      foreach my $t (reverse @to_unget) {
-        last if $t->type eq 'start' and $t->tagname eq 'Para';
-        $title = $t->text . $title if $t->type eq 'text';
+    elsif($state == 2) {
+      # seeking start of para (which must immediately follow)
+      if($token->is_start and $content_containers{ $token->tagname }) {
+        DEBUG and print "  Found start of Para.  Accumulating content...\n";
+        $para_text_content = '';
+        ++$state;
+      } else {
+        DEBUG and print
+         "  Didn't see an immediately subsequent start-Para.  Reseeking H1\n";
+        $state = 0;
       }
-      undef $title if $title =~ m<^\s*$>; # make sure it's contentful!
-      last;
-
-    } elsif ($pattern =~ m{<head(\d)>(.+)</head\d>$}
-      and !( $1 eq '1' and $2 eq 'NAME' )
-    ) {
-      # Well, it fits a fallback pattern
-      DEBUG and print "Seems to match NAMEless pattern.\n";
-      $title = '';
-      foreach my $t (reverse @to_unget) {
-        last if $t->type eq 'start' and $t->tagname =~ m/^head\d$/s;
-        $title = $t->text . $title if $t->type eq 'text';
-      }
-      undef $title if $title =~ m<^\s*$>; # make sure it's contentful!
-      last;
-      
-    } else {
-      DEBUG and $pattern and print "Leading pattern: $pattern\n";
     }
+    
+    elsif($state == 3) {
+      # accumulating text until end of Para
+      if( $token->is_text ) {
+        DEBUG and print "   Adding \"", $token->text, "\" to para-content.\n";
+        $para_text_content .= $token->text;
+        # and keep looking
+        
+      } elsif( $token->is_end and $content_containers{ $token->tagname } ) {
+        DEBUG and print "  Found end of Para.  Considering content: ",
+          $para_text_content, "\n";
+
+        if( $para_text_content =~ m/\S/
+          and ($max_content_length
+           ? (length($para_text_content) <= $max_content_length)
+           : 1)
+        ) {
+          # Some minimal sanity constraints, I think.
+          DEBUG and print "  It looks contentworthy, I guess.  Using it.\n";
+          $title = $para_text_content;
+          last;
+        } else {
+          DEBUG and print "  Doesn't look at all contentworthy!\n  Giving up.\n";
+          undef $title;
+          last;
+        }
+      }
+    }
+    
+    else {
+      die "IMPOSSIBLE STATE $state!\n";  # should never happen
+    }
+    
   }
   
-  # Put it all back:
+  # Put it all back!
   $self->unget_token(@to_unget);
   
   if(DEBUG) {
@@ -332,6 +457,7 @@ sub get_title {  # some witchery in here
   }
   
   return '' unless defined $title;
+  $title =~ s/^\s+//;
   return $title;
 }
 
@@ -531,6 +657,27 @@ stuff wow yeah!".
 If the title can't be found, then get_short_title returns empty-string
 ("").
 
+=item $author_name   = $parser->get_author
+
+This works like get_title except that it returns the contents of the
+"=head1 AUTHOR\n\nParagraph...\n" section, assuming that that section
+isn't terribly long.
+
+(This method tolerates "AUTHORS" instead of "AUTHOR" too.)
+
+=item $description_name = $parser->get_description
+
+This works like get_title except that it returns the contents of the
+"=head1 PARAGRAPH\n\nParagraph...\n" section, assuming that that section
+isn't terribly long.
+
+=item $version_block = $parser->get_version
+
+This works like get_title except that it returns the contents of
+the "=head1 VERSION\n\n[BIG BLOCK]\n" block.  Note that this does NOT
+return the module's C<$VERSION>!!
+
+
 =back
 
 =head1 NOTE
@@ -571,4 +718,78 @@ merchantability or fitness for a particular purpose.
 Sean M. Burke C<sburke@cpan.org>
 
 =cut
+
+
+
+JUNK:
+
+sub _old_get_title {  # some witchery in here
+  my $self = $_[0];
+  my $title;
+  my @to_unget;
+
+  while(1) {
+    push @to_unget, $self->get_token;
+    unless(defined $to_unget[-1]) { # whoops, short doc!
+      pop @to_unget;
+      last;
+    }
+
+    DEBUG and print "-Got token ", $to_unget[-1]->dump, "\n";
+
+    (DEBUG and print "Too much in the buffer.\n"),
+     last if @to_unget > 25; # sanity
+    
+    my $pattern = '';
+    if( #$to_unget[-1]->type eq 'end'
+        #and $to_unget[-1]->tagname eq 'Para'
+        #and
+        ($pattern = join('',
+         map {;
+            ($_->type eq 'start') ? ("<" . $_->tagname .">")
+          : ($_->type eq 'end'  ) ? ("</". $_->tagname .">")
+          : ($_->type eq 'text' ) ? ($_->text =~ m<^([A-Z]+)$>s ? $1 : 'X')
+          : "BLORP"
+         } @to_unget
+       )) =~ m{<head1>NAME</head1><Para>(X|</?[BCIFLS]>)+</Para>$}s
+    ) {
+      # Whee, it fits the pattern
+      DEBUG and print "Seems to match =head1 NAME pattern.\n";
+      $title = '';
+      foreach my $t (reverse @to_unget) {
+        last if $t->type eq 'start' and $t->tagname eq 'Para';
+        $title = $t->text . $title if $t->type eq 'text';
+      }
+      undef $title if $title =~ m<^\s*$>; # make sure it's contentful!
+      last;
+
+    } elsif ($pattern =~ m{<head(\d)>(.+)</head\d>$}
+      and !( $1 eq '1' and $2 eq 'NAME' )
+    ) {
+      # Well, it fits a fallback pattern
+      DEBUG and print "Seems to match NAMEless pattern.\n";
+      $title = '';
+      foreach my $t (reverse @to_unget) {
+        last if $t->type eq 'start' and $t->tagname =~ m/^head\d$/s;
+        $title = $t->text . $title if $t->type eq 'text';
+      }
+      undef $title if $title =~ m<^\s*$>; # make sure it's contentful!
+      last;
+      
+    } else {
+      DEBUG and $pattern and print "Leading pattern: $pattern\n";
+    }
+  }
+  
+  # Put it all back:
+  $self->unget_token(@to_unget);
+  
+  if(DEBUG) {
+    if(defined $title) { print "  Returing title <$title>\n" }
+    else { print "Returning title <>\n" }
+  }
+  
+  return '' unless defined $title;
+  return $title;
+}
 

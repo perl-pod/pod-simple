@@ -10,7 +10,7 @@ package Pod::Simple::RTF;
 
 use strict;
 use vars qw($VERSION @ISA %Escape $WRAP %Tagmap);
-$VERSION = '1.03';
+$VERSION = '1.04';
 use Pod::Simple::PullParser ();
 BEGIN {@ISA = ('Pod::Simple::PullParser')}
 
@@ -238,7 +238,9 @@ sub do_middle {      # the main work
         #
         while(1) {
           push @to_unget, $self->get_token;
-          unshift(@to_unget), last unless defined $to_unget[-1];
+          pop(@to_unget), last unless defined $to_unget[-1];
+           # Erroneously used to be "unshift" instead of pop!  Adds instead
+           # of removes, and operates on the beginning instead of the end!
           
           if($to_unget[-1]->type eq 'text') {
             if( ($text_count_here += length ${$to_unget[-1]->text_r}) > 150 ){
@@ -558,6 +560,7 @@ sub rtf_esc_codely {
   "\cb" => "{\n\\cs21\\lang1024\\noproof ",  # \\cf1
   "\cc" => "}",
 );
+1;
 
 __END__
 
