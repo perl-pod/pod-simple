@@ -18,6 +18,7 @@ lib/Pod/Simple/PullParserEndToken.pm
 lib/Pod/Simple/PullParserStartToken.pm
 lib/Pod/Simple/PullParserTextToken.pm
 lib/Pod/Simple/PullParserToken.pm
+lib/Pod/Simple/RTF.pm
 lib/Pod/Simple/SimpleTree.pm
 lib/Pod/Simple/Subclassing.pod
 lib/Pod/Simple/Text.pm
@@ -38,9 +39,13 @@ t/fcodes_ess.t
 t/for.t
 t/fornot.t
 t/heads.t
+t/html-para.t
+t/html-styles.t
+t/html-title.t
 t/items.t
 t/linkclass.t
 t/puller.t
+t/pulltitle.t
 t/render.t
 t/sanity_tfh.t
 t/stree.t

@@ -1,5 +1,12 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-09-29 00:21:59 MDT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-09-29 00:57:39 MDT"
 
+2002-09-29  Sean M. Burke <sburke@cpan.org>
+	* Release 0.92
+	* Beta release.  Much documentation still to write, many features
+	still to add.  The APIs might change in future versions.
+
+	* Fixing bungled distribution.
+	
 2002-09-29  Sean M. Burke <sburke@cpan.org>
 	* Release 0.91
 	* Beta release.  Much documentation still to write, many features
