@@ -1,11 +1,18 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-01 22:42:51 ADT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-02 23:51:39 ADT"
 #---------------------------------------------------------------------------
+	
+2003-09-02  Sean M. Burke <sburke@cpan.org>
+	* Release 2.02 -- fixing a testing bug
+	* Autrijus Tang found a silly bug of mine in corpustest.t's
+	testing of corpus/t/nonesuch.txt.  Fixed,
+	* I add encoding_nonesuch.t to test corpus/t/nonesuch.txt better.
+
 	
 2003-09-01  Sean M. Burke <sburke@cpan.org>
 	* Release 2.01
 	* Moved all version numbers up to 2.01 for reasons of Tibetan
 	numerology.
-	
+
 	* Implemented =encoding.  Thanks a million to Jarkko, Autrijus,
 	Dan Kogai, and many others for their help, patience, and
 	encouragement.

@@ -38,7 +38,7 @@ BEGIN {
   }
   @testfiles = @ARGV if @ARGV and !grep !m/\.txt/, @ARGV;
 
-  plan tests => (2 + 2*@testfiles );
+  plan tests => (2 + 2*@testfiles - 1);
 }
 
 my $HACK = 1;
@@ -83,6 +83,8 @@ foreach my $f (@testfiles) {
   
   die "Null outstring?" unless $outstring;
   
+  next if $f =~ /nonesuch/;
+
   my $outfilename = ($HACK > 1) ? $wouldxml{$f} : "$wouldxml{$f}\.out";
   if($HACK) {
     open OUT, ">$outfilename" or die "Can't write-open $outfilename: $!\n";
