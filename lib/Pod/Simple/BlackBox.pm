@@ -620,7 +620,7 @@ sub _ponder_paragraph_buffer {
       my $list_type;
 
       if($paras->[0][0] eq '=item') { # most common case
-        $list_type = $self->_get_item_type($paras->[0]);
+        $list_type = $self->_get_initial_item_type($paras->[0]);
 
       } elsif($paras->[0][0] eq '=back') {
         # Ignore empty lists.  TODO: make this an option?

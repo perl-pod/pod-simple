@@ -1,8 +1,6 @@
 ChangeLog
-MANIFEST
-MANIFEST.SKIP
-Makefile.PL
-README
+lib/perlpod.pod
+lib/perlpodspec.pod
 lib/Pod/Simple.pm
 lib/Pod/Simple.pod
 lib/Pod/Simple/BlackBox.pm
@@ -25,8 +23,10 @@ lib/Pod/Simple/Text.pm
 lib/Pod/Simple/TextContent.pm
 lib/Pod/Simple/TiedOutFH.pm
 lib/Pod/Simple/XMLOutStream.pm
-lib/perlpod.pod
-lib/perlpodspec.pod
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README
 t/ac_c_extend.t
 t/ac_c_simple.t
 t/ac_d.t
@@ -45,6 +45,7 @@ t/heads.t
 t/html-para.t
 t/html-styles.t
 t/html-title.t
+t/itemadapt.t
 t/items.t
 t/itemstar.t
 t/linkclass.t
@@ -66,3 +67,4 @@ t/test_old_perlvar_out.txt
 t/verbatim_formatted.t
 t/verbatims.t
 t/x_nixer.t
+META.yml                                Module meta-data (added by MakeMaker)

@@ -16,7 +16,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.97';
+$VERSION = '0.98';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -469,6 +469,17 @@ sub _complain_errata {
 }
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+sub _get_initial_item_type {
+  # A hack-wrapper here for when you have like "=over\n\n=item 456\n\n"
+  my($self, $para) = @_;
+  return $para->[1]{'~type'}  if $para->[1]{'~type'};
+
+  return $para->[1]{'~type'} = 'text'
+   if join("\n", @{$para}[2 .. $#$para]) =~ m/^\s*(\d+)\.?\s*$/s and $1 ne '1';
+  # Else fall thru to the general case:
+  return $self->_get_item_type($para);
+}
 
 
 sub _get_item_type {       # mutates the item!!

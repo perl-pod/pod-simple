@@ -1,5 +1,12 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-08-12 22:40:31 ADT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-01 20:52:05 ADT"
 
+2003-09-01  Sean M. Burke <sburke@cpan.org>
+	* Release 0.98
+	* At Michael Schwern's suggestion, a list that begins with a
+	"=item [number]" line where number isn't a 1, is no longer
+	treated as an error, but instead is silently coerced into being a
+	text-item list, just as if it were "=item wubble" or whatever.
+	
 2003-08-12  Sean M. Burke <sburke@cpan.org>
 	* Release 0.97
 	* Loooking goooooood.  Not smelling so much like beta anymore!
