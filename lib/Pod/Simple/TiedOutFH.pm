@@ -82,7 +82,7 @@ chop things finer to start with, and work at it.
 
 In a saucepan set over moderate heat, warm the oil until hot.
 
-Add the puree, the balsamic vinegar, and cook, stirring occasionally,
+Add the puree and the balsamic vinegar, and cook, stirring occasionally,
 for 20 to 40 minutes. (Cooking it longer will make it sweeter.)
 
 Add the Garam Masala, chili powder, and cook, stirring occasionally, for

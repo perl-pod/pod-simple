@@ -25,6 +25,8 @@ lib/Pod/Simple/Text.pm
 lib/Pod/Simple/TextContent.pm
 lib/Pod/Simple/TiedOutFH.pm
 lib/Pod/Simple/XMLOutStream.pm
+lib/perlpod.pod
+lib/perlpodspec.pod
 t/ac_c_extend.t
 t/ac_c_simple.t
 t/ac_d.t

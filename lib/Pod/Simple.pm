@@ -16,7 +16,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.94';
+$VERSION = '0.95';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -317,6 +317,42 @@ sub parse_file {
   return $self;
 }
 
+#-----------------------------------------------------------------------------
+
+sub parse_from_file {
+  # An emulation of Pod::Parser's interface, for the sake of Perldoc.
+
+  my($self, $source, $to) = @_;
+  $self = $self->new unless ref($self); # so we tolerate being a class method
+  
+  if(!defined $source)             { $source = *STDIN{IO}
+  } elsif(ref(\$source) eq 'GLOB') { # stet
+  } elsif(ref($source)           ) { # stet
+  } elsif(!length $source
+     or $source eq '-' or $source =~ m/^<&(STDIN|0)$/i
+  ) { 
+    $source = *STDIN{IO};
+  }
+
+  if(!defined $to) {             $self->output_fh( *STDOUT{IO}   );
+  } elsif(ref(\$to) eq 'GLOB') { $self->output_fh( $to );
+  } elsif(ref($to)) {            $self->output_fh( $to );
+  } elsif(!length $to
+     or $to eq '-' or $to =~ m/^>&?(?:STDOUT|1)$/i
+  ) {
+    $self->output_fh( *STDOUT{IO} );
+  } else {
+    require Symbol;
+    my $out_fh = Symbol::gensym();
+    DEBUG and print "Write-opening to $to\n";
+    open($out_fh, ">$to")  or  Carp::croak "Can't write-open $to: $!";
+    binmode($out_fh)
+     if $self->can('write_with_binmode') and $self->write_with_binmode;
+    $self->output_fh($out_fh);
+  }
+
+  return $self->parse_file($source);
+}
 
 #-----------------------------------------------------------------------------
 

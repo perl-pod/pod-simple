@@ -1,7 +1,7 @@
 
 require 5;
 package Pod::Simple::DumpAsXML;
-$VERSION = '1.01';
+$VERSION = '1.02';
 use Pod::Simple ();
 BEGIN {@ISA = ('Pod::Simple')}
 
@@ -10,7 +10,6 @@ use strict;
 use Carp ();
 
 # TODO: note that this is padding with WS
-
 # TODO: make a setting for leaving off the line number attributes?
 
 
@@ -20,6 +19,7 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
+  $new->accept_codes('VerbatimFormatted');
   return $new;
 }
 

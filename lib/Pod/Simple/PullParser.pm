@@ -110,8 +110,10 @@ sub get_token {
       DEBUG and print "$self 's source is filehandle $fh.\n";
       # Read those many lines at a time
       for(my $i = Pod::Simple::MANY_LINES; $i--;) {
-        DEBUG > 3 and print " Fetching a line...\n";
+        DEBUG > 3 and print " Fetching a line from source file...\n";
         push @lines, scalar(<$fh>);
+        DEBUG > 3 and print "  Line is: ",
+          defined($lines[-1]) ? $lines[-1] : "<undef>\n";
         unless( defined $lines[-1] ) {
           DEBUG and print "That's it for that source fh!  Killing.\n";
           delete $self->{'source_fh'}; # so it can be GC'd
@@ -145,7 +147,7 @@ sub get_token {
         (pos(${ $self->{'source_scalar_ref'} }) || 0),
         " characters left to parse.\n";
 
-      DEBUG > 3 and print " Fetching a line...\n";
+      DEBUG > 3 and print " Fetching a line from source-string...\n";
       if( ${ $self->{'source_scalar_ref'} } =~
         m/([^\n\r]*)((?:\r?\n)?)/g
       ) {

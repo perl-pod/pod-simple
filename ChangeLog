@@ -1,5 +1,21 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-10-16 12:31:43 MDT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-11-10 01:47:14 MST"
 
+2002-11-10  Sean M. Burke <sburke@cpan.org>
+	* Release 0.95
+	* Beta release.  Much documentation still to write, many features
+	still to add.  The APIs might change in future versions.
+
+	* Now including perlpod and perlpodspec in the dist.
+
+	* Pod::Simple -- added parse_from_file
+	* Pod::Simple::RTF -- minor style changes, and minor change to the
+	RTF-wrapping logic.
+	* Pod::Simple::BlackBox -- a =cut opening a block is no longer a
+	fatal(ish) error.
+	* Pod::Simple::BlackBox -- added experimental new
+	VerbatimFormatted stuff.
+
+	
 2002-10-16  Sean M. Burke <sburke@cpan.org>
 	* Release 0.94
 	* Beta release.  Much documentation still to write, many features

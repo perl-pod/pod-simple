@@ -86,10 +86,15 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
         if($1 eq 'cut') {
           $self->scream(
             $self->{'line_count'},
-            "=cut found outside a pod block.  Aborting processing of this file."
+            "=cut found outside a pod block.  Skipping to next block."
           );
-          splice @_;
-          push @_, undef;
+          
+          ## Before there were errata sections in the world, it was
+          ## least-pessimal to abort processing the file.  But now we can
+          ## just barrel on thru (but still not start a pod block).
+          #splice @_;
+          #push @_, undef;
+          
           next;
         } else {
           $self->{'in_pod'} = $self->{'start_of_pod_block'}
@@ -964,9 +969,18 @@ sub _ponder_paragraph_buffer {
 
           }
         }
-        push @$para, join "\n", splice(@$para, 2) if @$para > 3;
         
-        $para->[-1] =~ s/\n+$//s; # Kill any number of terminal newlines
+        # Now the VerbatimFormatted hoodoo...
+        if( $self->{'accept_codes'} and
+            $self->{'accept_codes'}{'VerbatimFormatted'}
+        ) {
+          while(@$para > 3 and $para->[-1] !~ m/\S/) { pop @$para }
+           # Kill any number of terminal newlines
+          $self->_verbatim_format($para);
+        } else {
+          push @$para, join "\n", splice(@$para, 2) if @$para > 3;
+          $para->[-1] =~ s/\n+$//s; # Kill any number of terminal newlines
+        }
         
       } elsif($para_type eq 'Data') {
         DEBUG and print " giving data treatment...\n";
@@ -992,7 +1006,6 @@ sub _ponder_paragraph_buffer {
   return;
 }
 
-
 sub _traverse_treelet_bit {  # for use only by the routine above
   my($self, $name) = splice @_,0,2;
 
@@ -1011,6 +1024,110 @@ sub _traverse_treelet_bit {  # for use only by the routine above
   return;
 }
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+sub _verbatim_format {
+  my($it, $p) = @_;
+  
+  my $formatting;
+
+  for(my $i = 2; $i < @$p; $i++) { # work backwards over the lines
+    DEBUG and print "_verbatim_format appends a newline to $i: $p->[$i]\n";
+    $p->[$i] .= "\n";
+     # Unlike with simple Verbatim blocks, we don't end up just doing
+     # a join("\n", ...) on the contents, so we have to append a
+     # newline to ever line, and then nix the last one later.
+  }
+
+  if( DEBUG > 4 ) {
+    print "<<\n";
+    for(my $i = $#$p; $i >= 2; $i--) { # work backwards over the lines
+      print "_verbatim_format $i: $p->[$i]";
+    }
+    print ">>\n";
+  }
+
+  for(my $i = $#$p; $i > 2; $i--) {
+    # work backwards over the lines, except the first (#2)
+    
+    next unless $p->[$i]   =~ m{^#:([ \^\/\%]*)\n?$}s
+            and $p->[$i-1] !~ m{^#:[ \^\/\%]*\n?$}s;
+     # look at a formatty line preceding a nonformatty one
+
+    # A formatty line has to have #: in the first two columns, and uses
+    # "^" to mean bold, "/" to mean underline, and "%" to mean bold italic.
+    # Example:
+    #   What do you want?  i like pie. [or whatever]
+    # #:^^^^^^^^^^^^^^^^^              /////////////         
+    
+
+    DEBUG > 4 and print "_verbatim_format considers:\n$p->[$i-1]\n$p->[$i]\n";
+    
+    $formatting = '  ' . $1;
+    $formatting =~ s/\s+$//s; # nix trailing whitespace
+    unless(length $formatting and length $p->[$i-1]) {
+      splice @$p,$i,1; # remove this line
+      $i--; # don't consider next line
+      next;
+    }
+
+    # Otherwise:
+    DEBUG > 4 and print "Formatting <$formatting>    on ", $p->[$i-1], "\n";
+    if( length($formatting) > length($p->[$i-1]) ) {
+      $formatting = substr($formatting, 0, length($p->[$i-1]));
+    } elsif( length($formatting) < length($p->[$i-1]) ) {
+      $formatting .= ' ' x (length($p->[$i-1]) - length($formatting));
+    }
+
+
+    my @new_line;
+    while( $formatting =~ m{\G(( +)|(\^+)|(\/+)|(\%+))}g ) {
+      #print "Format matches $1\n";
+
+      if($2) {
+        #print "SKIPPING <$2>\n";
+        push @new_line,
+          substr($p->[$i-1], pos($formatting)-length($1), length($1));
+      } else {
+        #print "SNARING $+\n";
+        push @new_line, [
+          (
+            $3 ? 'VerbatimB'  :
+            $4 ? 'VerbatimI'  :
+            $5 ? 'VerbatimBI' : die("Should never get called")
+          ), {},
+          substr($p->[$i-1], pos($formatting)-length($1), length($1))
+        ];
+        #print "Formatting <$new_line[-1][-1]> as $new_line[-1][0]\n";
+      }
+    }
+    splice @$p, $i-1, 2, @new_line; # replace myself and the next line
+    $i -= @new_line; # Skip however many things we've just added!
+  }
+
+  $p->[0] = 'VerbatimFormatted';
+
+  # Collapse adjacent text nodes, just for kicks.
+  for( my $i = 2; $i > $#$p; $i++ ) { # work forwards over the tokens except for the last
+    if( !ref($p->[$i]) and !ref($p->[$i + 1]) ) {
+      DEBUG > 5 and print "_verbatim_format merges {$p->[$i]} and {$p->[$i+1]}\n";
+      $p->[$i] .= splice @$p, $i+1, 1; # merge
+      --$i;  # and back up
+    }
+  }
+
+  # Now look for the last text token, and remove the terminal newline
+  for( my $i = $#$p; $i >= 2; $i-- ) {
+    # work backwards over the tokens, even the first
+    if( !ref($p->[$i]) ) {
+      $p->[$i] =~ s/\n$//s;
+      DEBUG > 5 and print "_verbatim_format killed the terminal newline on #$i: {$p->[$i]}, after {$p->[$i-1]}\n";
+      last; # we only want the next one
+    }
+  }
+
+  return;
+}
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
