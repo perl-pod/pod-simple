@@ -16,7 +16,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.92';
+$VERSION = '0.93';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -76,10 +76,12 @@ __PACKAGE__->_accessorize(
   'nix_X_codes',       # whether to ignore X<...> codes
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events
-  
+
+ 'content_seen',      # whether we've seen any real Pod content
+ 'errors_seen',       # TODO: document.  whether we've seen any errors (fatal or not)
+
  'code_handler',      # coderef to call when a code (non-pod) line is seen
  'cut_handler',       # coderef to call when a =cut line is seen
- 'content_seen',      # whether we've seen any real Pod content
  #Called like:
  # $code_handler->($line, $self->{'line_count'}, $self) if $code_handler;
  #  $cut_handler->($line, $self->{'line_count'}, $self) if $cut_handler;
@@ -321,6 +323,7 @@ sub parse_file {
 sub whine {
   #my($self,$line,$complaint) = @_;
   my $self = shift(@_);
+  ++$self->{'errors_seen'};
   if($self->{'no_whining'}) {
     DEBUG > 9 and print "Discarding complaint (at line $_[0]) $_[1]\n because no_whining is on.\n";
     return;
@@ -332,6 +335,7 @@ sub whine {
 sub scream {    # like whine, but not suppressable
   #my($self,$line,$complaint) = @_;
   my $self = shift(@_);
+  ++$self->{'errors_seen'};
   return $self->_complain_warn(@_) if $self->{'complain_stderr'};
   return $self->_complain_errata(@_);
 }

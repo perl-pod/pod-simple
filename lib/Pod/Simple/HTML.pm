@@ -11,6 +11,9 @@ sub DEBUG () {0}
 $Computerese =  " lang='und' xml:lang='und'" unless defined $Computerese;
 $Lame = ' class="pad"' unless defined $Lame;
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+my @_to_accept;
+
 %Tagmap = (
   'Verbatim'  => "\n<pre$Computerese>",
   '/Verbatim' => "</pre>\n",
@@ -27,6 +30,25 @@ $Lame = ' class="pad"' unless defined $Lame;
     item-number=li
     item-text=dt
   )),
+  changes2(
+    map {; m/^([-a-z]+)/s && push @_to_accept, $1; $_ }
+    qw[
+      sample=samp
+      definition=dfn
+      kbd=keyboard
+      variable=var
+      citation=cite
+      abbreviation=abbr
+      acronym=acronym
+      subscript=sub
+      superscript=sup
+      big=big
+      small=small
+      underline=u
+      strikethrough=s
+    ]  # no point in providing a way to get <q>...</q>, I think
+  ),
+  
   '/item-bullet' => "</li><p$Lame></p>\n",
   '/item-number' => "</li><p$Lame></p>\n",
   '/item-text'   => "</li><p$Lame></p>\n",
@@ -41,11 +63,14 @@ $Lame = ' class="pad"' unless defined $Lame;
   '/L' =>  "</a>",
 );
 
-
-
 sub changes {
   return map {; m/^([-_:0-9a-zA-Z]+)=([-_:0-9a-zA-Z]+)$/s
      ? ( $1, => "\n<$2>", "/$1", => "</$2>\n" ) : die "Funky $_"
+  } @_;
+}
+sub changes2 {
+  return map {; m/^([-_:0-9a-zA-Z]+)=([-_:0-9a-zA-Z]+)$/s
+     ? ( $1, => "<$2>", "/$1", => "</$2>" ) : die "Funky $_"
   } @_;
 }
 
@@ -53,8 +78,10 @@ sub new {
   my $new = shift->SUPER::new(@_);
   $new->nix_X_codes(1);
   $new->nbsp_for_S(1);
-  $new->accept_directive_as_data( 'html', 'HTML' );
-    # TODO: fix implementation
+  $new->accept_targets( 'html', 'HTML' );
+
+  $new->accept_codes(@_to_accept);
+  DEBUG > 2 and print "To accept: ", join(' ',@_to_accept), "\n";
   
   $new->{'Tagmap'} = {%Tagmap};
   return $new;
@@ -98,6 +125,18 @@ sub do_middle {      # the main work
       if(($tagname = $token->tagname) eq 'L') {
         esc($type = $self->do_link($token)); # reuse it, why not
         print $fh "<a href='$type'>";
+
+      } elsif ($tagname eq 'Data') {
+        my $next = $self->get_token;
+        next unless defined $next;
+        unless( $next->type eq 'text' ) {
+          $self->unget_token($next);
+          next;
+        }
+        DEBUG and print "    raw text ", $next->text, "\n";
+        printf $fh "\n" . $next->text . "\n";
+        next;
+
       } else {
         if( $tagname =~ m/^over-(.+)$/s ) {
           push @stack, $1;
@@ -123,17 +162,14 @@ sub do_middle {      # the main work
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-sub do_beginning {			# tricky!
+sub do_beginning {
   my $self = $_[0];
 
   my $title = $self->get_short_title();
-
   unless($self->content_seen) {
     DEBUG and print "No content seen in search for title.\n";
     return;
   }
-
-
   $self->{'Title'} = $title;
 
   esc($title);
@@ -190,7 +226,7 @@ TODO - TODO
  TODO
 
   perl -MPod::Simple::HTML -e \
-   "exit Pod::Simple::HTML->filter(shift)->any_errata_seen" \
+   "exit Pod::Simple::HTML->filter(shift)->errors_seen" \
    thingy.pod
 
 

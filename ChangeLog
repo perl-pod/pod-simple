@@ -1,5 +1,16 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-09-29 00:57:39 MDT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2002-09-29 22:54:35 MDT"
 
+2002-09-29  Sean M. Burke <sburke@cpan.org>
+	* Release 0.93
+	* Beta release.  Much documentation still to write, many features
+	still to add.  The APIs might change in future versions.
+
+        * Pod::Simple -- added errors_seen attribute
+	* Pod::Simple::HTML -- added support for =for HTML ... directives,
+	and =extend directives.
+	* Oh, and I added Pod::Simple::RTF in 0.92 but forgot to note it
+	until now.
+	
 2002-09-29  Sean M. Burke <sburke@cpan.org>
 	* Release 0.92
 	* Beta release.  Much documentation still to write, many features
