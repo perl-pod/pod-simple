@@ -5,7 +5,7 @@ use strict;
 use vars qw( $VERSION $HTML_RENDER_CLASS $HTML_EXTENSION
  $CSS $JAVASCRIPT $SLEEPY $SEARCH_CLASS @ISA
 );
-$VERSION = '3.01';
+$VERSION = '3.02';
 @ISA = ();  # Yup, we're NOT a subclass of Pod::Simple::HTML!
 
 # TODO: nocontents stylesheets. Strike some of the color variations?
@@ -875,7 +875,7 @@ $CSS = <<'EOCSS';
   }
 
   body.pod h1, body.pod h2, body.pod h3, body.pod h4  {
-    font-family: Tahoma, Verdana, Helvetica, Arial, "sans-serif";
+    font-family: Tahoma, Verdana, Helvetica, Arial, sans-serif;
     font-weight: normal;
     margin-top: 1.2em;
     margin-bottom: .1em;
@@ -894,7 +894,7 @@ $CSS = <<'EOCSS';
   p.backlinktop + h4 { border-top: none; margin-top: 0em;  }
 
   body.pod dt {
-    font-size: 105%; # just a wee bit more than normal
+    font-size: 105%; /* just a wee bit more than normal */
   }
 
   .indexgroup { font-size: 80%; }
@@ -926,7 +926,7 @@ $CSS = <<'EOCSS';
     margin-left: 1em;
     margin-right: 1em;
     text-indent: -.9em;
-    font-family: Tahoma, Verdana, Helvetica, Arial, "sans-serif";
+    font-family: Tahoma, Verdana, Helvetica, Arial, sans-serif;
     font-weight: normal;
     border-top:    thin solid #fff;
     border-bottom: thin solid #fff;
@@ -934,7 +934,7 @@ $CSS = <<'EOCSS';
   }
 
   dl.superindex > dt  {
-    font-family: Tahoma, Verdana, Helvetica, Arial, "sans-serif";
+    font-family: Tahoma, Verdana, Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-size: 90%;
     margin-top: .45em;
