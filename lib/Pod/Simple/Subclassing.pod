@@ -75,7 +75,7 @@ nodes that represent preformatted text (from verbatim sections).
 =head1 Events
 
 TODO intro... mention that events are supplied for implicits, like for
-missing closures.
+missing >'s
 
 
 In the following section, we use XML to represent the event structure
@@ -318,7 +318,7 @@ produces this event structure:
   </L>
 
 In cases of links to a section in the current Pod document,
-there is a I<section> attribute instead of a L<to> attribute.
+there is a I<section> attribute instead of a I<to> attribute.
 For example, this Pod source:
 
   L</"Member Data">
@@ -692,10 +692,10 @@ however, you may find this useful if you're making a Pod superset
 format where you don't need to worry about compatibility.
 
 
-=item C<< $parser->nbsp_for_S(I<VALUE>); >>
+=item C<< $parser->nbsp_for_S( I<BOOLEAN> ); >>
 
 Setting this attribute to a true value (and by default it is false) will
-take "SE<lt>...E<gt>" sequences to sequences of words separated by
+turn "SE<lt>...E<gt>" sequences into sequences of words separated by
 C<\xA0> (non-breaking space) characters. For example, it will take this:
 
     I like S<Dutch apple pie>, don't you?
@@ -715,7 +715,7 @@ probably provide one upon request.
 
 This returns a string reporting the $VERSION value from your module (and
 its classname) as well as the $VERSION value of Pod::Simple.  Note that
-L<perlpodspec> requires output formats to (wherever possible) note
+L<perlpodspec> requires output formats (wherever possible) to note
 this detail in a comment in the output format.  For example, for
 some kind of SGML output format:
 

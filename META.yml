@@ -1,11 +1,22 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         Pod-Simple
-version:      2.06
+version:      3.01
 version_from: lib/Pod/Simple.pm
 installdirs:  site
 requires:
-    Pod::Escapes:                  1.03
+    Carp:                          0
+    Config:                        0
+    constant:                      0
+    Cwd:                           0
+    File::Basename:                0
+    File::Find:                    0
+    File::Spec:                    0
+    integer:                       0
+    overload:                      0
+    Pod::Escapes:                  1.04
+    strict:                        0
+    Symbol:                        0
     Text::Wrap:                    98.112902
 
 distribution_type: module

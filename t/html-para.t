@@ -41,25 +41,26 @@ ok( x(qq{This is a paragraph}),
 
 ok(x(
 '=head1 This is a heading')
- => qq{\n<h1><a name="This_is_a_heading"\n>This is a heading</a></h1>\n},
+ => q{/\s*<h1><a[^<>]+>This\s+is\s+a\s+heading</a></h1>\s*$/},
   "heading building"
 );
 
 ok(x(
-'=head2 This is a heading')
- => qq{\n<h2><a name="This_is_a_heading"\n>This is a heading</a></h2>\n},
+'=head2 This is a heading too')
+ => q{/\s*<h2><a[^<>]+>This\s+is\s+a\s+heading\s+too</a></h2>\s*$/},
   "heading building"
 );
 
 ok(x(
-'=head3 This is a heading')
- => qq{\n<h3><a name="This_is_a_heading"\n>This is a heading</a></h3>\n},
+'=head3 Also, this is a heading')
+ => q{/\s*<h3><a[^<>]+>Also,\s+this\s+is\s+a\s+heading</a></h3>\s*$/},
   "heading building"
 );
 
+
 ok(x(
-'=head4 This is a heading')
- => qq{\n<h4><a name="This_is_a_heading"\n>This is a heading</a></h4>\n},
+'=head4 This, too, is a heading')
+ => q{/\s*<h4><a[^<>]+>This,\s+too,\s+is\s+a\s+heading</a></h4>\s*$/},
   "heading building"
 );
 

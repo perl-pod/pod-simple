@@ -1,6 +1,7 @@
 ^MANIFEST\.bak$
 ^[-_a-zA-Z0-9]+[0-9]+\.[0-9]+(?:_[0-9]+)?$
 \.out$
+delme
 Makefile(\.old)?$
 \.rej$
 CVS

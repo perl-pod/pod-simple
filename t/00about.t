@@ -1,18 +1,45 @@
 
 require 5;
-# Time-stamp: "2003-11-01 23:18:44 AST"
+# Time-stamp: "2004-05-23 19:48:32 ADT"
 
 # Summary of, well, things.
 
+use strict;
 use Test;
-BEGIN {plan tests => 2};
+my @modules;
+BEGIN {
+  @modules = qw(
+
+Pod::Escapes
+
+Pod::Simple	
+Pod::Simple::BlackBox	Pod::Simple::Checker	Pod::Simple::DumpAsText
+Pod::Simple::DumpAsXML	Pod::Simple::HTML	Pod::Simple::HTMLBatch
+Pod::Simple::HTMLLegacy	Pod::Simple::LinkSection	Pod::Simple::Methody
+Pod::Simple::Progress	Pod::Simple::PullParser
+Pod::Simple::PullParserEndToken	Pod::Simple::PullParserStartToken
+Pod::Simple::PullParserTextToken	Pod::Simple::PullParserToken
+Pod::Simple::RTF	Pod::Simple::Search	Pod::Simple::SimpleTree
+Pod::Simple::Text	Pod::Simple::TextContent	Pod::Simple::TiedOutFH
+Pod::Simple::Transcode	Pod::Simple::XMLOutStream
+
+  );
+  plan tests => 2 + @modules;
+};
 
 ok 1;
 
 #chdir "t" if -e "t";
-use Pod::Simple;
-use Pod::Escapes;
-use Pod::Simple::Transcode;
+foreach my $m (@modules) {
+  print "# Loading $m ...\n";
+  eval "require $m;";
+  unless($@) { ok 1; next }
+  my $e = $@;
+  $e =~ s/\s+$//s;
+  $e =~ s/[\n\r]+/\n# > /;
+  print "# Error while trying to load $m --\n# > $e\n";
+  ok 0;
+}
 
 {
   my @out;
@@ -40,8 +67,8 @@ use Pod::Simple::Transcode;
     next if $this eq 'main'; # %main:: is %::
 
     #print "Peeking at $this => ${$this . '::VERSION'}\n";
-    
-    if(defined ${$this . '::VERSION'} ) {
+    no strict 'refs';
+    if( defined ${$this . '::VERSION'} ) {
       $v{$this} = ${$this . '::VERSION'}
     } elsif(
        defined *{$this . '::ISA'} or defined &{$this . '::import'}
@@ -56,13 +83,14 @@ use Pod::Simple::Transcode;
     }
     
     $pref = length($this) ? "$this\::" : '';
-    push @stack, map m/^(.+)::$/ ? "$pref$1" : (), keys %{$this . '::'};
+    push @stack, map m/^(.+)::$/ ? "$pref$1" : (),
+        do { no strict 'refs'; keys %{$this . '::'} };
     #print "Stack: @stack\n";
   }
   push @out, " Modules in memory:\n";
   delete @v{'', '[none]'};
   foreach my $p (sort {lc($a) cmp lc($b)} keys %v) {
-    $indent = ' ' x (2 + ($p =~ tr/:/:/));
+    my $indent = ' ' x (2 + ($p =~ tr/:/:/));
     push @out,  '  ', $indent, $p, defined($v{$p}) ? " v$v{$p};\n" : ";\n";
   }
   push @out, sprintf "[at %s (local) / %s (GMT)]\n",

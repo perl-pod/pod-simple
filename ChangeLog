@@ -1,6 +1,28 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2004-05-07 15:25:25 ADT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2004-05-24 02:05:45 ADT"
 #---------------------------------------------------------------------------
 
+2004-05-24   Sean M. Burke <sburke@cpan.org>
+	* Relesae 3.01
+
+	No big changes to the main modules, but there's many changes to
+	the important Pod::Simple::HTML module.
+
+	Also, new modules:
+	  Pod::Simple::HTMLBatch
+	  Pod::Simple::HTMLLegacy
+	  Pod::Simple::Progress
+	  Pod::Simple::Search
+	and tests for these (well, most).
+
+	Some prettying up of the Makefile.PL.
+
+	The test 00about.t is a bit more careful and verbose now.
+
+	The docs are still incomplete, esp. for Pod::Simple::HTML and
+	Pod::Simple::HTMLBatch, which I hope to improve quite soon.
+	
+	
+	
 2004-05-07   Sean M. Burke <sburke@cpan.org>
 	* Release 2.06
 

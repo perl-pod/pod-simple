@@ -28,3 +28,6 @@
 =cut
 
 
+The above is the Olympic Hymn, by Kostis Palamas.
+Yup, it's in Greek.
+
