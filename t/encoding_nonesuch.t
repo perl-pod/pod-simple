@@ -2,7 +2,7 @@
 #use Pod::Simple::Debug (10);
 use Test;
 use File::Spec;
-use utf8;
+#use utf8;
 use strict;
 #use Pod::Simple::Debug (10);
 

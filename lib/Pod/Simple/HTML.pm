@@ -5,12 +5,10 @@ use strict;
 use Pod::Simple::PullParser ();
 use vars qw(@ISA %Tagmap $Computerese $Lame $Linearization_Limit $VERSION);
 @ISA = ('Pod::Simple::PullParser');
-$VERSION = '2.01';
+$VERSION = '2.02';
 
 use UNIVERSAL ();
 sub DEBUG () {0}
-
-use utf8;
 
 $Computerese =  " lang='und' xml:lang='und'" unless defined $Computerese;
 $Lame = ' class="pad"' unless defined $Lame;

@@ -4,7 +4,6 @@ package Pod::Simple::LinkSection;
   # Based somewhat dimly on Array::Autojoin
 
 use strict;
-use utf8;
 use Pod::Simple::BlackBox;
 
 use overload( # So it'll stringify nice

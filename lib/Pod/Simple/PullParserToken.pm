@@ -3,9 +3,8 @@ require 5;
 package Pod::Simple::PullParserToken;
  # Base class for tokens gotten from Pod::Simple::PullParser's $parser->get_token
 @ISA = ();
-$VERSION = '2.01';
+$VERSION = '2.02';
 use strict;
-use utf8;
 
 sub new {  # Class->new('type', stuff...);  ## Overridden in derived classes anyway
   my $class = shift;

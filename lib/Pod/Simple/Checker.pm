@@ -5,19 +5,18 @@
 require 5;
 package Pod::Simple::Checker;
 use strict;
-use utf8;
 use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
 use vars qw( @ISA $VERSION );
-$VERSION = '2.01';
+$VERSION = '2.02';
 @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG
           : sub() {0}
       }
 
-use Text::Wrap 2001.0131 ();
+use Text::Wrap 98.112902 (); # was 2001.0131, but I don't think we need that
 $Text::Wrap::wrap = 'overflow';
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

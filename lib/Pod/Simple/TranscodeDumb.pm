@@ -5,7 +5,7 @@ require 5;
 package Pod::Simple::TranscodeDumb;
 use strict;
 use vars qw($VERSION %Supported);
-$VERSION = '2.01';
+$VERSION = '2.02';
 # This module basically pretends it knows how to transcode, except
 #  only for null-transcodings!  We use this when Encode isn't
 #  available.
@@ -39,7 +39,22 @@ sub make_transcoder {
   my($e) = $_[1];
   die "WHAT ENCODING!?!?" unless $e;
   my $x;
-  return sub {;}; # no-opn
+  return sub {;
+    #foreach $x (@_) {
+    #  if(Pod::Simple::ASCII and !Pod::Simple::UNICODE and $] > 5.005) {
+    #    # We're in horrible gimp territory, so we need to knock out
+    #    # all the highbit things
+    #    $x =
+    #      pack 'C*',
+    #      map {; ($_ < 128) ? $_ : 0x7e }
+    #      unpack "C*",
+    #      $x
+    #    ;
+    #  }
+    #}
+    #
+    #return;
+  };
 }
 
 

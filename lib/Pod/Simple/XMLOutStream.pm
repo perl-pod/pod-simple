@@ -2,11 +2,10 @@
 require 5;
 package Pod::Simple::XMLOutStream;
 use strict;
-use utf8;
 use Carp ();
 use Pod::Simple ();
 use vars qw( $ATTR_PAD @ISA $VERSION $SORT_ATTRS);
-$VERSION = '2.01';
+$VERSION = '2.02';
 BEGIN {
   @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;

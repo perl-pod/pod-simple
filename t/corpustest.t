@@ -1,8 +1,9 @@
 
 #use Pod::Simple::Debug (10);
-use Test;
+use Test qw(plan ok skip);
+
 use File::Spec;
-use utf8;
+#use utf8;
 use strict;
 my(@testfiles, %xmlfiles, %wouldxml);
 #use Pod::Simple::Debug (10);
@@ -52,6 +53,12 @@ my $HACK = 1;
 #@testfiles = ('nonesuch.txt');
 
 ok 1;
+
+my $skippy =  ($] < 5.008) ? "skip because perl ($]) pre-dates v5.8.0" : 0;
+if($skippy) {
+  print "# This is just perl v$], so I'm skipping many many tests.\n";
+}
+
 {
   my @x = @testfiles;
   print "# Files to test:\n";
@@ -59,6 +66,7 @@ ok 1;
 }
 
 require Pod::Simple::DumpAsXML;
+
 
 foreach my $f (@testfiles) {
   my $xml = $xmlfiles{$f};
@@ -126,14 +134,19 @@ foreach my $f (@testfiles) {
     ok 1;
     next;
   }
-  
-  print "#  $outfilename and $xml don't match!\n";
-  ok 0;
+
+  if($skippy) {
+    skip $skippy, 0;
+  } else {
+    print "#  $outfilename and $xml don't match!\n";
+    ok 0;
+  }
 
 }
 
 
-print "#\n# I've been using Encode v", $Encode::VERSION || "(NONE)", "\n";
+print "#\n# I've been using Encode v",
+  $Encode::VERSION ? $Encode::VERSION : "(NONE)", "\n";
 print "# Byebye\n";
 ok 1;
 print "# --- Done with ", __FILE__, " --- \n";

@@ -2,10 +2,9 @@
 require 5;
 package Pod::Simple::Methody;
 use strict;
-use utf8;
 use Pod::Simple ();
 use vars qw(@ISA $VERSION);
-$VERSION = '2.01';
+$VERSION = '2.02';
 @ISA = ('Pod::Simple');
 
 # Yes, we could use named variables, but I want this to be impose

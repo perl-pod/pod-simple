@@ -1,7 +1,6 @@
 
 require 5;
 package Pod::Simple::RTF;
-use utf8;
 
 #sub DEBUG () {4};
 #sub Pod::Simple::DEBUG () {4};
@@ -9,7 +8,7 @@ use utf8;
 
 use strict;
 use vars qw($VERSION @ISA %Escape $WRAP %Tagmap);
-$VERSION = '2.01';
+$VERSION = '2.02';
 use Pod::Simple::PullParser ();
 BEGIN {@ISA = ('Pod::Simple::PullParser')}
 

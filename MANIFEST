@@ -30,6 +30,8 @@ Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 README
+t/00about.t
+t/20_skip_before_58.t
 t/ac_c_extend.t
 t/ac_c_simple.t
 t/ac_d.t
@@ -96,6 +98,7 @@ t/corpus_not_yet_impl/polish_utf8_bom2.xml
 t/corpustest.t
 t/encoding_nonesuch.t
 t/encoding_not_error.t
+t/encoding_not_error0.t
 t/fcodes.t
 t/fcodes_ee.t
 t/fcodes_ell.t

@@ -20,7 +20,6 @@ package Pod::Simple::BlackBox;
 # Every node in a treelet is a ['name', {attrhash}, ...children...]
 
 use integer; # vroom!
-use utf8;
 use strict;
 use Carp ();
 BEGIN {

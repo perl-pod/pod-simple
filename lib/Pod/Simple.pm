@@ -8,7 +8,7 @@ use integer;
 use Pod::Escapes 1.03 ();
 use Pod::Simple::LinkSection ();
 use Pod::Simple::BlackBox ();
-use utf8;
+#use utf8;
 
 use vars qw(
   $VERSION @ISA
@@ -18,7 +18,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '2.04';
+$VERSION = '2.05';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -39,9 +39,13 @@ BEGIN {
   unless(MANY_LINES() >= 1) {
     die "MANY_LINES is too small (", MANY_LINES(), ")!\nAborting";
   }
+  if(defined &UNICODE) { }
+  elsif($] >= 5.008)   { *UNICODE = sub() {1}  }
+  else                 { *UNICODE = sub() {''} }
 }
 if(DEBUG > 2) {
   print "# We are ", ASCII ? '' : 'not ', "in ASCII-land\n";
+  print "# We are under a Unicode-safe Perl.\n";
 }
 
 # Design note:
@@ -1236,7 +1240,7 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
 sub _treat_Es {
   my($self,@stack) = @_;
 
-  my($i, $treelet, $content, $replacer);
+  my($i, $treelet, $content, $replacer, $charnum);
   my $start_line = $stack[0][1]{'start_line'};
 
   # A recursive algorithm implemented iteratively!  Whee!
@@ -1295,12 +1299,21 @@ sub _treat_Es {
 
       DEBUG > 1 and print "Ogling E<$content>\n";
 
-      if(defined( $replacer = Pod::Escapes::e2char($content) )) {
-        DEBUG > 1 and print "Replacing E<$content> with $replacer\n";
-      } else {
-        DEBUG > 1 and print "I don't know how to deal with E<$content>\n";
+      $charnum  = Pod::Escapes::e2charnum($content);
+      DEBUG > 1 and print " Considering E<$content> with char ",
+        defined($charnum) ? $charnum : "undef", ".\n";
+
+      if(!defined( $charnum )) {
+        DEBUG > 1 and print "I don't know how to deal with E<$content>.\n";
         $self->whine( $start_line, "Unknown E content in E<$content>" );
         $replacer = "E<$content>"; # better than nothing
+      } elsif($charnum >= 255 and !UNICODE) {
+        $replacer = ASCII ? "\xA4" : "?";
+        DEBUG > 1 and print "This Perl version can't handle ", 
+          "E<$content> (chr $charnum), so replacing with $replacer\n";
+      } else {
+        $replacer = Pod::Escapes::e2char($content);
+        DEBUG > 1 and print " Replacing E<$content> with $replacer\n";
       }
 
       splice(@$treelet, $i, 1, $replacer); # no need to back up $i, tho

@@ -1,6 +1,18 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-10-10 15:46:36 ADT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-11-04 23:16:23 AST"
 #---------------------------------------------------------------------------
 
+2003-11-04  Sean M. Burke <sburke@cpan.org>
+	* Release 2.05 -- bugfix version
+
+	In an attempt to stop Perl 5.6 versions from going completely
+	crazy, I've tried to basically turn off all Unicode/utf8 support
+	under 5.6. Under 5.8 and above, Unicode should work fine, and
+	under 5.6, all Unicode characters should be replaced with a little
+	"can't render" symbol, either a "¤" or a "?".
+	Many many thanks to Jarkko Hietaniemi for helping out.
+
+	(Works under 5.005 now too?)
+	
 2003-10-10  Sean M. Burke <sburke@cpan.org>
 	* Release 2.04 -- minor bugfix version
 

@@ -1,12 +1,11 @@
 
 require 5;
 package Pod::Simple::PullParser;
-$VERSION = '2.01';
+$VERSION = '2.02';
 use Pod::Simple ();
 BEGIN {@ISA = ('Pod::Simple')}
 
 use strict;
-use utf8;
 use Carp ();
 
 use Pod::Simple::PullParserStartToken;
