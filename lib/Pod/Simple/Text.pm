@@ -2,11 +2,12 @@
 require 5;
 package Pod::Simple::Text;
 use strict;
+use utf8;
 use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
 use vars qw( @ISA $VERSION $FREAKYMODE);
-$VERSION = '1.02';
+$VERSION = '2.01';
 @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG

@@ -3,6 +3,7 @@ use strict;
 package Pod::Simple::TiedOutFH;
 use Symbol ('gensym');
 use Carp ();
+use utf8;
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -4,6 +4,7 @@ package Pod::Simple::PullParserStartToken;
 use Pod::Simple::PullParserToken ();
 @ISA = ('Pod::Simple::PullParserToken');
 use strict;
+use utf8;
 
 sub new {  # Class->new(tagname, optional_attrhash);
   my $class = shift;

@@ -3,10 +3,11 @@
 require 5;
 package Pod::Simple::SimpleTree;
 use strict;
+use utf8;
 use Carp ();
 use Pod::Simple ();
 use vars qw( $ATTR_PAD @ISA $VERSION $SORT_ATTRS);
-$VERSION = '1.01';
+$VERSION = '2.01';
 BEGIN {
   @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;

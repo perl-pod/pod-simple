@@ -2,6 +2,7 @@
 require 5;
 package Pod::Simple::Debug;
 use strict;
+use utf8;
 
 sub import {
   my($value,$variable);

@@ -3,10 +3,11 @@
 require 5;
 package Pod::Simple::TextContent;
 use strict;
+use utf8;
 use Carp ();
 use Pod::Simple ();
 use vars qw( @ISA $VERSION );
-$VERSION = '1.01';
+$VERSION = '2.01';
 @ISA = ('Pod::Simple');
 
 sub new {

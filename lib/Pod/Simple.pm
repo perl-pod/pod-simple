@@ -8,6 +8,7 @@ use integer;
 use Pod::Escapes 1.03 ();
 use Pod::Simple::LinkSection ();
 use Pod::Simple::BlackBox ();
+use utf8;
 
 use vars qw(
   $VERSION @ISA
@@ -16,7 +17,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '0.98';
+$VERSION = '2.01';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -350,6 +351,18 @@ sub parse_string_document {
   return $self;
 }
 
+sub _init_fh_source {
+  my($self, $source) = @_;
+
+  #DEBUG > 1 and print "Declaring $source as :raw for starters\n";
+  #$self->_apply_binmode($source, ':raw');
+  #binmode($source, ":raw");
+
+  return;
+}
+
+#:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.
+#
 
 sub parse_file {
   my($self, $source) = (@_);
@@ -369,7 +382,7 @@ sub parse_file {
       $self->{'source_filename'} = $source;
       $source = *PODSOURCE{IO};
     }
-    # TODO: file-discipline things here!
+    $self->_init_fh_source($source);
   }
   # By here, $source is a FH.
 
@@ -382,7 +395,6 @@ sub parse_file {
       push @lines, scalar(<$source>);  # readline
       last unless defined $lines[-1];
        # but pass thru the undef, which will set source_dead to true
-      #TODO: encoding thing here, to do stuff if $lines[-1] =~ m/=encoding/
     }
     $self->parse_lines(@lines);
   }
@@ -390,7 +402,7 @@ sub parse_file {
   return $self;
 }
 
-#-----------------------------------------------------------------------------
+#:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.
 
 sub parse_from_file {
   # An emulation of Pod::Parser's interface, for the sake of Perldoc.
@@ -480,6 +492,7 @@ sub _get_initial_item_type {
   # Else fall thru to the general case:
   return $self->_get_item_type($para);
 }
+
 
 
 sub _get_item_type {       # mutates the item!!

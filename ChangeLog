@@ -1,5 +1,23 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-01 20:52:05 ADT"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-09-01 22:42:51 ADT"
+#---------------------------------------------------------------------------
+	
+2003-09-01  Sean M. Burke <sburke@cpan.org>
+	* Release 2.01
+	* Moved all version numbers up to 2.01 for reasons of Tibetan
+	numerology.
+	
+	* Implemented =encoding.  Thanks a million to Jarkko, Autrijus,
+	Dan Kogai, and many others for their help, patience, and
+	encouragement.
 
+	It's not yet documented, but see ./t/corpus/*.txt for examples at
+	least.
+
+	* Added 'use utf8' to all the modules.  Byebye perl-5.005
+	compatibility, hello decent perl-5.6 compatibility.
+	
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	
 2003-09-01  Sean M. Burke <sburke@cpan.org>
 	* Release 0.98
 	* At Michael Schwern's suggestion, a list that begins with a

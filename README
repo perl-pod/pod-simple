@@ -1,5 +1,7 @@
-        Time-stamp: "2002-09-29 00:16:53 MDT"
+        Time-stamp: "2003-09-01 23:10:23 ADT"
 
-THIS IS A BETA RELEASE.  The modules are wildly underdocumented, and
-the APIs may change.
+This is a late-beta release of Pod::Simple, the module-suite for
+parsing Pod.
 
+There are still some gaps in the documentation, and Pod::Simple::HTML
+isn't yet all that it should be.

@@ -3,8 +3,9 @@ require 5;
 package Pod::Simple::PullParserToken;
  # Base class for tokens gotten from Pod::Simple::PullParser's $parser->get_token
 @ISA = ();
-$VERSION = 1.02;
+$VERSION = '2.01';
 use strict;
+use utf8;
 
 sub new {  # Class->new('type', stuff...);  ## Overridden in derived classes anyway
   my $class = shift;
@@ -24,8 +25,6 @@ __END__
 sub dump { '[' . _esc( @{ $_[0] } ) . ']' }
 
 # JUNK:
-#use utf8;   # Lame Perls would need this, if we generated Unicode
-# characters for them anyway.
 
 sub _esc {
   return '' unless @_;

@@ -1,12 +1,13 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         Pod-Simple
-version:      0.98
+version:      2.01
 version_from: ./lib/Pod/Simple.pm
 installdirs:  site
 requires:
     Pod::Escapes:                  1.03
     Text::Wrap:                    98.112902
+    utf8:                          0
 
 distribution_type: module
 generated_by: ExtUtils::MakeMaker version 6.16

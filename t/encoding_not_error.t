@@ -1,7 +1,7 @@
 
 use strict;
 use Test;
-BEGIN { plan tests => 5 };
+BEGIN { plan tests => 4 };
 
 #use Pod::Simple::Debug (5);
 
@@ -23,14 +23,6 @@ my @output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( q{
 =cut
 
 } );
-
-if(grep m/=encoding/ && m/not yet implemented/, @output_lines ) {
-  ok 1;
-} else {
-  ok 0;
-  print "# I saw no warning about \"=encoding...not yet implemented\" here:\n",
-    map("#==> $_\n", @output_lines), "#\n#\n";
-}
 
 
 if(grep m/Unknown directive/i, @output_lines ) {

@@ -20,6 +20,7 @@ package Pod::Simple::BlackBox;
 # Every node in a treelet is a ['name', {attrhash}, ...children...]
 
 use integer; # vroom!
+use utf8;
 use strict;
 use Carp ();
 BEGIN {
@@ -31,6 +32,7 @@ BEGIN {
 
 sub parse_line { shift->parse_lines(@_) } # alias
 
+# - - -  Turn back now!  Run away!  - - -
 
 sub parse_lines {             # Usage: $parser->parse_lines(@lines)
   # an undef means end-of-stream
@@ -62,7 +64,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       DEBUG > 4 and print "# Source is dead.\n";
       last;
     }
-    
+
     unless( defined $source_line ) {
       DEBUG > 4 and print "# Undef-line seen.\n";
 
@@ -73,11 +75,51 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       $self->_ponder_paragraph_buffer;
       next;
     }
-    ++$self->{'line_count'};
 
-    ($line = $source_line) =~ tr/\n\r//d;
-     # If we don't have two vars, we'll end up with that there
-     # tr/// modding the (potentially read-only) original source line!
+
+    if( $self->{'line_count'}++ ) {
+      ($line = $source_line) =~ tr/\n\r//d;
+       # If we don't have two vars, we'll end up with that there
+       # tr/// modding the (potentially read-only) original source line!
+    
+    } else {
+      DEBUG > 2 and print "First line: [$line]\n";
+
+      if( ($line = $source_line) =~ s/^\xEF\xBB\xBF//s ) {
+        DEBUG and print "UTF-8 BOM seen.  Faking a '=encode utf8'.\n";
+        $self->_handle_encoding_line( "=encode utf8" );
+        $line =~ tr/\n\r//d;
+        
+      } elsif( $line =~ s/^\xFE\xFF//s ) {
+        DEBUG and print "Big-endian UTF-16 BOM seen.  Aborting parsing.\n";
+        $self->scream(
+          $self->{'line_count'},
+          "UTF16-BE Byte Encoding Mark found; but Pod::Simple v$Pod::Simple::VERSION doesn't implement UTF16 yet."
+        );
+        splice @_;
+        push @_, undef;
+        next;
+
+        # TODO: implement somehow?
+
+      } elsif( $line =~ s/^\xFF\xFE//s ) {
+        DEBUG and print "Little-endian UTF-16 BOM seen.  Aborting parsing.\n";
+        $self->scream(
+          $self->{'line_count'},
+          "UTF16-LE Byte Encoding Mark found; but Pod::Simple v$Pod::Simple::VERSION doesn't implement UTF16 yet."
+        );
+        splice @_;
+        push @_, undef;
+        next;
+
+        # TODO: implement somehow?
+        
+      } else {
+        DEBUG > 2 and print "First line is BOM-less.\n";
+        ($line = $source_line) =~ tr/\n\r//d;
+      }
+    }
+
 
     DEBUG > 5 and print "# Parsing line: [$line]\n";
 
@@ -107,6 +149,9 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
          if $code_handler;
         # Note: this may cause code to be processed out of order relative
         #  to pods, but in order relative to cuts.
+        
+        # Note also that we haven't yet applied the transcoding to $line
+        #  by time we call $code_handler!
 
         if( $line =~ m/^#\s*line\s+(\d+)\s*(?:\s"([^"]+)")?\s*$/ ) {
           # That RE is from perlsyn, section "Plain Old Comments (Not!)",
@@ -122,6 +167,14 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     
     # . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     # Else we're in pod mode:
+
+    # Apply any necessary transcoding:
+    $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
+
+    # HERE WE CATCH =encoding EARLY!
+    if( $line =~ m/^=encoding\s+\S+\s*$/s ) {
+      $line = $self->_handle_encoding_line( $line );
+    }
 
     if($line =~ m/^=cut/s) {
       # here ends the pod block, and therefore the previous pod para
@@ -157,6 +210,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
          # Example: ['=head1', {'start_line' => 123}, ' foo']
         
         ++$self->{'pod_para_count'};
+        
         $self->_ponder_paragraph_buffer();
          # by now it's safe to consider the previous paragraph as done.
                 
@@ -164,7 +218,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
         DEBUG > 1 and print "Starting new ${$paras}[-1][0] para at line ${$self}{'line_count'}\n";
         
       } elsif($line =~ m/^\s/s) {
-      
+
         if(!$self->{'start_of_pod_block'} and @$paras and $paras->[-1][0] eq '~Verbatim') {
           DEBUG > 1 and print "Resuming verbatim para at line ${$self}{'line_count'}\n";
           push @{$paras->[-1]}, $line;
@@ -204,7 +258,138 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+sub _handle_encoding_line {
+  my($self, $line) = @_;
+  
+  # The point of this routine is to set $self->{'_transcoder'} as indicated.
+
+  return $line unless $line =~ m/^=encoding\s+(\S+)\s*$/s;
+  DEBUG > 1 and print "Found an encoding line \"=encoding $1\"\n";
+
+  my $e    = $1;
+  my $orig = $e;
+  push @{ $self->{'encoding_command_reqs'} }, "=encoding $orig";
+
+  my $enc_error;
+
+  # Cf.   perldoc Encode   and   perldoc Encode::Supported
+
+  require Pod::Simple::Transcode;
+
+  if( $self->{'encoding'} ) {
+    my $norm_current = $self->{'encoding'};
+    my $norm_e = $e;
+    foreach my $that ($norm_current, $norm_e) {
+      $that =  lc($that);
+      $that =~ s/[-_]//g;
+    }
+    if($norm_current eq $norm_e) {
+      DEBUG > 1 and print "The '=encoding $orig' line is ",
+       "redundant.  ($norm_current eq $norm_e).  Ignoring.\n";
+      $enc_error = '';
+       # But that doesn't necessarily mean that the earlier one went okay
+    } else {
+      $enc_error = "Can't do '=encoding $orig' because encoding is already "
+       . $self->{'encoding'};
+      DEBUG > 1 and print $enc_error;
+    }
+  } elsif (
+    # OK, let's turn on the encoding
+    do {
+      DEBUG > 1 and print " Setting encoding to $e\n";
+      $self->{'encoding'} = $e;
+      1;
+    }
+    and $e eq 'HACKRAW'
+  ) {
+    DEBUG and print " Putting in HACKRAW (no-op) encoding mode.\n";
+
+  } elsif( Pod::Simple::Transcode::->encoding_is_available($e) ) {
+
+    die($enc_error = "WHAT? _transcoder is already set?!")
+     if $self->{'_transcoder'};   # should never happen
+    require Pod::Simple::Transcode;
+    $self->{'_transcoder'} = Pod::Simple::Transcode::->make_transcoder($e);
+    eval {
+      my @x = ('', "abc", "123");
+      $self->{'_transcoder'}->(@x);
+    };
+    $@ && die( $enc_error =
+      "Really unexpected error setting up encoding $e: $@\nAborting"
+    );
+
+  } else {
+    my @supported = Pod::Simple::Transcode::->all_encodings;
+
+    # Note unsupported, and complain
+    DEBUG and print " Encoding [$e] is unsupported.",
+      "\nSupporteds: @supported\n";
+    my $suggestion = '';
+
+    # Look for a near match:
+    my $norm = lc($e);
+    $norm =~ tr[-_][]d;
+    my $n;
+    foreach my $enc (@supported) {
+      $n = lc($enc);
+      $n =~ tr[-_][]d;
+      next unless $n eq $norm;
+      $suggestion = "  (Maybe \"$e\" should be \"$enc\"?)";
+      last;
+    }
+    my $encmodver = Pod::Simple::Transcode::->encmodver;
+    $enc_error = join '' =>
+      "This document probably does not appear as it should, because its ",
+      "\"=encoding $e\" line calls for an unsupported encoding.",
+      $suggestion, "  [$encmodver\'s supported encodings are: @supported]"
+    ;
+
+  }
+  $enc_error and $self->scream( $self->{'line_count'}, $enc_error );
+  push @{ $self->{'encoding_command_statuses'} }, $enc_error;
+
+  return '=encoding ALREADYDONE';
+}
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+sub _handle_encoding_second_level {
+  # By time this is called, the encoding (if well formed) will already
+  #  have been acted one.
+  my($self, $para) = @_;
+  my @x = @$para;
+  my $content = join ' ', splice @x, 2;
+  $content =~ s/^\s+//s;
+  $content =~ s/\s+$//s;
+
+  DEBUG > 2 and print "Ogling encoding directive: =encoding $content\n";
+  
+  if($content eq 'ALREADYDONE') {
+    # It's already been handled.  Check for errors.
+    if(! $self->{'encoding_command_statuses'} ) {
+      DEBUG > 2 and print " CRAZY ERROR: It wasn't really handled?!\n";
+    } elsif( $self->{'encoding_command_statuses'}[-1] ) {
+      #$self->whine( $para->[1]{'start_line'},
+      #  sprintf "Couldn't do %s: %s",
+      #    $self->{'encoding_command_reqs'  }[-1],
+      #    $self->{'encoding_command_statuses'}[-1],
+      #);
+    } else {
+      DEBUG > 2 and print " (Yup, it was successfully handled already.)\n";
+    }
+    
+  } else {
+    # Otherwise it's a syntax error
+    $self->whine( $para->[1]{'start_line'},
+      "Invalid =encoding syntax: $content"
+    );
+  }
+  
+  return;
+}
+
+#~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`
+
 {
 my $m = -321;   # magic line number
 
@@ -881,14 +1066,8 @@ sub _ponder_paragraph_buffer {
         $self->_ponder_extend($para);
         next;  # and skip
       } elsif($para_type eq '=encoding') {
-        $self->scream(
-          $self->{'line_count'},
-          "This document probably"
-         ." does not appear as it should, because it contains an"
-         ." \"=encoding $$para[2]\" command.  The \"=encoding\" command"
-         ." is not yet implemented in this Pod::Simple"
-         ." version (v$Pod::Simple::VERSION)."
-        );
+        # Not actually acted on here, but we catch errors here.
+        $self->_handle_encoding_second_level($para);
 
         next;  # and skip
       } elsif($para_type eq '~Verbatim') {

@@ -1,7 +1,8 @@
 
 require 5;
 package Pod::Simple::DumpAsText;
-$VERSION = '1.02';
+$VERSION = '2.01';
+use utf8;
 use Pod::Simple ();
 BEGIN {@ISA = ('Pod::Simple')}
 

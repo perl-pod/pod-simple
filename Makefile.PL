@@ -1,11 +1,13 @@
 # This -*- perl -*- script writes the Makefile for Pod::Simple
 #
-# Time-stamp: "2002-09-11 01:22:50 MDT"
+# Time-stamp: "2003-09-01 22:39:09 ADT"
 #
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 #
-require 5.004;
+
+require 5.006;  # because of all our utf8 stuff.
+
 use strict;
 use ExtUtils::MakeMaker;
 
@@ -17,6 +19,7 @@ WriteMakefile
      PREREQ_PM	  	=> {
 			     'Text::Wrap' => '98.112902',
 			     'Pod::Escapes' => '1.03',
+			     'utf8' => '0',
 			   },
      # INSTALLDIRS        => 'perl',
     );
