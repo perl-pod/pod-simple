@@ -1,6 +1,25 @@
-# ChangeLog for Pod::Simple dist     # Time-stamp: "2003-11-04 23:16:23 AST"
+# ChangeLog for Pod::Simple dist     # Time-stamp: "2004-05-07 15:25:25 ADT"
 #---------------------------------------------------------------------------
 
+2004-05-07   Sean M. Burke <sburke@cpan.org>
+	* Release 2.06
+
+	Allison Randal brilliantly refactors a huge monolithic sub in
+	Blackbox.pm.  Code is now actually sanely readable!
+
+	I add the new option-attributes fullstop_space_harden and
+	codes_in_verbatim, and the two methods abandon_output_string and
+        abandon_output_fh.  Not yet documented.
+
+	New test fullstop_spaces.t and new corpus document
+	greek_iso_8859_7.pod.
+	
+	Another version should be forthcoming in a few days that has the
+	new Pod::Simple::HTML stuff in it.
+
+	Note to self: document =extend and =encoding in perlpodspec ASAP!
+
+	
 2003-11-04  Sean M. Burke <sburke@cpan.org>
 	* Release 2.05 -- bugfix version
 

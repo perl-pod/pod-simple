@@ -18,7 +18,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '2.05';
+$VERSION = '2.06';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -80,12 +80,16 @@ __PACKAGE__->_accessorize(
   'bare_output',       # For some subclasses: whether to prepend
                        #  header-code and postpend footer-code
 
+  'fullstop_space_harden', # Whether to turn ".  " into ".[nbsp] ";
+
   'nix_X_codes',       # whether to ignore X<...> codes
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events
 
  'content_seen',      # whether we've seen any real Pod content
  'errors_seen',       # TODO: document.  whether we've seen any errors (fatal or not)
+
+ 'codes_in_verbatim', # for PseudoPod extensions
 
  'code_handler',      # coderef to call when a code (non-pod) line is seen
  'cut_handler',       # coderef to call when a =cut line is seen
@@ -139,8 +143,16 @@ sub output_string {
   $$x = '' unless defined $$x;
   DEBUG > 4 and print "# Output string set to $x ($$x)\n";
   $this->{'output_fh'} = Pod::Simple::TiedOutFH->handle_on($_[0]);
-  return $this->{'output_string'} = ${ $this->{'output_fh'} };
+  return
+    $this->{'output_string'} = $_[0];
+    #${ ${ $this->{'output_fh'} } };
 }
+
+sub abandon_output_string { $_[0]->abandon_output_fh; delete $_[0]{'output_string'} }
+sub abandon_output_fh     { $_[0]->output_fh(undef) }
+# These don't delete the string or close the FH -- they just delete our
+#  references to it/them.
+# TODO: document these
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1008,7 +1020,9 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
       ) {
         $treelet->[$i][1]{'type'} = 'url';
         $treelet->[$i][1]{'content-implicit'} = 'yes';
-        
+
+        # TODO: deal with rel: URLs here?
+
         if( 3 == @{ $treelet->[$i] } ) {
           # But if it IS just one text node (most common case)
           DEBUG > 1 and printf qq{Catching "%s as " as ho-hum L<URL> link.\n},

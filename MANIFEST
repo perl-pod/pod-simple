@@ -54,6 +54,8 @@ t/corpus/french_implicit_latin1.txt
 t/corpus/french_implicit_latin1.xml
 t/corpus/french_latin1.txt
 t/corpus/french_latin1.xml
+t/corpus/greek_iso_8859_7.pod
+t/corpus/greek_iso_8859_7.xml
 t/corpus/haiku-iso2202jp.txt
 t/corpus/haiku-iso2202jp.xml
 t/corpus/haiku-iso2202jpx.txt
@@ -105,6 +107,7 @@ t/fcodes_ell.t
 t/fcodes_ess.t
 t/for.t
 t/fornot.t
+t/fullstop_spaces.t
 t/head_ends_over.t
 t/heads.t
 t/html-para.t
