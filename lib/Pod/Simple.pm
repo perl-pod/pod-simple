@@ -18,7 +18,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '3.02';
+$VERSION = '3.03';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
@@ -85,6 +85,8 @@ __PACKAGE__->_accessorize(
   'nix_X_codes',       # whether to ignore X<...> codes
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events
+
+  'preserve_whitespace', # whether to try to keep whitespace as-is
 
  'content_seen',      # whether we've seen any real Pod content
  'errors_seen',       # TODO: document.  whether we've seen any errors (fatal or not)
@@ -1371,7 +1373,7 @@ sub _change_S_to_nbsp { #  a recursive function
         $i +=  @$to_pull_up - 1;   # Make $i skip the pulled-up stuff
       }
     } else {
-      $treelet->[$i] =~ tr/ /\xA0/ if ASCII and $in_s;
+      $treelet->[$i] =~ s/\s/\xA0/g if ASCII and $in_s;
        # (If not in ASCIIland, we can't assume that \xA0 == nbsp.)
        
        # Note that if you apply nbsp_for_S to text, and so turn
