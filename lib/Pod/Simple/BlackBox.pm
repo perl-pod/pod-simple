@@ -1620,7 +1620,7 @@ sub _treelet_from_formatting_codes {
   
   my $treelet = ['~Top', {'start_line' => $start_line},];
   
-  unless ($preserve_space) {
+  unless ($preserve_space || $self->{'preserve_whitespace'}) {
     $para =~ s/\.  /\.\xA0 /g if $self->{'fullstop_space_harden'};
   
     $para =~ s/\s+/ /g; # collapse and trim all whitespace first.
@@ -1635,26 +1635,54 @@ sub _treelet_from_formatting_codes {
   my @lineage = ($treelet);
 
   DEBUG > 4 and print "Paragraph:\n$para\n\n";
-  
-  while($para =~  # Here begins our frightening tokenizer RE.
+ 
+  # Here begins our frightening tokenizer RE.  The following regex matches
+  # text in four main parts:
+  #
+  #  * Start-codes.  The first alternative matches C< or C<<, the latter
+  #    followed by some whitespace.  $1 will hold the entire start code
+  #    (including any space following a multiple-angle-bracket delimiter),
+  #    and $2 will hold only the additional brackets past the first in a
+  #    multiple-bracket delimiter.  length($2) + 1 will be the number of
+  #    closing brackets we have to find.
+  #
+  #  * Closing brackets.  Match some amount of whitespace followed by
+  #    multiple close brackets.  The logic to see if this closes anything
+  #    is down below.  Note that in order to parse C<<  >> correctly, we
+  #    have to use look-behind (?<=\s\s), since the match of the starting
+  #    code will have consumed the whitespace.
+  #
+  #  * A single closing bracket, to close a simple code like C<>.
+  #
+  #  * Something that isn't a start or end code.  We have to be careful
+  #    about accepting whitespace, since perlpodspec says that any whitespace
+  #    before a multiple-bracket closing delimiter should be ignored.
+  #
+  while($para =~
     m/\G
       (?:
-        ([A-Z]<(<+\ )?) # that's $1 and $2 for both kinds of start-codes
+        # Match starting codes, including the whitespace following a
+        # multiple-delimiter start code.  $1 gets the whole start code and
+        # $2 gets all but one of the <s in the multiple-bracket case.
+        ([A-Z]<(?:(<+)\s+)?)
         |
-        (\ >{2,})       # $3: end-codes of the type " >>", " >>>", etc.
+        # Match multiple-bracket end codes.  $3 gets the whitespace that
+        # should be discarded before an end bracket but kept in other cases
+        # and $4 gets the end brackets themselves.
+        (\s+|(?<=\s\s))(>{2,})
         |
-        (\ ?>)          # $4: simple end-codes
+        (\s?>)          # $5: simple end-codes
         |
-        (               # $5: stuff containing no start-codes or end-codes
+        (               # $6: stuff containing no start-codes or end-codes
           (?:
-            [^A-Z\ >]+
+            [^A-Z\s>]+
             |
             (?:
               [A-Z](?!<)
             )
             |
             (?:
-              \ (?!>)
+              \s(?!\s*>)
             )
           )+
         )
@@ -1665,7 +1693,7 @@ sub _treelet_from_formatting_codes {
     if(defined $1) {
       if(defined $2) {
         DEBUG > 3 and print "Found complex start-text code \"$1\"\n";
-        push @stack, length($1) - 1; 
+        push @stack, length($2) + 1; 
           # length of the necessary complex end-code string
       } else {
         DEBUG > 3 and print "Found simple start-text code \"$1\"\n";
@@ -1674,48 +1702,48 @@ sub _treelet_from_formatting_codes {
       push @lineage, [ substr($1,0,1), {}, ];  # new node object
       push @{ $lineage[-2] }, $lineage[-1];
       
-    } elsif(defined $3) {
-      DEBUG > 3 and print "Found apparent complex end-text code \"$3\"\n";
+    } elsif(defined $4) {
+      DEBUG > 3 and print "Found apparent complex end-text code \"$3$4\"\n";
       # This is where it gets messy...
       if(! @stack) {
         # We saw " >>>>" but needed nothing.  This is ALL just stuff then.
         DEBUG > 4 and print " But it's really just stuff.\n";
-        push @{ $lineage[-1] }, $3;
+        push @{ $lineage[-1] }, $3, $4;
         next;
       } elsif(!$stack[-1]) {
         # We saw " >>>>" but needed only ">".  Back pos up.
         DEBUG > 4 and print " And that's more than we needed to close simple.\n";
-        push @{ $lineage[-1] }, ' '; # That was a for-real space, too.
-        pos($para) = pos($para) - length($3) + 2;
-      } elsif($stack[-1] == length($3)) {
+        push @{ $lineage[-1] }, $3; # That was a for-real space, too.
+        pos($para) = pos($para) - length($4) + 1;
+      } elsif($stack[-1] == length($4)) {
         # We found " >>>>", and it was exactly what we needed.  Commonest case.
         DEBUG > 4 and print " And that's exactly what we needed to close complex.\n";
-      } elsif($stack[-1] < length($3)) {
+      } elsif($stack[-1] < length($4)) {
         # We saw " >>>>" but needed only " >>".  Back pos up.
         DEBUG > 4 and print " And that's more than we needed to close complex.\n";
-        pos($para) = pos($para) - length($3) + $stack[-1];
+        pos($para) = pos($para) - length($4) + $stack[-1];
       } else {
         # We saw " >>>>" but needed " >>>>>>".  So this is all just stuff!
         DEBUG > 4 and print " But it's really just stuff, because we needed more.\n";
-        push @{ $lineage[-1] }, $3;
+        push @{ $lineage[-1] }, $3, $4;
         next;
       }
       #print "\nHOOBOY ", scalar(@{$lineage[-1]}), "!!!\n";
-      
+
       push @{ $lineage[-1] }, '' if 2 == @{ $lineage[-1] };
       # Keep the element from being childless
       
       pop @stack;
       pop @lineage;
       
-    } elsif(defined $4) {
+    } elsif(defined $5) {
       DEBUG > 3 and print "Found apparent simple end-text code \"$4\"\n";
 
       if(@stack and ! $stack[-1]) {
         # We're indeed expecting a simple end-code
         DEBUG > 4 and print " It's indeed an end-code.\n";
 
-        if(length($4) == 2) { # There was a space there: " >"
+        if(length($5) == 2) { # There was a space there: " >"
           push @{ $lineage[-1] }, ' ';
         } elsif( 2 == @{ $lineage[-1] } ) { # Closing a childless element
           push @{ $lineage[-1] }, ''; # keep it from being really childless
@@ -1725,12 +1753,12 @@ sub _treelet_from_formatting_codes {
         pop @lineage;
       } else {
         DEBUG > 4 and print " It's just stuff.\n";
-        push @{ $lineage[-1] }, $4;
+        push @{ $lineage[-1] }, $5;
       }
 
-    } elsif(defined $5) {
-      DEBUG > 3 and print "Found stuff \"$5\"\n";
-      push @{ $lineage[-1] }, $5;
+    } elsif(defined $6) {
+      DEBUG > 3 and print "Found stuff \"$6\"\n";
+      push @{ $lineage[-1] }, $6;
       
     } else {
       # should never ever ever ever happen
