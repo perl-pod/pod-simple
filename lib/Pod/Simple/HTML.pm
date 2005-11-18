@@ -27,8 +27,8 @@ $Content_decl ||=
  q{<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" >};
 
 $HTML_EXTENSION = '.html' unless defined $HTML_EXTENSION;
-$Computerese =  " lang='und' xml:lang='und'" unless defined $Computerese;
-$LamePad = '<p class="pad"></p>' unless defined $LamePad;
+$Computerese =  "" unless defined $Computerese;
+$LamePad = '' unless defined $LamePad;
 
 $Linearization_Limit = 120 unless defined $Linearization_Limit;
  # headings/items longer than that won't get an <a name="...">
