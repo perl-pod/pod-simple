@@ -10,7 +10,7 @@ use vars qw(
   $Doctype_decl  $Content_decl
 );
 @ISA = ('Pod::Simple::PullParser');
-$VERSION = '3.01';
+$VERSION = '3.03';
 
 use UNIVERSAL ();
 BEGIN {
@@ -140,8 +140,9 @@ my @_to_accept;
   '/item-bullet' => "</li>$LamePad\n",
   '/item-number' => "</li>$LamePad\n",
   '/item-text'   => "</a></dt>$LamePad\n",
-  'Para_item'    => "\n<dd>",
-  '/Para_item'   => "</dd>$LamePad\n",
+  'item-body'    => "\n<dd>",
+  '/item-body'   => "</dd>\n",
+
 
   'B'      =>  "<b>",                  '/B'     =>  "</b>",
   'I'      =>  "<i>",                  '/I'     =>  "</i>",
@@ -406,7 +407,7 @@ sub index_as_html {
     
     $indent = '  '  x $level;
     push @out, sprintf
-      "%s<li class='indexItem indexItem%s'><a href='#%s'>%s</a></li>",
+      "%s<li class='indexItem indexItem%s'><a href='#%s'>%s</a>",
       $indent, $level, $anchorname, esc($text)
     ;
   }
@@ -419,6 +420,7 @@ sub index_as_html {
 sub _do_middle_main_loop {
   my $self = $_[0];
   my $fh = $self->{'output_fh'};
+  my $tagmap = $self->{'Tagmap'};
   
   my($token, $type, $tagname, $linkto, $linktype);
   my @stack;
@@ -443,7 +445,7 @@ sub _do_middle_main_loop {
         }
 
       } elsif ($tagname eq 'item-text' or $tagname =~ m/^head\d$/s) {
-        print $fh $self->{'Tagmap'}{$tagname} || next;
+        print $fh $tagmap->{$tagname} || next;
 
         my @to_unget;
         while(1) {
@@ -489,12 +491,13 @@ sub _do_middle_main_loop {
         next;
        
       } else {
-        if( $tagname =~ m/^over-(.+)$/s ) {
-          push @stack, $1;
-        } elsif( $tagname eq 'Para') {
-          $tagname = 'Para_item' if @stack and $stack[-1] eq 'text';
+        if( $tagname =~ m/^over-/s ) {
+          push @stack, '';
+        } elsif( $tagname =~ m/^item-/s and @stack and $stack[-1] ) {
+          print $fh $stack[-1];
+          $stack[-1] = '';
         }
-        print $fh $self->{'Tagmap'}{$tagname} || next;
+        print $fh $tagmap->{$tagname} || next;
         ++$dont_wrap if $tagname eq 'Verbatim' or $tagname eq "VerbatimFormatted"
           or $tagname eq 'X';
       }
@@ -502,11 +505,21 @@ sub _do_middle_main_loop {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     } elsif( $type eq 'end' ) {
       if( ($tagname = $token->tagname) =~ m/^over-/s ) {
-        pop @stack;
-      } elsif( $tagname eq 'Para' ) {
-        $tagname = 'Para_item' if @stack and $stack[-1] eq 'text';
+        if( my $end = pop @stack ) {
+          print $fh $end;
+        }
+      } elsif( $tagname =~ m/^item-/s and @stack) {
+        $stack[-1] = $tagmap->{"/$tagname"};
+        if( $tagname eq 'item-text' and defined(my $next = $self->get_token) ) {
+          $self->unget_token($next);
+          if( $next->type eq 'start' and $next->tagname !~ m/^item-/s ) {
+            print $fh $tagmap->{"/item-text"},$tagmap->{"item-body"};
+            $stack[-1] = $tagmap->{"/item-body"};
+          }
+        }
+        next;
       }
-      print $fh $self->{'Tagmap'}{"/$tagname"} || next;
+      print $fh $tagmap->{"/$tagname"} || next;
       --$dont_wrap if $tagname eq 'Verbatim' or $tagname eq 'X';
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
