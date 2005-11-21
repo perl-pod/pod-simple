@@ -839,6 +839,14 @@ true for an HTML formatter class should omit the
 If you want to set this to true, you should probably also set
 C<no_whining> or at least C<no_errata_section> to true.
 
+=item C<< $parser->preserve_whitespace( I<SOMEVALUE> ) >>
+
+If you set this attribute to a true value, the parser will try to
+preserve whitespace in the output.  This means that such formatting
+conventions as two spaces after periods will be preserved by the parser.
+This is primarily useful for output formats that treat whitespace as
+significant (such as text or *roff, but not HTML).
+
 =back
 
 
