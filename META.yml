@@ -1,7 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         Pod-Simple
-version:      3.02
+version:      3.03
 version_from: lib/Pod/Simple.pm
 installdirs:  site
 requires:
