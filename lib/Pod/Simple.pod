@@ -209,7 +209,9 @@ merchantability or fitness for a particular purpose.
 
 =head1 AUTHOR
 
-Sean M. Burke C<sburke@cpan.org>
+Original author: Sean M. Burke C<sburke@cpan.org>
+
+Maintained by: Allison Randal C<allison@perl.org>
 
 =cut
 
