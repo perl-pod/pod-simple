@@ -43,33 +43,33 @@ sub start_item_bullet { $_[0]{'scratch'} = '<li>' }
 sub start_item_number { $_[0]{'scratch'} = "<li>$_[1]{'number'}. "  }
 sub start_item_text   { $_[0]{'scratch'} = '<li>'   }
 
-sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; $_[0]->emit() }
-sub start_over_text   { $_[0]{'scratch'} = '<ul>'; $_[0]->emit() }
-sub start_over_block  { $_[0]{'scratch'} = '<ul>'; $_[0]->emit() }
-sub start_over_number { $_[0]{'scratch'} = '<ol>'; $_[0]->emit() }
+sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
+sub start_over_text   { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
+sub start_over_block  { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
+sub start_over_number { $_[0]{'scratch'} = '<ol>'; $_[0]->emit }
 
-sub end_over_bullet { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit() }
-sub end_over_text   { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit() }
-sub end_over_block  { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit() }
-sub end_over_number { $_[0]{'scratch'} .= '</ol>'; $_[0]->emit() }
+sub end_over_bullet { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
+sub end_over_text   { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
+sub end_over_block  { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
+sub end_over_number { $_[0]{'scratch'} .= '</ol>'; $_[0]->emit }
 
 # . . . . . Now the actual formatters:
 
-sub end_Para     { $_[0]{'scratch'} .= '</p>'; $_[0]->emit() }
+sub end_Para     { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 sub end_Verbatim {
     $_[0]{'scratch'}     .= '</code></pre>';
     $_[0]{'in_verbatim'}  = 0;
-    $_[0]->emit();
+    $_[0]->emit;
 }
 
-sub end_head1       { $_[0]{'scratch'} .= '</h1>'; $_[0]->emit() }
-sub end_head2       { $_[0]{'scratch'} .= '</h2>'; $_[0]->emit() }
-sub end_head3       { $_[0]{'scratch'} .= '</h3>'; $_[0]->emit() }
-sub end_head4       { $_[0]{'scratch'} .= '</h4>'; $_[0]->emit() }
+sub end_head1       { $_[0]{'scratch'} .= '</h1>'; $_[0]->emit }
+sub end_head2       { $_[0]{'scratch'} .= '</h2>'; $_[0]->emit }
+sub end_head3       { $_[0]{'scratch'} .= '</h3>'; $_[0]->emit }
+sub end_head4       { $_[0]{'scratch'} .= '</h4>'; $_[0]->emit }
 
-sub end_item_bullet { $_[0]{'scratch'} .= '</li>'; $_[0]->emit() }
-sub end_item_number { $_[0]{'scratch'} .= '</li>'; $_[0]->emit() }
-sub end_item_text   { $_[0]->emit() }
+sub end_item_bullet { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
+sub end_item_number { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
+sub end_item_text   { $_[0]->emit }
 
 # This handles =begin and =for blocks of all kinds.
 sub start_for { 
@@ -77,13 +77,13 @@ sub start_for {
   $self->{'scratch'} .= '<div';
   $self->{'scratch'} .= ' class="'.$flags->{'target'}.'"' if ($flags->{'target'});
   $self->{'scratch'} .= '>';
-  $self->emit();
+  $self->emit;
 
 }
 sub end_for { 
   my ($self) = @_;
   $self->{'scratch'} .= '</div>';
-  $self->emit();
+  $self->emit;
 }
 
 sub start_Document { 
@@ -95,14 +95,14 @@ sub start_Document {
                             $self->{'css_tags'} .
                             "' type='text/css'>";
     }
-    $self->emit();
+    $self->emit;
   }
 }
 sub end_Document   { 
   my ($self) = @_;
   if ($self->{'body_tags'}) {
     $self->{'scratch'} .= "</body>\n</html>";
-    $self->emit();
+    $self->emit;
   }
 }
 
@@ -122,8 +122,20 @@ sub end_F   { $_[0]{'scratch'} .= '</i>' }
 sub start_I { $_[0]{'scratch'} .= '<i>' }
 sub end_I   { $_[0]{'scratch'} .= '</i>' }
 
-sub start_L { $_[0]{'scratch'} .= '<a href="#' }
-sub end_L   { $_[0]{'scratch'} .= '">link</a>' }
+sub start_L { 
+  my ($self, $flags) = @_;
+    my $url;
+    if ($flags->{'type'} eq 'url') {
+      $url = $flags->{'to'};
+    } elsif ($flags->{'type'} eq 'pod') {
+      $url = $flags->{'to'} . '/' . $flags->{'section'};
+    require Data::Dumper;
+    print STDERR Data::Dumper->Dump([$flags]);
+    }
+
+    $self->{'scratch'} .= '<a href="'. $url . '">';
+}
+sub end_L   { $_[0]{'scratch'} .= '</a>' }
 
 sub start_S { $_[0]{'scratch'} .= '<nobr>' }
 sub end_S   { $_[0]{'scratch'} .= '</nobr>' }
