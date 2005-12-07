@@ -1,6 +1,6 @@
 package Pod::Simple::XHTML;
 use strict;
-use vars qw( $VERSION );
+use vars qw( $VERSION @ISA );
 $VERSION = '3.04';
 use Carp ();
 use Pod::Simple::Methody ();
@@ -17,7 +17,6 @@ sub new {
   $new->accept_targets( 'html', 'HTML' );
 
   $new->nix_X_codes(1);
-  $new->nbsp_for_S(1);
   $new->add_css_tags(0);
   $new->add_body_tags(1);
   $new->codes_in_verbatim(1);
@@ -35,11 +34,10 @@ sub handle_text {
 sub start_Para     { $_[0]{'scratch'} = '<p>' }
 sub start_Verbatim { $_[0]{'scratch'} = '<pre><code>'; $_[0]{'in_verbatim'} = 1}
 
-sub start_head0 {  $_[0]{'scratch'} = '<h1>' }
-sub start_head1 {  $_[0]{'scratch'} = '<h2>' }
-sub start_head2 {  $_[0]{'scratch'} = '<h3>' }
-sub start_head3 {  $_[0]{'scratch'} = '<h4>' }
-sub start_head4 {  $_[0]{'scratch'} = '<h5>' }
+sub start_head1 {  $_[0]{'scratch'} = '<h1>' }
+sub start_head2 {  $_[0]{'scratch'} = '<h2>' }
+sub start_head3 {  $_[0]{'scratch'} = '<h3>' }
+sub start_head4 {  $_[0]{'scratch'} = '<h4>' }
 
 sub start_item_bullet { $_[0]{'scratch'} = '<li>' }
 sub start_item_number { $_[0]{'scratch'} = "<li>$_[1]{'number'}. "  }
@@ -64,35 +62,14 @@ sub end_Verbatim {
     $_[0]->emit();
 }
 
-sub end_head0       { $_[0]{'scratch'} .= '</h1>'; $_[0]->emit() }
-sub end_head1       { $_[0]{'scratch'} .= '</h2>'; $_[0]->emit() }
-sub end_head2       { $_[0]{'scratch'} .= '</h3>'; $_[0]->emit() }
-sub end_head3       { $_[0]{'scratch'} .= '</h4>'; $_[0]->emit() }
-sub end_head4       { $_[0]{'scratch'} .= '</h5>'; $_[0]->emit() }
+sub end_head1       { $_[0]{'scratch'} .= '</h1>'; $_[0]->emit() }
+sub end_head2       { $_[0]{'scratch'} .= '</h2>'; $_[0]->emit() }
+sub end_head3       { $_[0]{'scratch'} .= '</h3>'; $_[0]->emit() }
+sub end_head4       { $_[0]{'scratch'} .= '</h4>'; $_[0]->emit() }
 
 sub end_item_bullet { $_[0]{'scratch'} .= '</li>'; $_[0]->emit() }
 sub end_item_number { $_[0]{'scratch'} .= '</li>'; $_[0]->emit() }
 sub end_item_text   { $_[0]->emit() }
-
-sub start_figure { 
-  my ($self, $flags)      = @_;
-  $self->{'in_figure'}    = 1;
-
-  $self->{'figure_title'} = $flags->{'title'} if $flags->{'title'};
-}
-
-sub end_figure { 
-  my ($self, $flags)   = @_;
-  $self->{'in_figure'} = 0;
-
-  if ($self->{'figure_title'})
-  {
-    $self->{'scratch'} .= "<p><em>" . $self->{'figure_title'} . "</em></p>";
-    delete $self->{'figure_title'};
-  }
-
-  $self->emit();
-}
 
 # This handles =begin and =for blocks of all kinds.
 sub start_for { 
@@ -148,8 +125,8 @@ sub end_I   { $_[0]{'scratch'} .= '</i>' }
 sub start_L { $_[0]{'scratch'} .= '<a href="#' }
 sub end_L   { $_[0]{'scratch'} .= '">link</a>' }
 
-sub start_Z { $_[0]{'scratch'} .= '<a name="' }
-sub end_Z   { $_[0]{'scratch'} .= '">' }
+sub start_S { $_[0]{'scratch'} .= '<nobr>' }
+sub end_S   { $_[0]{'scratch'} .= '</nobr>' }
 
 sub emit {
   my($self) = @_;
@@ -187,8 +164,8 @@ Pod::Simple::XHTML -- format Pod as validating XHTML
 
 =head1 DESCRIPTION
 
-This class is a formatter that takes Pod and renders it as
-html.
+This class is a formatter that takes Pod and renders it as XHTML
+validating HTML.
 
 This is a subclass of L<Pod::Simple::Methody> and inherits all its methods.
 
