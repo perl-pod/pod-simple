@@ -16,6 +16,22 @@ my $parser = Pod::Simple::XHTML->new ();
 isa_ok ($parser, 'Pod::Simple::XHTML');
 
 my $results;
+initialize($parser, $results);
+$parser->accept_targets_as_text( 'comment' );
+$parser->parse_string_document(<<'EOPOD');
+=for comment
+This is an ordinary for block.
+
+EOPOD
+
+is($results, <<'EOHTML', "a for block");
+<div class="comment">
+
+<p>This is an ordinary for block.</p>
+
+</div>
+
+EOHTML
 
 foreach my $target qw(note tip warning) {
   initialize($parser, $results);
