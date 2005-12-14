@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -59,7 +59,8 @@ EOHTML
 
 sub initialize {
 	$_[0] = Pod::Simple::XHTML->new ();
-        $_[0]->add_body_tags(0);
+        $_[0]->html_header("");
+        $_[0]->html_footer("");
 	$_[0]->output_string( \$results ); # Send the resulting output to a string
 	$_[1] = '';
 	return;
