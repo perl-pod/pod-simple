@@ -1,3 +1,30 @@
+=pod
+
+=head1 NAME
+
+Pod::Simple::XHTML -- format Pod as validating XHTML
+
+=head1 SYNOPSIS
+
+  use Pod::Simple::HTML;
+
+  my $parser = Pod::PseudoPod::HTML->new();
+
+  ...
+
+  $parser->parse_file('path/to/file.pod');
+
+=head1 DESCRIPTION
+
+This class is a formatter that takes Pod and renders it as XHTML
+validating HTML.
+
+This is a subclass of L<Pod::Simple::Methody> and inherits all its
+methods. The implementation is entirely different than
+L<Pod::Simple::HTML>, but it largely preserves the same interface.
+
+=cut
+
 package Pod::Simple::XHTML;
 use strict;
 use vars qw( $VERSION @ISA );
@@ -10,6 +37,122 @@ use HTML::Entities 'encode_entities';
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+=head1 METHODS
+
+Pod::Simple::XHTML offers a number of methods that modify the format of
+the HTML output. Call these after creating the parser object, but before
+the call to C<parse_file>:
+
+  my $parser = Pod::PseudoPod::HTML->new();
+  $parser->set_optional_param("value");
+  $parser->parse_file($file);
+
+=head2 perldoc_url_prefix
+
+In turning L<Foo::Bar> into http://whatever/Foo%3a%3aBar, what
+to put before the "Foo%3a%3aBar". The default value is
+"http://search.cpan.org/perldoc?".
+
+=head2 perldoc_url_postfix
+
+What to put after "Foo%3a%3aBar" in the URL. This option is not set by
+default.
+
+=head2 title_prefix, title_postfix
+
+What to put before and after the title in the head. The values should
+already be &-escaped.
+
+=head2 html_css
+
+  $parser->html_css('path/to/style.css');
+
+The URL or relative path of a CSS file to include. This option is not
+set by default.
+
+=head2 html_javascript
+
+The URL of a JavaScript file to pull in. This option is not set by
+default.
+
+=head2 html_doctype
+
+A document type tag for the file. This option is not set by default.
+
+=head2 html_contenttype
+
+A content type for the document. The default value is:
+
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+=head2 default_title
+
+Set a default title for the page if no title can be determined from the
+content. The value of this string should already be &-escaped.
+
+=head2 force_title
+
+Force a title for the page (don't try to determine it from the content).
+The value of this string should already be &-escaped.
+
+=head2 html_header, html_footer
+
+Set the HTML output at the beginning and end of each file. The default
+header includes a title, a doctype tag (if C<html_doctype> is set), a
+content tag (customized by C<html_contenttype>), a tag for a CSS file
+(if C<html_css> is set), and a tag for a Javascript file (if
+C<html_javascript> is set). The default footer simply closes the C<html>
+and C<body> tags.
+
+The options listed above customize parts of the default header, but
+setting C<html_header> or C<html_footer> completely overrides the
+built-in header or footer. These may be useful if you want to use
+template tags instead of literal HTML headers and footers or are
+integrating converted POD pages in a larger website.
+
+If you want no headers or footers output in the HTML, set these options
+to the empty string.
+
+=head2 index
+
+TODO -- Not implemented.
+
+Whether to add a table-of-contents at the top of each page (called an
+index for the sake of tradition).
+
+
+=cut
+
+__PACKAGE__->_accessorize(
+ 'perldoc_url_prefix',
+ 'perldoc_url_postfix',
+ 'title_prefix',  'title_postfix',
+ 'html_css', 
+ 'html_javascript',
+ 'html_doctype',
+ 'html_contenttype',
+ 'title', # Used internally for the title extracted from the content
+ 'default_title',
+ 'force_title',
+ 'html_header',
+ 'html_footer',
+ 'index',
+ 'batch_mode', # whether we're in batch mode
+ 'batch_mode_current_level',
+    # When in batch mode, how deep the current module is: 1 for "LWP",
+    #  2 for "LWP::Procotol", 3 for "LWP::Protocol::GHTTP", etc
+);
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=head1 SUBCLASSING
+
+If the standard options aren't enough, you may want to subclass
+Pod::Simple::XHMTL. These are the most likely candidates for methods
+you'll want to override when subclassing.
+
+=cut
+
 sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
@@ -17,14 +160,44 @@ sub new {
   $new->accept_targets( 'html', 'HTML' );
 
   $new->nix_X_codes(1);
-  $new->add_css_tags(0);
-  $new->add_body_tags(1);
   $new->codes_in_verbatim(1);
   $new->{'scratch'} = '';
   return $new;
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=head2 handle_text
+
+This method handles the body of text within any element: it's the body
+of a paragraph, or everything between a "=begin" tag and the
+corresponding "=end" tag, or the text within an L entity, etc. You would
+want to override this if you are adding a custom element type that does
+more than just display formatted text. Perhaps adding a way to generate
+HTML tables from an extended version of POD.
+
+So, let's say you want add a custom element called 'foo'. In your
+subclass's C<new> method, after calling C<SUPER::new> you'd call:
+
+  $new->accept_targets_as_text( 'foo' );
+
+Then override the C<start_for> method in the subclass to check for when
+"$flags->{'target'}" is equal to 'foo' and set a flag that marks that
+you're in a foo block (maybe "$self->{'in_foo'} = 1"). Then override the
+C<handle_text> method to check for the flag, and pass $text to your
+custom subroutine to construct the HTML output for 'foo' elements,
+something like:
+
+  sub handle_text {
+      my ($self, $text) = @_;
+      if ($self->{'in_foo'}) {
+          $self->{'scratch'} .= build_foo_html($text); 
+      } else {
+          $self->{'scratch'} .= $text;
+      }
+  }
+
+=cut
 
 sub handle_text {
     # escape special characters in HTML (<, >, &, etc)
@@ -88,19 +261,41 @@ sub end_for {
 
 sub start_Document { 
   my ($self) = @_;
-  if ($self->{'body_tags'}) {
-    $self->{'scratch'} .= "<html>\n<body>";
-    if ($self->{'css_tags'}) {
-      $self->{'scratch'} .= "\n<link rel='stylesheet' href='" .
-                            $self->{'css_tags'} .
-                            "' type='text/css'>";
+  if (defined $self->html_header) {
+    $self->{'scratch'} .= $self->html_header;
+    $self->emit unless $self->html_header eq "";
+  } else {
+    my ($doctype, $title, $metatags);
+    $doctype = $self->html_doctype || '';
+    $title = $self->force_title || $self->title || $self->default_title || '';
+    $metatags = $self->html_contenttype || '';
+    if ($self->html_css) {
+      $metatags .= "\n<link rel='stylesheet' href='" .
+             $self->html_css . "' type='text/css'>";
     }
+    if ($self->html_javascript) {
+      $metatags .= "\n<script type='text/javascript' src='" .
+                    $self->html_javascript . "'></script>";
+    }
+    $self->{'scratch'} .= <<"HTML";
+$doctype
+<html>
+<head>
+<title>$title</title>
+$metatags
+</head>
+<body>
+HTML
     $self->emit;
   }
 }
+
 sub end_Document   { 
   my ($self) = @_;
-  if ($self->{'body_tags'}) {
+  if (defined $self->html_footer) {
+    $self->{'scratch'} .= $self->html_footer;
+    $self->emit unless $self->html_footer eq "";
+  } else {
     $self->{'scratch'} .= "</body>\n</html>";
     $self->emit;
   }
@@ -129,8 +324,8 @@ sub start_L {
       $url = $flags->{'to'};
     } elsif ($flags->{'type'} eq 'pod') {
       $url = $flags->{'to'} . '/' . $flags->{'section'};
-    require Data::Dumper;
-    print STDERR Data::Dumper->Dump([$flags]);
+#    require Data::Dumper;
+#    print STDERR Data::Dumper->Dump([$flags]);
     }
 
     $self->{'scratch'} .= '<a href="'. $url . '">';
@@ -148,58 +343,12 @@ sub emit {
   return;
 }
 
-# Set additional options
-
-sub add_body_tags { $_[0]{'body_tags'} = $_[1] }
-sub add_css_tags { $_[0]{'css_tags'} = $_[1] }
-
-# bypass built-in E<> handling to preserve entity encoding
+# Bypass built-in E<> handling to preserve entity encoding
 sub _treat_Es {} 
 
 1;
 
 __END__
-
-=head1 NAME
-
-Pod::Simple::XHTML -- format Pod as validating XHTML
-
-=head1 SYNOPSIS
-
-  use Pod::Simple::HTML;
-
-  my $parser = Pod::PseudoPod::HTML->new();
-
-  ...
-
-  $parser->parse_file('path/to/file.pod');
-
-=head1 DESCRIPTION
-
-This class is a formatter that takes Pod and renders it as XHTML
-validating HTML.
-
-This is a subclass of L<Pod::Simple::Methody> and inherits all its methods.
-
-=head1 METHODS
-
-=head2 add_body_tags
-
-  $parser->add_body_tags(1);
-  $parser->parse_file($file);
-
-Adds beginning and ending "<html>" and "<body>" tags to the formatted
-document.
-
-=head2 add_css_tags
-
-  $parser->add_css_tags('path/to/style.css');
-  $parser->parse_file($file);
-
-Imports a css stylesheet to the html document and adds additional css
-tags to url, footnote, and sidebar elements for a nicer display. If
-you don't plan on writing a style.css file (or using the one provided
-in "examples/"), you probably don't want this option on.
 
 =head1 SEE ALSO
 

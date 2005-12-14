@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 22;
+use Test::More tests => 24;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -182,7 +182,8 @@ EOHTML
 
 
 initialize($parser, $results);
-$parser->add_body_tags(1);
+$parser->html_header("<html>\n<body>");
+$parser->html_footer("</body>\n</html>");
 $parser->parse_string_document(<<'EOPOD');
 =pod
 
@@ -201,24 +202,16 @@ EOHTML
 
 
 initialize($parser, $results);
-$parser->add_body_tags(1);
-$parser->add_css_tags('style.css');
+$parser->html_css('style.css');
+$parser->html_header(undef);
+$parser->html_footer(undef);
 $parser->parse_string_document(<<'EOPOD');
 =pod
 
 A plain paragraph with body tags and css tags turned on.
 EOPOD
-is($results, <<"EOHTML", "adding html body tags and css tags");
-<html>
-<body>
-<link rel='stylesheet' href='style.css' type='text/css'>
-
-<p>A plain paragraph with body tags and css tags turned on.</p>
-
-</body>
-</html>
-
-EOHTML
+like($results, qr/<link rel='stylesheet' href='style.css' type='text\/css'>/,
+"adding html body tags and css tags");
 
 
 initialize($parser, $results);
@@ -236,13 +229,34 @@ initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
 =pod
 
-A plain paragraph with a L<crossreferencelink>.
+A plain paragraph with a L<perlport/Newlines>.
 EOPOD
 is($results, <<"EOHTML", "Link entity in a paragraph");
-<p>A plain paragraph with a <a href="#crossreferencelink">link</a>.</p>
+<p>A plain paragraph with a <a href="perlport/Newlines">"Newlines" in perlport</a>.</p>
 
 EOHTML
 
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=pod
+
+A plain paragraph with a L<Boo|http://link.included.here>.
+EOPOD
+is($results, <<"EOHTML", "A link in a paragraph");
+<p>A plain paragraph with a <a href="http://link.included.here">Boo</a>.</p>
+
+EOHTML
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=pod
+
+A plain paragraph with a L<http://link.included.here>.
+EOPOD
+is($results, <<"EOHTML", "A link in a paragraph");
+<p>A plain paragraph with a <a href="http://link.included.here">http://link.included.here</a>.</p>
+
+EOHTML
 
 initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
@@ -277,6 +291,7 @@ is($results, <<"EOHTML", "File name in a paragraph");
 
 EOHTML
 
+
 initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
 =pod
@@ -309,7 +324,8 @@ EOHTML
 
 sub initialize {
 	$_[0] = Pod::Simple::XHTML->new ();
-        $_[0]->add_body_tags(0);
+        $_[0]->html_header("");
+        $_[0]->html_footer("");
 	$_[0]->output_string( \$results ); # Send the resulting output to a string
 	$_[1] = '';
 	return;
