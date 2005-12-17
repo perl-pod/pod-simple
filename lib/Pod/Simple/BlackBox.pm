@@ -1900,6 +1900,17 @@ sub pretty { # adopted from Class::Classless
   return $out;
 }
 
+sub reinit {
+  my $self = shift;
+  foreach (qw(source_dead source_filename doc_has_started
+start_of_pod_block content_seen last_was_blank paras curr_open
+line_count pod_para_count in_pod ~tried_gen_errata errata errors_seen
+Title)) {
+
+    delete $self->{$_};
+  }
+}
+
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 1;
 
