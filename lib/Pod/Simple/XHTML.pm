@@ -6,9 +6,9 @@ Pod::Simple::XHTML -- format Pod as validating XHTML
 
 =head1 SYNOPSIS
 
-  use Pod::Simple::HTML;
+  use Pod::Simple::XHTML;
 
-  my $parser = Pod::PseudoPod::HTML->new();
+  my $parser = Pod::Simple::XHTML->new();
 
   ...
 
@@ -72,18 +72,22 @@ set by default.
 
 =head2 html_javascript
 
-The URL of a JavaScript file to pull in. This option is not set by
-default.
+The URL or relative path of a JavaScript file to pull in. This option is
+not set by default.
 
 =head2 html_doctype
 
 A document type tag for the file. This option is not set by default.
 
-=head2 html_contenttype
+=head2 html_header_tags
 
-A content type for the document. The default value is:
+Additional arbitrary HTML tags for the header of the document. The
+default value is just a content type header tag:
 
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+Add additional meta tags here, or blocks of inline CSS or JavaScript
+(wrapped in the appropriate tags).
 
 =head2 default_title
 
@@ -99,7 +103,7 @@ The value of this string should already be &-escaped.
 
 Set the HTML output at the beginning and end of each file. The default
 header includes a title, a doctype tag (if C<html_doctype> is set), a
-content tag (customized by C<html_contenttype>), a tag for a CSS file
+content tag (customized by C<html_header_tags>), a tag for a CSS file
 (if C<html_css> is set), and a tag for a Javascript file (if
 C<html_javascript> is set). The default footer simply closes the C<html>
 and C<body> tags.
@@ -130,7 +134,7 @@ __PACKAGE__->_accessorize(
  'html_css', 
  'html_javascript',
  'html_doctype',
- 'html_contenttype',
+ 'html_header_tags',
  'title', # Used internally for the title extracted from the content
  'default_title',
  'force_title',
@@ -268,7 +272,7 @@ sub start_Document {
     my ($doctype, $title, $metatags);
     $doctype = $self->html_doctype || '';
     $title = $self->force_title || $self->title || $self->default_title || '';
-    $metatags = $self->html_contenttype || '';
+    $metatags = $self->html_header_tags || '';
     if ($self->html_css) {
       $metatags .= "\n<link rel='stylesheet' href='" .
              $self->html_css . "' type='text/css'>";
