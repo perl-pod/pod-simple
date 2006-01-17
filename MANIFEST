@@ -132,6 +132,7 @@ t/other^test^lib/squaa/Vliff.pm
 t/other^test^lib/squaa/Wowo.pod
 t/puller.t
 t/pulltitle.t
+t/reinit.t
 t/render.t
 t/sanity_tfh.t
 t/search_05sane.t
