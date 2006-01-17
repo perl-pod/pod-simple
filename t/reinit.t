@@ -26,11 +26,11 @@ use Pod::Simple::HTML;
 my $parser  = Pod::Simple::HTML->new();
  
 foreach my $file (
-  "test_junk1.pod",
-  "test_junk2.pod",
-  "test_old_perlcygwin.pod",
-  "test_old_perlfaq3.pod",
-  "test_old_perlvar.pod",
+  "junk1.pod",
+  "junk2.pod",
+  "perlcyg.pod",
+  "perlfaq3.pod",
+  "perlvar.pod",
 ) {
 
   unless(-e source_path($file)) {

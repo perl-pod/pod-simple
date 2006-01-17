@@ -1,7 +1,13 @@
+BEGIN {
+    if($ENV{PERL_CORE}) {
+        chdir 't';
+        @INC = '../lib';
+    }
+}
 
 use strict;
 
-sub Pod::Simple::Search::DEBUG () {5};
+#sub Pod::Simple::Search::DEBUG () {5};
 
 use Pod::Simple::Search;
 use Test;
@@ -20,23 +26,34 @@ use File::Spec;
 use Cwd;
 my $cwd = cwd();
 print "# CWD: $cwd\n";
+my $dir;
+sub source_path {
+    my $file = shift;
+    if ($ENV{PERL_CORE}) {
+        my $updir = File::Spec->updir;
+        $dir = File::Spec->catdir($updir, 'lib', 'Pod', 'Simple', 't');
+        return File::Spec->catdir ($dir, $file);
+    } else {
+        return $file;
+    }
+}
 
 my($here1, $here2, $here3);
 
-if(        -e ($here1 = File::Spec->catdir($cwd,      'test^lib'      ))) {
+if(        -e ($here1 = source_path( 'test_lib'      ))) {
   die "But where's $here2?"
-    unless -e ($here2 = File::Spec->catdir($cwd,      'other^test^lib'));
+    unless -e ($here2 = source_path( 'other_test_lib'));
   die "But where's $here3?"
-    unless -e ($here3 = File::Spec->catdir($cwd,      'yet^another^test^lib'));
+    unless -e ($here3 = source_path( 'yet_another_test_lib'));
 
-} elsif(   -e ($here1 = File::Spec->catdir($cwd, 't', 'test^lib'      ))) {
+} elsif(   -e ($here1 = File::Spec->catdir($cwd, 't', 'test_lib'      ))) {
   die "But where's $here2?"
-    unless -e ($here2 = File::Spec->catdir($cwd, 't', 'other^test^lib'));
+    unless -e ($here2 = File::Spec->catdir($cwd, 't', 'other_test_lib'));
   die "But where's $here3?"
-    unless -e ($here3 = File::Spec->catdir($cwd, 't', 'yet^another^test^lib'));
+    unless -e ($here3 = File::Spec->catdir($cwd, 't', 'yet_another_test_lib'));
 
 } else {
-  die "Can't find the test corpora";
+  die "Can't find the test corpora: $dir";
 }
 print "# OK, found the test corpora\n#  as $here1\n# and $here2\n# and $here3\n#\n";
 ok 1;
@@ -83,9 +100,9 @@ thar 'squaa::Vliff';
 
 ok ! $name2where->{'squaa'};  # because squaa.pm isn't squaa::*
 
-ok( ($name2where->{'squaa::Vliff'} || 'huh???'), '/[^\^]test\^lib/' );
+ok( ($name2where->{'squaa::Vliff'} || 'huh???'), '/[^\^]test_lib/' );
 
-ok( ($name2where->{'squaa::Wowo'}  || 'huh???'), '/other\^test\^lib/' );
+ok( ($name2where->{'squaa::Wowo'}  || 'huh???'), '/other_test_lib/' );
 
 
 print "# OK, bye from ", __FILE__, "\n";

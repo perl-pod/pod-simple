@@ -1,3 +1,9 @@
+BEGIN {
+    if($ENV{PERL_CORE}) {
+        chdir 't';
+        @INC = '../lib';
+    }
+}
 
 #use Pod::Simple::Debug (10);
 use Test qw(plan ok skip);
@@ -9,10 +15,21 @@ my(@testfiles, %xmlfiles, %wouldxml);
 #use Pod::Simple::Debug (10);
 BEGIN { 
 
+sub source_path {
+    my $file = shift;
+    if ($ENV{PERL_CORE}) {
+        require File::Spec;
+        my $updir = File::Spec->updir;
+        my $dir = File::Spec->catdir($updir, 'lib', 'Pod', 'Simple', 't');
+        return File::Spec->catdir ($dir, $file);
+    } else {
+        return $file;
+    }
+} 
   my @bits;
   if(-e( File::Spec::->catdir( @bits =
-    (File::Spec::->curdir, 't', 'corpus') ) )
-  ) {
+    source_path('corpus') ) ) )
+   {
     # OK
     print "# 1Bits: @bits\n";
   } elsif( -e (File::Spec::->catdir( @bits =
@@ -20,10 +37,15 @@ BEGIN {
   ) {
     # OK
     print "# 2Bits: @bits\n";
+  } elsif ( -e (File::Spec::->catdir( @bits =
+    (File::Spec::->curdir, 't', 'corpus') ) )
+  ) {
+    # OK
+    print "# 3Bits: @bits\n";
   } else {
     die "Can't find the corpusdir";
   }
-  my $corpusdir = File::Spec::->catdir( @bits );
+  my $corpusdir = File::Spec::->catdir( @bits);
   print "#Corpusdir: $corpusdir\n";
 
   opendir(INDIR, $corpusdir) or die "Can't opendir corpusdir : $!";

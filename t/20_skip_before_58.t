@@ -1,3 +1,9 @@
+BEGIN {
+    if($ENV{PERL_CORE}) {
+        chdir 't';
+        @INC = '../lib';
+    }
+}
 
 print "1..2\n";
   print "# Running under Perl v $]\n";

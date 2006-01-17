@@ -1,4 +1,10 @@
-
+BEGIN {
+    if( $ENV{PERL_CORE} ) {
+        chdir 't';
+        use File::Spec;
+        @INC = (File::Spec->rel2abs('../lib') );
+    }
+}
 use strict;
 
 #sub Pod::Simple::Search::DEBUG () {5};
@@ -56,6 +62,6 @@ if( $strictpath ) {
 
 ok 1;
 print "# Byebye from ", __FILE__, "\n";
-
+print "# @INC\n";
 __END__
 

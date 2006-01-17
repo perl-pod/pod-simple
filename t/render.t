@@ -1,3 +1,9 @@
+BEGIN {
+    chdir 't';
+    if($ENV{PERL_CORE}) {
+        @INC = '../lib';
+    }
+}
 
 use strict;
 use Test;
@@ -14,27 +20,36 @@ BEGIN {
 $Pod::Simple::Text::FREAKYMODE = 1;
 use Pod::Simple::TiedOutFH ();
 
+sub source_path {
+    my $file = shift;
+    if ($ENV{PERL_CORE}) {
+        require File::Spec;
+        my $updir = File::Spec->updir;
+        my $dir = File::Spec->catdir ($updir, 'lib', 'Pod', 'Simple', 't');
+        return File::Spec->catfile ($dir, $file);
+    } else {
+        return $file;
+    }
+}
+
 my $outfile = '10000';
 
-chdir "t" or die "Can't chdir: $!" if -e "t";
-
-
 foreach my $file (
-  "test_junk1.pod",
-  "test_junk2.pod",
-  "test_old_perlcygwin.pod",
-  "test_old_perlfaq3.pod",
-  "test_old_perlvar.pod",
+  "junk1.pod",
+  "junk2.pod",
+  "perlcyg.pod",
+  "perlfaq3.pod",
+  "perlvar.pod",
 ) {
 
-  unless(-e $file) {
+  unless(-e source_path($file)) {
     ok 0;
     print "# But $file doesn't exist!!\n";
     exit 1;
   }
 
   my @out;
-  my $precooked = $file;
+  my $precooked = source_path($file);
   $precooked =~ s<\.pod><_out.txt>s;
   unless(-e $precooked) {
     ok 0;
@@ -48,9 +63,9 @@ foreach my $file (
     push @out, '';
     $p->output_string(\$out[-1]);
     my $t = mytime();
-    $p->parse_file($file);
+    $p->parse_file(source_path($file));
     printf "# %s %s %sb, %.03fs\n",
-     ref($p), $file, length($out[-1]), mytime() - $t ;
+     ref($p), source_path($file), length($out[-1]), mytime() - $t ;
     ok 1;
   }
 

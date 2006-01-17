@@ -1,3 +1,9 @@
+BEGIN {
+    if($ENV{PERL_CORE}) {
+        chdir 't';
+        @INC = '../lib';
+    }
+}
 
 # Time-stamp: "2004-05-24 02:07:47 ADT"
 use strict;
@@ -18,6 +24,7 @@ my $t_dir;
 my $corpus_dir;
 
 foreach my $t_maybe (
+  File::Spec->catdir( File::Spec->updir(), 'lib','Pod','Simple','t'),
   File::Spec->catdir( $cwd ),
   File::Spec->catdir( $cwd, 't' ),
   'OHSNAP'
@@ -26,7 +33,7 @@ foreach my $t_maybe (
   next unless -e $t_maybe;
 
   $t_dir = $t_maybe;
-  $corpus_dir = File::Spec->catdir( $t_maybe, 'test^lib' );
+  $corpus_dir = File::Spec->catdir( $t_maybe, 'test_lib' );
   next unless -e $corpus_dir;
   last;
 }
@@ -38,6 +45,11 @@ while(1) {
   my $rand = sprintf "%05x", rand( 0x100000 );
   $outdir = File::Spec->catdir( $t_dir, "delme-$rand-out" );
   last unless -e $outdir;
+}
+
+END {
+    use File::Path;
+    rmtree $outdir, 0, 0;
 }
 
 ok 1;

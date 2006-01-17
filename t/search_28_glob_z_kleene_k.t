@@ -1,3 +1,9 @@
+BEGIN {
+    if($ENV{PERL_CORE}) {
+        chdir 't';
+        @INC = '../lib';
+    }
+}
 
 use strict;
 use Pod::Simple::Search;
@@ -18,19 +24,30 @@ use Cwd;
 my $cwd = cwd();
 print "# CWD: $cwd\n";
 
+sub source_path {
+    my $file = shift;
+    if ($ENV{PERL_CORE}) {
+        my $updir = File::Spec->updir;
+        my $dir = File::Spec->catdir($updir, 'lib', 'Pod', 'Simple', 't');
+        return File::Spec->catdir ($dir, $file);
+    } else {
+        return $file;
+    }
+}
+
 my($here1, $here2, $here3);
 
-if(        -e ($here1 = File::Spec->catdir($cwd,      'test^lib'      ))) {
+if(        -e ($here1 = source_path(  'test_lib'      ))) {
   die "But where's $here2?"
-    unless -e ($here2 = File::Spec->catdir($cwd,      'other^test^lib'));
+    unless -e ($here2 = source_path(  'other_test_lib'));
   die "But where's $here3?"
-    unless -e ($here3 = File::Spec->catdir($cwd,      'yet^another^test^lib'));
+    unless -e ($here3 = source_path(  'yet_another_test_lib'));
 
-} elsif(   -e ($here1 = File::Spec->catdir($cwd, 't', 'test^lib'      ))) {
+} elsif(   -e ($here1 = File::Spec->catdir($cwd, 't', 'test_lib'      ))) {
   die "But where's $here2?"
-    unless -e ($here2 = File::Spec->catdir($cwd, 't', 'other^test^lib'));
+    unless -e ($here2 = File::Spec->catdir($cwd, 't', 'other_test_lib'));
   die "But where's $here3?"
-    unless -e ($here3 = File::Spec->catdir($cwd, 't', 'yet^another^test^lib'));
+    unless -e ($here3 = File::Spec->catdir($cwd, 't', 'yet_another_test_lib'));
 
 } else {
   die "Can't find the test corpora";

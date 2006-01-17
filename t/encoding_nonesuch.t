@@ -1,4 +1,10 @@
-  
+BEGIN {
+    if($ENV{PERL_CORE}) {
+        chdir 't';
+        @INC = '../lib';
+    }
+}
+
 #use Pod::Simple::Debug (10);
 use Test;
 use File::Spec;
@@ -14,10 +20,23 @@ use Pod::Simple::DumpAsXML;
 my $thefile;
 
 
-
 BEGIN { 
+
+  # Find the path to the test source files.  This requires some fiddling when
+# these tests are run as part of Perl core.
+sub source_path {
+    my $file = shift;
+    if ($ENV{PERL_CORE}) {
+        require File::Spec;
+        my $updir = File::Spec->updir;
+        my $dir = File::Spec->catdir ($updir, 'lib', 'Pod', 'Simple', 't', 'corpus');
+        return File::Spec->catfile ($dir, $file);
+    } else {
+        return $file;
+    }
+}
   if( -e
-    ($thefile = File::Spec::->catfile( File::Spec::->curdir, 't', 'corpus', 'nonesuch.txt' ))
+    ($thefile = source_path('nonesuch.txt'))
    #or (print("# Nope, not $thefile\n"), 0)
   ) {
     # okay,
@@ -27,7 +46,11 @@ BEGIN {
    #or (print("# Nope, not $thefile\n"), 0)
   ) {
     # okay,
-
+  } elsif (-e
+    ($thefile = File::Spec::->catfile( File::Spec::->curdir, 't', 'corpus', 'nonesuch.txt' ))
+   #or (print("# Nope, not $thefile\n"), 0)
+  ) {
+    # okay,
   } else {
     die "Can't find the corpus directory\n Aborting";
   }
