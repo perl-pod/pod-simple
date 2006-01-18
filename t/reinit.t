@@ -5,6 +5,8 @@ BEGIN {
     }
 }
 
+use lib '../lib';
+
 use strict;
 use Test;
 BEGIN { plan tests => 5 };
@@ -21,9 +23,10 @@ sub source_path {
     }
 }
 
-use Pod::Simple::HTML;
+use Pod::Simple::Text;
+$Pod::Simple::Text::FREAKYMODE = 1;
 
-my $parser  = Pod::Simple::HTML->new();
+my $parser  = Pod::Simple::Text->new();
  
 foreach my $file (
   "junk1.pod",
@@ -39,9 +42,50 @@ foreach my $file (
     next;
   }
 
-    my $outfile = $file;
-    $outfile =~ s<\.pod><_out.html>s;
+    my $precooked = $file;
+    my $outstring;
+    my $compstring;
+    $precooked =~ s<\.pod><_out.txt>s;
     $parser->reinit;
-    $parser->parse_from_file( $file, $outfile );
-    ok 1;
+    $parser->output_string(\$outstring);
+    $parser->parse_file(source_path($file));
+
+    open(IN, $precooked) or die "Can't read-open $precooked: $!";
+    {
+      local $/;
+      $compstring = <IN>;
+    }
+    close(IN);
+
+    for ($outstring,$compstring) { s/\s+/ /g; s/^\s+//s; s/\s+$//s; }
+
+    if($outstring eq $compstring) {
+      ok 1;
+      next;
+    } elsif( do{
+      for ($outstring, $compstring) { tr/ //d; };
+      $outstring eq $compstring;
+    }){
+      print "# Differ only in whitespace.\n";
+      ok 1;
+      next;
+    } else {
+    
+      my $x = $outstring ^ $compstring;
+      $x =~ m/^(\x00*)/s or die;
+      my $at = length($1);
+      print "# Difference at byte $at...\n";
+      if($at > 10) {
+        $at -= 5;
+      }
+      {
+        print "# ", substr($outstring,$at,20), "\n";
+        print "# ", substr($compstring,$at,20), "\n";
+        print "#      ^...";
+      }
+    
+      ok 0;
+      printf "# Unequal lengths %s and %s\n", length($outstring), length($compstring);
+      next;
+    }
   }
