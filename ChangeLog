@@ -7,7 +7,7 @@
 	Applied test patches for Perl core integration from Steve Peters.
 
 	Added a 'reinit' method to Pod::Simple::BlackBox for Russ Allbery
-	so Pod::Man can provide backwards compatibility to old users
+	so Pod::Man can provide backward compatibility to existing users
 	(such as Module::Build and ExtUtils::MakeMaker).
 
 	Applied patch for extracting case-preserved package names on VMS
