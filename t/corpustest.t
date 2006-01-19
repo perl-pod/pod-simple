@@ -122,7 +122,7 @@ foreach my $f (@testfiles) {
   
   next if $f =~ /nonesuch/;
 
-  my $outfilename = ($HACK > 1) ? $wouldxml{$f} : "$wouldxml{$f}\.out";
+  my $outfilename = ($HACK > 1) ? $wouldxml{$f} : "$wouldxml{$f}\_out";
   if($HACK) {
     open OUT, ">$outfilename" or die "Can't write-open $outfilename: $!\n";
     binmode(OUT);
