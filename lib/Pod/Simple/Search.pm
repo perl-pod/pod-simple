@@ -254,13 +254,16 @@ sub _path2modname {
   my $name = join '::', @m, $shortname;
   $self->_simplify_base($name);
 
+  # On VMS, case-preserved document names can't be constructed from
+  # filenames, so try to extract them from the "=head1 NAME" tag in the
+  # file instead.
   if ($^O eq 'VMS' && ($name eq lc($name) || $name eq uc($name))) {
       open PODFILE, "<$file" or die "_path2modname: Can't open $file: $!";
       my $in_pod = 0;
       my $in_name = 0;
       my $line;
       while ($line = <PODFILE>) {
-        chomp;
+        chomp $line;
         $in_pod = 1 if ($line =~ m/^=\w/);
         $in_pod = 0 if ($line =~ m/^=cut/);
         next unless $in_pod;         # skip non-pod text
@@ -279,7 +282,7 @@ sub _path2modname {
             last;
           }
         }
-        $in_name = 1 if m/^=head1 NAME/;
+        $in_name = 1 if ($line =~ m/^=head1 NAME/);
     }
     close PODFILE;
   }
