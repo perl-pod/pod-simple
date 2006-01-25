@@ -2,6 +2,8 @@ BEGIN {
     chdir 't';
     if($ENV{PERL_CORE}) {
         @INC = '../lib';
+    } else {
+        push @INC, '../lib';
     }
 }
 
