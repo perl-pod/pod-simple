@@ -40,7 +40,7 @@ foreach my $file (
   "junk1.pod",
   "junk2.pod",
   "perlcyg.pod",
-  "perlfaq3.pod",
+  "perlfaq.pod",
   "perlvar.pod",
 ) {
 
@@ -52,7 +52,7 @@ foreach my $file (
 
   my @out;
   my $precooked = source_path($file);
-  $precooked =~ s<\.pod><_out.txt>s;
+  $precooked =~ s<\.pod><o.txt>s;
   unless(-e $precooked) {
     ok 0;
     print "# But $precooked doesn't exist!!\n";

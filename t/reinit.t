@@ -32,7 +32,7 @@ foreach my $file (
   "junk1.pod",
   "junk2.pod",
   "perlcyg.pod",
-  "perlfaq3.pod",
+  "perlfaq.pod",
   "perlvar.pod",
 ) {
 
@@ -45,7 +45,7 @@ foreach my $file (
     my $precooked = $file;
     my $outstring;
     my $compstring;
-    $precooked =~ s<\.pod><_out.txt>s;
+    $precooked =~ s<\.pod><o.txt>s;
     $parser->reinit;
     $parser->output_string(\$outstring);
     $parser->parse_file(source_path($file));
