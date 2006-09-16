@@ -1,3 +1,4 @@
+# Testing HTMLBatch
 BEGIN {
     if($ENV{PERL_CORE}) {
         chdir 't';

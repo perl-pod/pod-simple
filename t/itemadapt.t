@@ -1,3 +1,4 @@
+# Testing the =item directive
 BEGIN {
     if($ENV{PERL_CORE}) {
         chdir 't';

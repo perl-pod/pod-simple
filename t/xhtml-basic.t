@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# t/xhtml-basic.t - check output from Pod::Simple::XHTML
+# t/xhtml01.t - check basic output from Pod::Simple::XHTML
 
 BEGIN {
     chdir 't' if -d 't';
