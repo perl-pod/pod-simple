@@ -43,9 +43,9 @@ sub source_path {
 }
 
 my $here;
-if(     -e ($here = source_path('test_lib'))) {
+if(     -e ($here = source_path('testlib1'))) {
   #
-} elsif(-e ($here = File::Spec->catdir($cwd, 't', 'test_lib'))) {
+} elsif(-e ($here = File::Spec->catdir($cwd, 't', 'testlib1'))) {
   #
 } else {
   die "Can't find the test corpus";
