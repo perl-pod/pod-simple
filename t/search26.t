@@ -80,12 +80,12 @@ print $p;
 
 {
 my $names = join "|", sort keys %$name2where;
-ok $names, "Zonk::Pronk|hink_honk::Glunk|perlzuk|squaa::Glunk|zikzik";
+ok $names, "Zonk::Pronk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
 }
 
 {
 my $names = join "|", sort values %$where2name;
-ok $names, "Zonk::Pronk|hink_honk::Glunk|hink_honk::Glunk|perlzuk|squaa::Glunk|zikzik";
+ok $names, "Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
 }
 
 print "# OK, bye from ", __FILE__, "\n";

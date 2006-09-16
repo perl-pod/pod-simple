@@ -71,25 +71,25 @@ print $p;
 {
 print "# won't show any shadows, since we're just looking at the name2where keys\n";
 my $names = join "|", sort keys %$name2where;
-ok $names, "Blorm|Sizzlesuzzle|Zonk::Pronk|hink_honk::Glunk|hink_honk::Vliff|perlfliff|perlthang|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Wowo|zikzik";
+ok $names, "Blorm|Suzzle|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Wowo|zikzik";
 }
 
 {
 print "# but here we'll see shadowing:\n";
 my $names = join "|", sort values %$where2name;
-ok $names, "Blorm|Sizzlesuzzle|Zonk::Pronk|hink_honk::Glunk|hink_honk::Glunk|hink_honk::Vliff|hink_honk::Vliff|perlfliff|perlthang|perlthang|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Vliff|squaa::Vliff|squaa::Wowo|zikzik";
+ok $names, "Blorm|Suzzle|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Glunk|hinkhonk::Vliff|hinkhonk::Vliff|perlflif|perlthng|perlthng|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Vliff|squaa::Vliff|squaa::Wowo|zikzik";
 
 my %count;
 for(values %$where2name) { ++$count{$_} };
 #print pretty(\%count), "\n\n";
 delete @count{ grep $count{$_} < 2, keys %count };
 my $shadowed = join "|", sort keys %count;
-ok $shadowed, "hink_honk::Glunk|hink_honk::Vliff|perlthang|squaa::Vliff";
+ok $shadowed, "hinkhonk::Glunk|hinkhonk::Vliff|perlthng|squaa::Vliff";
 
 sub thar { print "# Seen $_[0] :\n", map "#  {$_}\n", sort grep $where2name->{$_} eq $_[0],keys %$where2name; return; }
 
-ok $count{'perlthang'}, 2;
-thar 'perlthang';
+ok $count{'perlthng'}, 2;
+thar 'perlthng';
 ok $count{'squaa::Vliff'}, 3;
 thar 'squaa::Vliff';
 }
@@ -99,7 +99,7 @@ ok( ($name2where->{'squaa'} || 'huh???'), '/squaa\.pm$/');
 
 ok grep( m/squaa\.pm/, keys %$where2name ), 1;
 
-ok( ($name2where->{'perlthang'}    || 'huh???'), '/[^\^]testlib1/' );
+ok( ($name2where->{'perlthng'}    || 'huh???'), '/[^\^]testlib1/' );
 ok( ($name2where->{'squaa::Vliff'} || 'huh???'), '/[^\^]testlib1/' );
 
 # Some sanity:

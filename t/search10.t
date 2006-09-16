@@ -68,12 +68,12 @@ print $p;
 
 {
 my $names = join "|", sort values %$where2name;
-ok $names, "Blorm|Zonk::Pronk|hink_honk::Glunk|hink_honk::Vliff|perlfliff|perlthang|squaa|squaa::Glunk|squaa::Vliff|zikzik";
+ok $names, "Blorm|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|squaa|squaa::Glunk|squaa::Vliff|zikzik";
 }
 
 {
 my $names = join "|", sort keys %$name2where;
-ok $names, "Blorm|Zonk::Pronk|hink_honk::Glunk|hink_honk::Vliff|perlfliff|perlthang|squaa|squaa::Glunk|squaa::Vliff|zikzik";
+ok $names, "Blorm|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|squaa|squaa::Glunk|squaa::Vliff|zikzik";
 }
 
 ok( ($name2where->{'squaa'} || 'huh???'), '/squaa\.pm$/');
