@@ -1,6 +1,6 @@
 BEGIN {
-    chdir 't';
     if($ENV{PERL_CORE}) {
+        chdir 't';
         @INC = '../lib';
     } else {
         push @INC, '../lib';
@@ -21,6 +21,8 @@ BEGIN {
 
 $Pod::Simple::Text::FREAKYMODE = 1;
 use Pod::Simple::TiedOutFH ();
+
+chdir 't' unless $ENV{PERL_CORE};
 
 sub source_path {
     my $file = shift;
