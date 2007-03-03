@@ -60,7 +60,7 @@ if( $strictpath ) {
   print "#        => \"$x[0]\" to \"$x[1]\"\n";
   ok $x[0], $x[1], " find('strict') should match survey's name2where{strict}";
 } elsif ($nopod) {
-  ok 1; # skipping find() for 'thatpath/strict.pm
+  skip "skipping find() for strict.pm"; # skipping find() for 'thatpath/strict.pm
 } else {
   ok 0;  # an entry without a defined path means can't test find()
 }
