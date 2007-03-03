@@ -1,6 +1,19 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2007-03-03   Allison Randal <allison@perl.org>
+	* Release 3.05
+
+	Standardized all test files on 8.3 naming scheme for Perl core.
+
+	Applied test patches from Jerry Hedden for Perl core when
+	Encode not installed.
+
+	Applied test patch from Ken Williams for 5.005_04 compatibility.
+
+	Fixed a failing search test on Debian-based distributions caused
+	by Debian stripping Pod documentation out of core modules.
+
 2006-01-18   Allison Randal <allison@perl.org>
 	* Release 3.04
 
