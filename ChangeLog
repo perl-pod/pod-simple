@@ -11,6 +11,9 @@
 
 	Applied test patch from Ken Williams for 5.005_04 compatibility.
 
+	Applied a patch from Christopher Madsen to fix architecture
+	directory searches on Gentoo.
+
 	Fixed a failing search test on Debian-based distributions caused
 	by Debian stripping Pod documentation out of core modules.
 	(Three cheers to the CPAN testers and James Ponza for sending
