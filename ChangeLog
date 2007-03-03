@@ -13,6 +13,8 @@
 
 	Fixed a failing search test on Debian-based distributions caused
 	by Debian stripping Pod documentation out of core modules.
+	(Three cheers to the CPAN testers and James Ponza for sending
+	enough reports that I could work out the pattern.)
 
 2006-01-18   Allison Randal <allison@perl.org>
 	* Release 3.04
