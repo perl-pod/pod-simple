@@ -20,6 +20,9 @@ WriteMakefile(
    'Text::Wrap' => '98.112902',
    'Pod::Escapes' => '1.04',
 
+   # RT#29439
+   'Test'         => '1.25',
+
    # And finally, things I don't have any particular version in mind for:
    map {; $_ => 0 } qw[
     File::Spec File::Basename Cwd Config Carp overload Symbol strict
