@@ -4,8 +4,8 @@
 2008-06-03   Allison Randal <allison@perl.org>
 	* Release 3.06
 
-	Applied a patch from John McNamara to localize $1 before passing it to
-	File::Spec.
+	Fix bugs related to passing $1 to File::Spec, reported by Andrew Hamlin and
+	John McNamara.
 
 	Applied a suggested fix from Kevin Ryde to return a successful exit
 	code when Pod::Simple::HTML is run from the command line.
