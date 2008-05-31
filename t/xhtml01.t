@@ -17,6 +17,8 @@ isa_ok ($parser, 'Pod::Simple::XHTML');
 
 my $results;
 
+my $PERLDOC = "http://search.cpan.org/perldoc?";
+
 initialize($parser, $results);
 $parser->parse_string_document( "=head1 Poit!" );
 is($results, "<h1>Poit!</h1>\n\n", "head1 level output");
@@ -232,7 +234,7 @@ $parser->parse_string_document(<<'EOPOD');
 A plain paragraph with a L<perlport/Newlines>.
 EOPOD
 is($results, <<"EOHTML", "Link entity in a paragraph");
-<p>A plain paragraph with a <a href="perlport/Newlines">"Newlines" in perlport</a>.</p>
+<p>A plain paragraph with a <a href="${PERLDOC}perlport/Newlines">"Newlines" in perlport</a>.</p>
 
 EOHTML
 
@@ -300,7 +302,7 @@ $parser->parse_string_document(<<'EOPOD');
   my $text = "File is: " . <FILE>;
 EOPOD
 is($results, <<"EOHTML", "Verbatim text with encodable entities");
-<pre><code>  # this header is very important &amp; don't you forget it
+<pre><code>  # this header is very important &amp; don&#39;t you forget it
   my \$text = &quot;File is: &quot; . &lt;FILE&gt;;</code></pre>
 
 EOHTML
@@ -314,8 +316,8 @@ $parser->parse_string_document(<<'EOPOD');
   my $text = "File is: " . <FILE>;
 EOPOD
 is($results, <<"EOHTML", "Verbatim text with markup and embedded formatting");
-<pre><code>  # this header is very important &amp; don't you forget it
-  <b>my \$file = &lt;FILE&gt; || 'Blank!';</b>
+<pre><code>  # this header is very important &amp; don&#39;t you forget it
+  <b>my \$file = &lt;FILE&gt; || &#39;Blank!&#39;;</b>
   my \$text = &quot;File is: &quot; . &lt;FILE&gt;;</code></pre>
 
 EOHTML
