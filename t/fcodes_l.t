@@ -411,8 +411,8 @@ ok( $x->_out(qq{=pod\n\nI like L<<< I<text>|http://text.com >>>.\n}),
 ok( $x->_out(qq{=pod\n\nI like L<<< C<text>|http://text.com >>>.\n}),
 '<Document><Para>I like <L to="http://text.com" type="url"><C>text</C></L>.</Para></Document>'
 );
-ok( $x->_out(qq{=pod\n\nI like L<<< I<tI<eI<xI<t>>>>|mailto:earl\@text.com >>>.\n}),
-'<Document><Para>I like <L to="mailto:earl[...]text.com" type="url"><I>t<I>e<I>x<I>t</I></I></I></I></L>.</Para></Document>'
+ok( $x->_out(qq{=pod\n\nI like L<<< I<tI<eI<xI<t>>>>|mailto:earlE<64>text.com >>>.\n}),
+'<Document><Para>I like <L to="mailto:earl@text.com" type="url"><I>t<I>e<I>x<I>t</I></I></I></I></L>.</Para></Document>'
 );
 ok( $x->_out(qq{=pod\n\nI like L<<< textZ<>|http://text.com >>>.\n}),
 '<Document><Para>I like <L to="http://text.com" type="url">text</L>.</Para></Document>'
