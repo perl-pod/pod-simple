@@ -10,6 +10,8 @@
 	Applied a suggested fix from Kevin Ryde to return a successful exit
 	code when Pod::Simple::HTML is run from the command line.
 
+	Fix handling of complex L<URL> entries, thanks to tests supplied in RT#4896.
+
 	Thanks to Hans Dieter Pearcey for applying patches, resolving bugs,
 	and generally getting ready for the release.
 
