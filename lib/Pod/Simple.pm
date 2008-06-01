@@ -1064,7 +1064,7 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
 
         splice @$ell, 2, $#$ell, @text;
 
-        use Data::Dumper; warn Dumper($ell);
+        #use Data::Dumper; warn Dumper($ell);
 
         next;
       }
