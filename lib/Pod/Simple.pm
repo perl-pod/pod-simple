@@ -1010,7 +1010,7 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
        or (@{$ell} == 3 and $ell->[2] eq '')
       ) {
         $self->whine( $start_line, "An empty L<>" );
-        $ell = 'L<>';  # just make it a text node
+        $treelet->[$i] = 'L<>';  # just make it a text node
         next;  # and move on
       }
      
