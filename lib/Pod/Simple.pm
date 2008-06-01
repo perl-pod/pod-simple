@@ -983,6 +983,7 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
   # L<text|name/"sec"> or L<text|name/sec>
   # L<text|/"sec"> or L<text|/sec> or L<text|"sec">
   # L<scheme:...>
+  # Ltext|scheme:...>
 
   my($self,@stack) = @_;
 
@@ -1033,23 +1034,25 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
       # anything after it is part of the url.
       # the url text node itself may contain parts of both.
 
-      my ($url_index, $text, $url);
-      for (2..$#$ell) {
-        next if ref $ell->[$_];
-        next unless $ell->[$_] =~ m/^(?:([^|]*)\|)?(\w+:[^:\s]\S*)$/s;
-        ($text, $url) = ($1, $2);
-        $url_index = $_;
-        last;
-      }
-
-      if ($url_index) {
+      if (my ($url_index, $text_part, $url_part) =
+        # grep is no good here; we want to bail out immediately so that we can
+        # use $1, $2, etc. without having to do the match twice.
+        sub {
+          for (2..$#$ell) {
+            next if ref $ell->[$_];
+            next unless $ell->[$_] =~ m/^(?:([^|]*)\|)?(\w+:[^:\s]\S*)$/s;
+            return ($_, $1, $2);
+          }
+          return;
+        }->()
+      ) {
         $ell->[1]{'type'} = 'url';
 
         my @text = @{$ell}[2..$url_index-1];
-        push @text, $text if defined $text;
+        push @text, $text_part if defined $text_part;
 
         my @url  = @{$ell}[$url_index+1..$#$ell];
-        unshift @url, $url;
+        unshift @url, $url_part;
 
         unless (@text) {
           $ell->[1]{'content-implicit'} = 'yes';
@@ -1064,11 +1067,8 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
 
         splice @$ell, 2, $#$ell, @text;
 
-        #use Data::Dumper; warn Dumper($ell);
-
         next;
       }
-      
       
       # Catch some very simple and/or common cases
       if(@{$ell} == 3 and ! ref $ell->[2]) {
