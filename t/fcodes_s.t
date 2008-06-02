@@ -80,8 +80,8 @@ skip( $unless_ascii,
 use Pod::Simple::Text;
 $x = Pod::Simple::Text->new;
 $x->preserve_whitespace(1);
-# this fails because S<    > does not parse correctly; see RT#25679
-skip(1,
+# RT#25679
+ok(
   $x->_out(<<END
 =head1 The Tk::mega manpage showed me how C<< SE<lt> E<gt> foo >> is being rendered
 

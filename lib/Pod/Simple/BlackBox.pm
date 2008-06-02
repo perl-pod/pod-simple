@@ -1681,8 +1681,11 @@ sub _treelet_from_formatting_codes {
               [A-Z](?!<)
             )
             |
+            # whitespace is ok, but we don't want to eat the whitespace before
+            # a multiple-bracket end code.
+            # NOTE: we may still have problems with e.g. S<<    >>
             (?:
-              \s(?!\s*>)
+              \s(?!\s*>{2,})
             )
           )+
         )
