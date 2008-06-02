@@ -1459,7 +1459,7 @@ sub _out {
    "\nAbout to parse source: {{\n$_[0]\n}}\n\n";
   
   
-  my $parser = $class->new;
+  my $parser = ref $class && $class->isa(__PACKAGE__) ? $class : $class->new;
   $parser->hide_line_numbers(1);
 
   my $out = '';
