@@ -329,7 +329,8 @@ sub start_L {
       $url = $flags->{'to'};
     } elsif ($flags->{'type'} eq 'pod') {
       $url .= $self->perldoc_url_prefix || '';
-      $url .= $flags->{'to'} . '/' . $flags->{'section'};
+      $url .= $flags->{'to'} || '';
+      $url .= '/' . $flags->{'section'} if ($flags->{'section'});
       $url .= $self->perldoc_url_postfix || '';
 #    require Data::Dumper;
 #    print STDERR Data::Dumper->Dump([$flags]);

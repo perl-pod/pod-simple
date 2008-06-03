@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 24;
+use Test::More tests => 25;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -224,6 +224,17 @@ A plain paragraph with S<non breaking text>.
 EOPOD
 is($results, <<"EOHTML", "Non breaking text in a paragraph");
 <p>A plain paragraph with <nobr>non breaking text</nobr>.</p>
+
+EOHTML
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=pod
+
+A plain paragraph with a L<Newlines>.
+EOPOD
+is($results, <<"EOHTML", "Link entity in a paragraph");
+<p>A plain paragraph with a <a href="${PERLDOC}Newlines">Newlines</a>.</p>
 
 EOHTML
 
