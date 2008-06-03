@@ -29,6 +29,7 @@ lib/Pod/Simple/TiedOutFH.pm
 lib/Pod/Simple/Transcode.pm
 lib/Pod/Simple/TranscodeDumb.pm
 lib/Pod/Simple/TranscodeSmart.pm
+lib/Pod/Simple/XHTML.pm
 lib/Pod/Simple/XMLOutStream.pm
 Makefile.PL
 MANIFEST
@@ -173,5 +174,7 @@ t/perlvaro.txt
 t/verb_fmt.t
 t/verbatim.t
 t/x_nixer.t
+t/xhtml01.t
+t/xhtml05.t
 t/testlib3/squaa/Vliff.pm
 META.yml                                 Module meta-data (added by MakeMaker)

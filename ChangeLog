@@ -15,6 +15,9 @@
 	Fix incorrect handling of S<> entries made up of entirely whitespace, thanks
 	to test case from Andreas Koenig.
 
+	Launch Pod::Simple::XHTML, an XHTML compliant, more easily extensible
+	HTML formatter.
+
 	Thanks to Hans Dieter Pearcey for applying patches, resolving bugs,
 	and generally getting ready for the release.
 
