@@ -18,6 +18,9 @@
 	Launch Pod::Simple::XHTML, an XHTML compliant, more easily extensible
 	HTML formatter.
 
+	Add feature to parse additional text after =begin target as a block
+	title, requested by Adam Kennedy.
+
 	Thanks to Hans Dieter Pearcey for applying patches, resolving bugs,
 	and generally getting ready for the release.
 

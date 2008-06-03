@@ -910,17 +910,10 @@ sub _ponder_begin {
     return 1;
   }
   
-  unless($content =~ m/^\S+$/s) {  # i.e., unless it's one word
-    $self->whine(
-      $para->[1]{'start_line'},
-      "'=begin' only takes one parameter, not several as in '=begin $content'"
-    );
-    DEBUG and print "Ignoring unintelligible =begin $content\n";
-    return 1;
-  }
-
-
-  $para->[1]{'target'} = $content;  # without any ':'
+  my ($target, $title) = $content =~ m/^(\S+)\s*(.*)$/;
+  $para->[1]{'title'} = $title if ($title);
+  $para->[1]{'target'} = $target;  # without any ':'
+  $content = $target; # strip off the title
 
   $content =~ s/^:!/!:/s;
   my $neg;  # whether this is a negation-match
