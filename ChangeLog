@@ -1,6 +1,12 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2008-06-04   Allison Randal <allison@perl.org>
+	* Release 3.07
+
+	Fix module dependencies, make HTML::Entities optional and require
+	Test::More.
+
 2008-06-03   Allison Randal <allison@perl.org>
 	* Release 3.06
 
