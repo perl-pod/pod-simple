@@ -29,6 +29,8 @@ WriteMakefile(
     constant integer File::Find Test::More
    ]
   },
+
+  INSTALLDIRS => $] >= 5.009003 ? 'perl' : 'site',
 );
 
 
