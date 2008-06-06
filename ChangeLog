@@ -1,6 +1,12 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+xxxx-xx-xx
+	* Release 3.08
+
+	Fix installdirs for Perl versions where Pod::Simple was core; RT#36446,
+	thanks to Jerry Hedden.
+
 2008-06-04   Allison Randal <allison@perl.org>
 	* Release 3.07
 
