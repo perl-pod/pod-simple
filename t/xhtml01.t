@@ -21,19 +21,19 @@ my $PERLDOC = "http://search.cpan.org/perldoc?";
 
 initialize($parser, $results);
 $parser->parse_string_document( "=head1 Poit!" );
-is($results, "<h1>Poit!</h1>\n\n", "head1 level output");
+is($results, qq{<h1 id="Poit-">Poit!</h1>\n\n}, "head1 level output");
 
 initialize($parser, $results);
 $parser->parse_string_document( "=head2 I think so Brain." );
-is($results, "<h2>I think so Brain.</h2>\n\n", "head2 level output");
+is($results, qq{<h2 id="I-think-so-Brain.">I think so Brain.</h2>\n\n}, "head2 level output");
 
 initialize($parser, $results);
 $parser->parse_string_document( "=head3 I say, Brain..." );
-is($results, "<h3>I say, Brain...</h3>\n\n", "head3 level output");
+is($results, qq{<h3 id="I-say-Brain...">I say, Brain...</h3>\n\n}, "head3 level output");
 
 initialize($parser, $results);
-$parser->parse_string_document( "=head4 Zort!" );
-is($results, "<h4>Zort!</h4>\n\n", "head4 level output");
+$parser->parse_string_document( "=head4 Zort & Zog!" );
+is($results, qq{<h4 id="Zort-Zog-">Zort & Zog!</h4>\n\n}, "head4 level output");
 
 
 initialize($parser, $results);

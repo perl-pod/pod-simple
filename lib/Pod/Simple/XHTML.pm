@@ -137,8 +137,6 @@ to the empty string.
 
 =head2 index
 
-TODO -- Not implemented.
-
 Whether to add a table-of-contents at the top of each page (called an
 index for the sake of tradition).
 
@@ -185,6 +183,9 @@ sub new {
   $new->nix_X_codes(1);
   $new->codes_in_verbatim(1);
   $new->{'scratch'} = '';
+  $new->{'to_index'} = [];
+  $new->{'output'} = [];
+  $new->{'ids'} = {};
   return $new;
 }
 
@@ -214,7 +215,7 @@ something like:
   sub handle_text {
       my ($self, $text) = @_;
       if ($self->{'in_foo'}) {
-          $self->{'scratch'} .= build_foo_html($text); 
+          $self->{'scratch'} .= build_foo_html($text);
       } else {
           $self->{'scratch'} .= $text;
       }
@@ -230,10 +231,10 @@ sub handle_text {
 sub start_Para     { $_[0]{'scratch'} = '<p>' }
 sub start_Verbatim { $_[0]{'scratch'} = '<pre><code>'; $_[0]{'in_verbatim'} = 1}
 
-sub start_head1 {  $_[0]{'scratch'} = '<h1>' }
-sub start_head2 {  $_[0]{'scratch'} = '<h2>' }
-sub start_head3 {  $_[0]{'scratch'} = '<h3>' }
-sub start_head4 {  $_[0]{'scratch'} = '<h4>' }
+sub start_head1 {  $_[0]{'in_head'} = 1 }
+sub start_head2 {  $_[0]{'in_head'} = 2 }
+sub start_head3 {  $_[0]{'in_head'} = 3 }
+sub start_head4 {  $_[0]{'in_head'} = 4 }
 
 sub start_item_bullet { $_[0]{'scratch'} = '<li>' }
 sub start_item_number { $_[0]{'scratch'} = "<li>$_[1]{'number'}. "  }
@@ -258,10 +259,20 @@ sub end_Verbatim {
     $_[0]->emit;
 }
 
-sub end_head1       { $_[0]{'scratch'} .= '</h1>'; $_[0]->emit }
-sub end_head2       { $_[0]{'scratch'} .= '</h2>'; $_[0]->emit }
-sub end_head3       { $_[0]{'scratch'} .= '</h3>'; $_[0]->emit }
-sub end_head4       { $_[0]{'scratch'} .= '</h4>'; $_[0]->emit }
+
+sub _end_head {
+    my $h = delete $_[0]{in_head};
+    my $id = $_[0]->idify($_[0]{scratch});
+    my $text = $_[0]{scratch};
+    $_[0]{'scratch'} = qq{<h$h id="$id">$text</h$h>};
+    $_[0]->emit;
+    push @{ $_[0]{'to_index'} }, [$h, $id, $text];
+}
+
+sub end_head1       { shift->_end_head(@_); }
+sub end_head2       { shift->_end_head(@_); }
+sub end_head3       { shift->_end_head(@_); }
+sub end_head4       { shift->_end_head(@_); }
 
 sub end_item_bullet { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
 sub end_item_number { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
@@ -313,8 +324,47 @@ HTML
   }
 }
 
-sub end_Document   { 
+sub end_Document   {
   my ($self) = @_;
+  my $to_index = $self->{'to_index'};
+  if ($self->index && @{ $to_index } ) {
+      my @out;
+      my $level  = 0;
+      my $indent = -1;
+      my $space  = '';
+      my $id     = ' id="index"';
+
+      for my $h (@{ $to_index }, [0]) {
+          my $target_level = $h->[0];
+          # Get to target_level by opening or closing ULs
+          if ($level == $target_level) {
+              $out[-1] .= '</li>';
+          } elsif ($level > $target_level) {
+              $out[-1] .= '</li>' if $out[-1] =~ /^\s+<li>/;
+              while ($level > $target_level) {
+                  --$level;
+                  push @out, ('  ' x --$indent) . '</li>' if @out && $out[-1] =~ m{^\s+<\/ul};
+                  push @out, ('  ' x --$indent) . '</ul>';
+              }
+              push @out, ('  ' x --$indent) . '</li>' if $level;
+          } else {
+              while ($level < $target_level) {
+                  ++$level;
+                  push @out, ('  ' x ++$indent) . '<li>' if @out && $out[-1]=~ /^\s*<ul/;
+                  push @out, ('  ' x ++$indent) . "<ul$id>";
+                  $id = '';
+              }
+              ++$indent;
+          }
+
+          next unless $level;
+          $space = '  '  x $indent;
+          push @out, sprintf '%s<li><a href="#%s">%s</a>',
+              $space, $h->[1], $h->[2];
+      }
+      print {$self->{'output_fh'}} join ("\n", @out), "\n\n";
+  }
+
   if (defined $self->html_footer) {
     $self->{'scratch'} .= $self->html_footer;
     $self->emit unless $self->html_footer eq "";
@@ -322,6 +372,12 @@ sub end_Document   {
     $self->{'scratch'} .= "</body>\n</html>";
     $self->emit;
   }
+
+  if ($self->index) {
+      print {$self->{'output_fh'}} join ("\n\n", @{ $self->{'output'} }), "\n\n";
+      @{$self->{'output'}} = ();
+  }
+
 }
 
 # Handling code tags
@@ -363,10 +419,61 @@ sub end_S   { $_[0]{'scratch'} .= '</nobr>' }
 
 sub emit {
   my($self) = @_;
-  my $out = $self->{'scratch'} . "\n";
-  print {$self->{'output_fh'}} $out, "\n";
+  if ($self->index) {
+      push @{ $self->{'output'} }, $self->{'scratch'};
+  } else {
+      print {$self->{'output_fh'}} $self->{'scratch'}, "\n\n";
+  }
   $self->{'scratch'} = '';
   return;
+}
+
+=head2 idify
+
+  my $id   = $pod->idify($text);
+  my $hash = $pod->idify($text, 1);
+
+This method turns an arbitrary string into a valid XHTML ID attribute value.
+The rules enforced, following
+L<http://webdesign.about.com/od/htmltags/a/aa031707.htm>, are:
+
+=over
+
+=item *
+
+The id must start with a letter (a-z or A-Z)
+
+=item *
+
+All subsequent characters can be letters, numbers (0-9), hyphens (-),
+underscores (_), colons (:), and periods (.).
+
+=item *
+
+Each id must be unique within the document.
+
+=back
+
+In addition, the returned value will be unique within the context of the
+Pod::Simple::XHTML object unless a second argument is passed a true value. ID
+attributes should always be unique within a single XHTML document, but pass
+the true value if you are creating not an ID but a URL hash to point to
+an ID (i.e., if you need to put the "#foo" in C<< <a href="#foo">foo</a> >>.
+
+=cut
+
+sub idify {
+    my ($self, $t, $not_unique) = @_;
+    for ($t) {
+        s/<[^>]+>//g;            # Strip HTML.
+        s/^([^a-zA-Z]+)$/pod$1/; # Prepend "pod" if no valid chars.
+        s/^[^a-zA-Z]+//;         # First char must be a letter.
+        s/[^-a-zA-Z0-9_:.]+/-/g; # All other chars must be valid.
+    }
+    return $t if $not_unique;
+    my $i = '';
+    $i++ while $self->{ids}{"$t$i"}++;
+    return "$t$i";
 }
 
 # Bypass built-in E<> handling to preserve entity encoding

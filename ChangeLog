@@ -1,6 +1,13 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2009-00-00   Allison Randal <allison@perl.org>
+	* Release 3.09
+
+	Add support for an index (TOC) in the XHTML output from David E.
+	Wheeler.
+
+
 2009-07-16   Allison Randal <allison@perl.org>
 	* Release 3.08
 
