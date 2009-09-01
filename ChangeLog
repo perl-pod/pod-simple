@@ -9,6 +9,12 @@
 
 	Add strip_verbatim_indent() from David E. Wheeler.
 
+	Added the "nocase" option to PullParser's get_title(),
+	get_version(), get_description(), and get_author() methods. This
+	allows one to fetch the contents of those sections regardless of
+	the case of the labels (e.g., "NAME" and "Name" and "name" are all
+	valid). Graham Barr.
+
 2009-07-16   Allison Randal <allison@perl.org>
 	* Release 3.08
 
