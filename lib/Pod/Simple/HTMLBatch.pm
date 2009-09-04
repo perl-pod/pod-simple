@@ -37,6 +37,7 @@ $HTML_RENDER_CLASS ||= "Pod::Simple::HTML";
 Pod::Simple::_accessorize( __PACKAGE__,
  'verbose', # how verbose to be during batch conversion
  'html_render_class', # what class to use to render
+ 'search_class', # what to use to search for POD documents
  'contents_file', # If set, should be the name of a file (in current directory)
                   # to write the list of all modules to
  'index', # will set $htmlpage->index(...) to this (true or false)
@@ -71,6 +72,7 @@ sub go {
 sub new {
   my $new = bless {}, ref($_[0]) || $_[0];
   $new->html_render_class($HTML_RENDER_CLASS);
+  $new->search_class($SEARCH_CLASS);
   $new->verbose(1 + DEBUG);
   $new->_contents([]);
   
@@ -529,7 +531,7 @@ sub modnames2paths { # return a hashref mapping modulenames => paths
 
   my $m2p;
   {
-    my $search = $SEARCH_CLASS->new;
+    my $search = $self->search_class->new;
     DEBUG and print "Searching via $search\n";
     $search->verbose(1) if DEBUG > 10;
     $search->progress( $self->progress->copy->goal(0) ) if $self->progress;
@@ -1272,6 +1274,14 @@ TODO
 =item $batchconv->html_render_class( I<classname> );
 
 This sets what class is used for rendering the files.
+The default is "Pod::Simple::HTML".  If you set it to something else,
+it should probably be a subclass of Pod::Simple::HTML, and you should
+C<require> or C<use> that class so that's it's loaded before
+Pod::Simple::HTMLBatch tries loading it.
+
+=item $batchconv->search_class( I<classname> );
+
+This sets what class is used for searching for the files.
 The default is "Pod::Simple::Search".  If you set it to something else,
 it should probably be a subclass of Pod::Simple::Search, and you should
 C<require> or C<use> that class so that's it's loaded before
@@ -1297,6 +1307,8 @@ TODO
     $page->batch_mode_page_object_init($self, $module, $infile, $outfile, $depth)
   or maybe override
     $batchconv->batch_mode_page_object_init($page, $module, $infile, $outfile, $depth)
+  subclass Pod::Simple::Search and set $batchconv->search_class to
+    that classname
 
 
 
