@@ -246,11 +246,8 @@ sub _do_one_batch_conversion {
   }
 
   # Give each class a chance to init the converter:
-  
   $page->batch_mode_page_object_init($self, $module, $infile, $outfile, $depth)
    if $page->can('batch_mode_page_object_init');
-  $self->batch_mode_page_object_init($page, $module, $infile, $outfile, $depth)
-   if $self->can('batch_mode_page_object_init');
     
   # Now get busy...
   $self->makepath($outdir => \@namelets);
