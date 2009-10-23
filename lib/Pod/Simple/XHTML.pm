@@ -361,7 +361,9 @@ sub end_Document   {
           push @out, sprintf '%s<li><a href="#%s">%s</a>',
               $space, $h->[1], $h->[2];
       }
-      print {$self->{'output_fh'}} join ("\n", @out), "\n\n";
+      # Splice the index in between the HTML headers and the first element.
+      my $offset = defined $self->html_header ? $self->html_header eq '' ? 0 : 1 : 1;
+      splice @{ $self->{'output'} }, $offset, 0, join "\n", @out;
   }
 
   if (defined $self->html_footer) {

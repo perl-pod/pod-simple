@@ -14,6 +14,8 @@ use Test::More tests => 44;
 use_ok('Pod::Simple::XHTML') or exit;
 
 isa_ok my $parser = Pod::Simple::XHTML->new, 'Pod::Simple::XHTML';
+my $header = $parser->html_header;
+my $footer = $parser->html_footer;
 
 for my $spec (
     [ 'foo'    => 'foo',   'foo'     ],
@@ -32,13 +34,27 @@ for my $spec (
 my $results;
 
 initialize($parser, $results);
+$parser->html_header($header);
+$parser->html_footer($footer);
 ok $parser->parse_string_document( '=head1 Foo' ), 'Parse one header';
 is $results, <<'EOF', 'Should have the index';
+
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+</head>
+<body>
+
+
 <ul id="index">
   <li><a href="#Foo">Foo</a></li>
 </ul>
 
 <h1 id="Foo">Foo</h1>
+
+</body>
+</html>
 
 EOF
 
