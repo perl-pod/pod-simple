@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 29;
+use Test::More tests => 30;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -33,7 +33,7 @@ is($results, qq{<h3 id="I-say-Brain...">I say, Brain...</h3>\n\n}, "head3 level 
 
 initialize($parser, $results);
 $parser->parse_string_document( "=head4 Zort & Zog!" );
-is($results, qq{<h4 id="Zort-Zog-">Zort & Zog!</h4>\n\n}, "head4 level output");
+is($results, qq{<h4 id="Zort-Zog-">Zort &amp; Zog!</h4>\n\n}, "head4 level output");
 
 
 initialize($parser, $results);
@@ -63,7 +63,7 @@ EOPOD
 is($results, <<'EOHTML', "multiple paragraphs");
 <p>B: Now, Pinky, if by any chance you are captured during this mission, remember you are Gunther Heindriksen from Appenzell. You moved to Grindelwald to drive the cog train to Murren. Can you repeat that?</p>
 
-<p>P: Mmmm, no, Brain, don't think I can.</p>
+<p>P: Mmmm, no, Brain, don&#39;t think I can.</p>
 
 EOHTML
 
@@ -151,6 +151,29 @@ is($results, <<'EOHTML', "list with text headings");
 
 <p>The same thing we do every night, Pinky. Try to take over the world!</p>
 </li>
+
+</ul>
+
+EOHTML
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=over
+
+=item * Brain <brain@binkyandthebrain.com>
+
+=item * Pinky <pinky@binkyandthebrain.com>
+
+=back
+
+EOPOD
+
+is($results, <<'EOHTML', "bulleted author list");
+<ul>
+
+<li>Brain &lt;brain@binkyandthebrain.com&gt;</li>
+
+<li>Pinky &lt;pinky@binkyandthebrain.com&gt;</li>
 
 </ul>
 
@@ -247,7 +270,7 @@ $parser->parse_string_document(<<'EOPOD');
 A plain paragraph with a L<perlport/Newlines>.
 EOPOD
 is($results, <<"EOHTML", "Link entity in a paragraph");
-<p>A plain paragraph with a <a href="${PERLDOC}perlport/Newlines">"Newlines" in perlport</a>.</p>
+<p>A plain paragraph with a <a href="${PERLDOC}perlport/Newlines">&quot;Newlines&quot; in perlport</a>.</p>
 
 EOHTML
 

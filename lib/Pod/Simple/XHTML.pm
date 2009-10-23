@@ -225,11 +225,11 @@ something like:
 
 sub handle_text {
     # escape special characters in HTML (<, >, &, etc)
-    $_[0]{'scratch'} .= $_[0]{'in_verbatim'} ? encode_entities( $_[1] ) : $_[1]
+    $_[0]{'scratch'} .= encode_entities( $_[1] )
 }
 
 sub start_Para     { $_[0]{'scratch'} = '<p>' }
-sub start_Verbatim { $_[0]{'scratch'} = '<pre><code>'; $_[0]{'in_verbatim'} = 1}
+sub start_Verbatim { $_[0]{'scratch'} = '<pre><code>' }
 
 sub start_head1 {  $_[0]{'in_head'} = 1 }
 sub start_head2 {  $_[0]{'in_head'} = 2 }
@@ -255,7 +255,6 @@ sub end_over_number { $_[0]{'scratch'} .= '</ol>'; $_[0]->emit }
 sub end_Para     { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 sub end_Verbatim {
     $_[0]{'scratch'}     .= '</code></pre>';
-    $_[0]{'in_verbatim'}  = 0;
     $_[0]->emit;
 }
 
@@ -384,8 +383,8 @@ sub end_Document   {
 sub start_B { $_[0]{'scratch'} .= '<b>' }
 sub end_B   { $_[0]{'scratch'} .= '</b>' }
 
-sub start_C { $_[0]{'scratch'} .= '<code>'; $_[0]{'in_verbatim'} = 1; }
-sub end_C   { $_[0]{'scratch'} .= '</code>'; $_[0]{'in_verbatim'} = 0; }
+sub start_C { $_[0]{'scratch'} .= '<code>' }
+sub end_C   { $_[0]{'scratch'} .= '</code>' }
 
 sub start_E { $_[0]{'scratch'} .= '&' }
 sub end_E   { $_[0]{'scratch'} .= ';' }
@@ -466,6 +465,7 @@ sub idify {
     my ($self, $t, $not_unique) = @_;
     for ($t) {
         s/<[^>]+>//g;            # Strip HTML.
+        s/&[^;]+;//g;            # Strip entities.
         s/^([^a-zA-Z]+)$/pod$1/; # Prepend "pod" if no valid chars.
         s/^[^a-zA-Z]+//;         # First char must be a letter.
         s/[^-a-zA-Z0-9_:.]+/-/g; # All other chars must be valid.
