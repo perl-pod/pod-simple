@@ -8,8 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-#use Test::More tests => 26;
-use Test::More 'no_plan';
+use Test::More tests => 29;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -146,10 +145,12 @@ is($results, <<'EOHTML', "list with text headings");
 <li>Pinky
 
 <p>Gee, Brain, what do you want to do tonight?</p>
+</li>
 
 <li>Brain
 
 <p>The same thing we do every night, Pinky. Try to take over the world!</p>
+</li>
 
 </ul>
 
