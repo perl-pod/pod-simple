@@ -8,7 +8,8 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 26;
+#use Test::More tests => 26;
+use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -338,6 +339,14 @@ is($results, <<"EOHTML", "Verbatim text with markup and embedded formatting");
 
 EOHTML
 }
+
+
+ok $parser = Pod::Simple::XHTML->new, 'Construct a new parser';
+$results = '';
+$parser->output_string( \$results ); # Send the resulting output to a string
+ok $parser->parse_string_document( "=head1 Poit!" ), 'Parse with headers';
+like $results, qr{<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />},
+    'Should have proper http-equiv meta tag';
 
 ######################################
 

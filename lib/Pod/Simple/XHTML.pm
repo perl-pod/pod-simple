@@ -179,7 +179,7 @@ sub new {
   $new->{'output_fh'} ||= *STDOUT{IO};
   $new->accept_targets( 'html', 'HTML' );
   $new->perldoc_url_prefix('http://search.cpan.org/perldoc?');
-  $new->html_header_tags('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">');
+  $new->html_header_tags('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />');
   $new->nix_X_codes(1);
   $new->codes_in_verbatim(1);
   $new->{'scratch'} = '';
