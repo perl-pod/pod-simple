@@ -236,8 +236,18 @@ sub start_head2 {  $_[0]{'in_head'} = 2 }
 sub start_head3 {  $_[0]{'in_head'} = 3 }
 sub start_head4 {  $_[0]{'in_head'} = 4 }
 
-sub start_item_bullet { $_[0]{'scratch'} = '<li>' }
-sub start_item_number { $_[0]{'scratch'} = "<li>$_[1]{'number'}. "  }
+sub start_item_number {
+    $_[0]{'scratch'} = "</li>\n" if $_[0]{'in_li'};
+    $_[0]{'scratch'} .= '<li><p>';
+    $_[0]{'in_li'} = 1
+}
+
+sub start_item_bullet {
+    $_[0]{'scratch'} = "</li>\n" if $_[0]{'in_li'};
+    $_[0]{'scratch'} .= '<li><p>';
+    $_[0]{'in_li'} = 1
+}
+
 sub start_item_text   {
     $_[0]{'scratch'} = "</dd>\n" if delete $_[0]{'in_dd'};
     $_[0]{'scratch'} .= '<dt>';
@@ -248,9 +258,20 @@ sub start_over_text   { $_[0]{'scratch'} = '<dl>'; $_[0]->emit }
 sub start_over_block  { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
 sub start_over_number { $_[0]{'scratch'} = '<ol>'; $_[0]->emit }
 
-sub end_over_bullet { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
 sub end_over_block  { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
-sub end_over_number { $_[0]{'scratch'} .= '</ol>'; $_[0]->emit }
+
+sub end_over_number   {
+    $_[0]{'scratch'} = "</li>\n" if delete $_[0]{'in_li'};
+    $_[0]{'scratch'} .= '</ol>';
+    $_[0]->emit;
+}
+
+sub end_over_bullet   {
+    $_[0]{'scratch'} = "</li>\n" if delete $_[0]{'in_li'};
+    $_[0]{'scratch'} .= '</ul>';
+    $_[0]->emit;
+}
+
 sub end_over_text   {
     $_[0]{'scratch'} = "</dd>\n" if delete $_[0]{'in_dd'};
     $_[0]{'scratch'} .= '</dl>';
@@ -279,8 +300,8 @@ sub end_head2       { shift->_end_head(@_); }
 sub end_head3       { shift->_end_head(@_); }
 sub end_head4       { shift->_end_head(@_); }
 
-sub end_item_bullet { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
-sub end_item_number { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
+sub end_item_bullet { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
+sub end_item_number { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 sub end_item_text   { $_[0]{'scratch'} .= "</dt>\n<dd>"; $_[0]{'in_dd'} = 1; $_[0]->emit }
 
 # This handles =begin and =for blocks of all kinds.

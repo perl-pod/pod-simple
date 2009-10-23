@@ -86,10 +86,12 @@ EOPOD
 is($results, <<'EOHTML', "simple bulleted list");
 <ul>
 
-<li>P: Gee, Brain, what do you want to do tonight?</li>
+<li><p>P: Gee, Brain, what do you want to do tonight?</p>
 
-<li>B: The same thing we do every night, Pinky. Try to take over the world!</li>
+</li>
+<li><p>B: The same thing we do every night, Pinky. Try to take over the world!</p>
 
+</li>
 </ul>
 
 EOHTML
@@ -114,10 +116,12 @@ EOPOD
 is($results, <<'EOHTML', "numbered list");
 <ol>
 
-<li>1. P: Gee, Brain, what do you want to do tonight?</li>
+<li><p>P: Gee, Brain, what do you want to do tonight?</p>
 
-<li>2. B: The same thing we do every night, Pinky. Try to take over the world!</li>
+</li>
+<li><p>B: The same thing we do every night, Pinky. Try to take over the world!</p>
 
+</li>
 </ol>
 
 EOHTML
@@ -177,16 +181,16 @@ EOPOD
 is($results, <<'EOHTML', "list with bullet and text headings");
 <ul>
 
-<li>Pinky
+<li><p>Pinky</p>
 
 <p>Gee, Brain, what do you want to do tonight?</p>
-</li>
 
-<li>Brain
+</li>
+<li><p>Brain</p>
 
 <p>The same thing we do every night, Pinky. Try to take over the world!</p>
-</li>
 
+</li>
 </ul>
 
 EOHTML
@@ -206,10 +210,12 @@ EOPOD
 is($results, <<'EOHTML', "bulleted author list");
 <ul>
 
-<li>Brain &lt;brain@binkyandthebrain.com&gt;</li>
+<li><p>Brain &lt;brain@binkyandthebrain.com&gt;</p>
 
-<li>Pinky &lt;pinky@binkyandthebrain.com&gt;</li>
+</li>
+<li><p>Pinky &lt;pinky@binkyandthebrain.com&gt;</p>
 
+</li>
 </ul>
 
 EOHTML
