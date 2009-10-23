@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 30;
+use Test::More tests => 31;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -140,6 +140,41 @@ The same thing we do every night, Pinky. Try to take over the world!
 EOPOD
 
 is($results, <<'EOHTML', "list with text headings");
+<dl>
+
+<dt>Pinky</dt>
+<dd>
+
+<p>Gee, Brain, what do you want to do tonight?</p>
+
+</dd>
+<dt>Brain</dt>
+<dd>
+
+<p>The same thing we do every night, Pinky. Try to take over the world!</p>
+
+</dd>
+</dl>
+
+EOHTML
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=over
+
+=item * Pinky
+
+Gee, Brain, what do you want to do tonight?
+
+=item * Brain
+
+The same thing we do every night, Pinky. Try to take over the world!
+
+=back
+
+EOPOD
+
+is($results, <<'EOHTML', "list with bullet and text headings");
 <ul>
 
 <li>Pinky

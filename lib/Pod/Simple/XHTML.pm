@@ -238,17 +238,24 @@ sub start_head4 {  $_[0]{'in_head'} = 4 }
 
 sub start_item_bullet { $_[0]{'scratch'} = '<li>' }
 sub start_item_number { $_[0]{'scratch'} = "<li>$_[1]{'number'}. "  }
-sub start_item_text   { $_[0]{'scratch'} = '<li>'   }
+sub start_item_text   {
+    $_[0]{'scratch'} = "</dd>\n" if delete $_[0]{'in_dd'};
+    $_[0]{'scratch'} .= '<dt>';
+}
 
 sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
-sub start_over_text   { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
+sub start_over_text   { $_[0]{'scratch'} = '<dl>'; $_[0]->emit }
 sub start_over_block  { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
 sub start_over_number { $_[0]{'scratch'} = '<ol>'; $_[0]->emit }
 
 sub end_over_bullet { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
-sub end_over_text   { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
 sub end_over_block  { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
 sub end_over_number { $_[0]{'scratch'} .= '</ol>'; $_[0]->emit }
+sub end_over_text   {
+    $_[0]{'scratch'} = "</dd>\n" if delete $_[0]{'in_dd'};
+    $_[0]{'scratch'} .= '</dl>';
+    $_[0]->emit;
+}
 
 # . . . . . Now the actual formatters:
 
@@ -257,7 +264,6 @@ sub end_Verbatim {
     $_[0]{'scratch'}     .= '</code></pre>';
     $_[0]->emit;
 }
-
 
 sub _end_head {
     my $h = delete $_[0]{in_head};
@@ -275,7 +281,7 @@ sub end_head4       { shift->_end_head(@_); }
 
 sub end_item_bullet { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
 sub end_item_number { $_[0]{'scratch'} .= '</li>'; $_[0]->emit }
-sub end_item_text   { $_[0]->emit }
+sub end_item_text   { $_[0]{'scratch'} .= "</dt>\n<dd>"; $_[0]{'in_dd'} = 1; $_[0]->emit }
 
 # This handles =begin and =for blocks of all kinds.
 sub start_for { 

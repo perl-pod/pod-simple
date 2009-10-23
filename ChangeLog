@@ -19,7 +19,10 @@
 	David E. Wheeler.
 
 	XHTML output now properly encodes entities in all places, not just
-	in verbatim blocks and code spans.
+	in verbatim blocks and code spans. David E. Wheler
+
+	Fixed XHTML to output definition lists when it should, rather than
+	(broken) unordered lists. David E. Wheeler
 
 2009-07-16   Allison Randal <allison@perl.org>
 	* Release 3.08
