@@ -151,10 +151,7 @@ If you set this attribute to a true value, it will send reports of
 parsing errors to STDERR. By default, this attribute's value is false,
 meaning that no output is sent to STDERR.
 
-Note that errors can be noted in an errata section, or sent to STDERR,
-or both, or neither. So don't think that turning on C<complain_stderr>
-will turn off C<no_errata_section> or vice versa -- these are
-independent attributes.
+Setting C<complain_stderr> also sets C<no_errata_section>.
 
 
 =item C<< $parser->source_filename >>
