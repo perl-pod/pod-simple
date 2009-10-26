@@ -65,7 +65,7 @@ directly formatting it).  A B<Pod formatter> (or B<Pod translator>)
 is a module or program that converts Pod to some other format (HTML,
 plaintext, TeX, PostScript, RTF).  A B<Pod processor> might be a
 formatter or translator, or might be a program that does something
-else with the Pod (like wordcounting it, scanning for index points,
+else with the Pod (like counting words, scanning for index points,
 etc.).
 
 Pod content is contained in B<Pod blocks>.  A Pod block starts with a
@@ -189,7 +189,7 @@ is a verbatim paragraph, because its first line starts with a literal
 whitespace character (and there's no "=begin"..."=end" region around).
 
 The "=begin I<identifier>" ... "=end I<identifier>" commands stop
-paragraphs that they surround from being parsed as data or verbatim
+paragraphs that they surround from being parsed as ordinary or verbatim
 paragraphs, if I<identifier> doesn't begin with a colon.  This
 is discussed in detail in the section
 L</About Data Paragraphs and "=beginE<sol>=end" Regions>.
@@ -238,7 +238,7 @@ ignored.  Examples:
   # This is the first line of program text.
   sub foo { # This is the second.
 
-It is an error to try to I<start> a Pod black with a "=cut" command.  In
+It is an error to try to I<start> a Pod block with a "=cut" command.  In
 that case, the Pod processor must halt parsing of the input file, and
 must by default emit a warning.
 
@@ -331,6 +331,29 @@ begins with a ":"; if "formatname" I<doesn't> begin with a colon,
 then "text..." will constitute a data paragraph.  There is no way
 to use "=for formatname text..." to express "text..." as a verbatim
 paragraph.
+
+=item "=encoding encodingname"
+
+This command, which should occur early in the document (at least
+before any non-US-ASCII data!), declares that this document is
+encoded in the encoding I<encodingname>, which must be
+an encoding name that L<Encode> recognizes.  (Encode's list
+of supported encodings, in L<Encode::Supported>, is useful here.)
+If the Pod parser cannot decode the declared encoding, it 
+should emit a warning and may abort parsing the document
+altogether.
+
+A document having more than one "=encoding" line should be
+considered an error.  Pod processors may silently tolerate this if
+the not-first "=encoding" lines are just duplicates of the
+first one (e.g., if there's a "=encoding utf8" line, and later on
+another "=encoding utf8" line).  But Pod processors should complain if
+there are contradictory "=encoding" lines in the same document
+(e.g., if there is a "=encoding utf8" early in the document and
+"=encoding big5" later).  Pod processors that recognize BOMs
+may also complain if they see an "=encoding" line
+that contradicts the BOM (e.g., if a document with a UTF-16LE
+BOM has an "=encoding shiftjis" line).
 
 =back
 
@@ -463,7 +486,7 @@ L</Notes on Implementing Pod Processors>.
 
 This formatting code is syntactically simple, but semantically
 complex.  What it means is that each space in the printable
-content of this code signifies a nonbreaking space.
+content of this code signifies a non-breaking space.
 
 Consider:
 
@@ -474,7 +497,7 @@ Consider:
 Both signify the monospace (c[ode] style) text consisting of
 "$x", one space, "?", one space, ":", one space, "$z".  The
 difference is that in the latter, with the S code, those spaces
-are not "normal" spaces, but instead are nonbreaking spaces.
+are not "normal" spaces, but instead are non-breaking spaces.
 
 =back
 
@@ -499,7 +522,7 @@ a "-".  This was so that this:
 
 would parse as equivalent to this:
 
-    C<$foo-E<lt>bar>
+    C<$foo-E<gt>bar>
 
 instead of as equivalent to a "C" formatting code containing 
 only "$foo-", and then a "bar>" outside the "C" formatting code.  This
@@ -589,7 +612,7 @@ UTF-16.  If the file begins with the three literal byte values
  0xEF 0xBB 0xBF
 
 =for comment
- If toke.c is modified to support UTF32, add mention of those here.
+ If toke.c is modified to support UTF-32, add mention of those here.
 
 =item *
 
@@ -701,7 +724,7 @@ period-space-space or period-newline sequences).
 Pod parsers should not, by default, try to coerce apostrophe (') and
 quote (") into smart quotes (little 9's, 66's, 99's, etc), nor try to
 turn backtick (`) into anything else but a single backtick character
-(distinct from an openquote character!), nor "--" into anything but
+(distinct from an open quote character!), nor "--" into anything but
 two minus signs.  They I<must never> do any of those things to text
 in CE<lt>...> formatting codes, and never I<ever> to text in verbatim
 paragraphs.
@@ -709,10 +732,10 @@ paragraphs.
 =item *
 
 When rendering Pod to a format that has two kinds of hyphens (-), one
-that's a nonbreaking hyphen, and another that's a breakable hyphen
+that's a non-breaking hyphen, and another that's a breakable hyphen
 (as in "object-oriented", which can be split across lines as
 "object-", newline, "oriented"), formatters are encouraged to
-generally translate "-" to nonbreaking hyphen, but may apply
+generally translate "-" to non-breaking hyphen, but may apply
 heuristics to convert some of these to breaking hyphens.
 
 =item *
@@ -936,7 +959,7 @@ for idiosyncratic mappings of Unicode-to-I<my_escapes>.
 
 =item *
 
-It is up to individual Pod formatter to display good judgment when
+It is up to individual Pod formatter to display good judgement when
 confronted with an unrenderable character (which is distinct from an
 unknown EE<lt>thing> sequence that the parser couldn't resolve to
 anything, renderable or not).  It is good practice to map Latin letters
@@ -969,15 +992,15 @@ EE<lt>euro>1,000,000 Solution|Million::Euros>".
 
 =item *
 
-Some Pod formatters output to formats that implement nonbreaking
+Some Pod formatters output to formats that implement non-breaking
 spaces as an individual character (which I'll call "NBSP"), and
-others output to formats that implement nonbreaking spaces just as
+others output to formats that implement non-breaking spaces just as
 spaces wrapped in a "don't break this across lines" code.  Note that
 at the level of Pod, both sorts of codes can occur: Pod can contain a
 NBSP character (whether as a literal, or as a "EE<lt>160>" or
 "EE<lt>nbsp>" code); and Pod can contain "SE<lt>foo
 IE<lt>barE<gt> baz>" codes, where "mere spaces" (character 32) in
-such codes are taken to represent nonbreaking spaces.  Pod
+such codes are taken to represent non-breaking spaces.  Pod
 parsers should consider supporting the optional parsing of "SE<lt>foo
 IE<lt>barE<gt> baz>" as if it were
 "fooI<NBSP>IE<lt>barE<gt>I<NBSP>baz", and, going the other way, the
@@ -1107,7 +1130,7 @@ is "perlfunc".  In "LE<lt>/CAVEATS>", the name is undef.)
 =item Fourth:
 
 The section (AKA "item" in older perlpods), or undef if none.  E.g.,
-in L<Getopt::Std/DESCRIPTION>, "DESCRIPTION" is the section.  (Note
+in "LE<lt>Getopt::Std/DESCRIPTIONE<gt>", "DESCRIPTION" is the section.  (Note
 that this is not the same as a manpage section like the "5" in "man 5
 crontab".  "Section Foo" in the Pod sense means the part of the text
 that's introduced by the heading or item whose text is "Foo".)
@@ -1310,7 +1333,7 @@ given C<LE<lt>fooE<gt>> code.
 =item *
 
 Previous versions of perlpod allowed for a C<LE<lt>sectionE<gt>> syntax
-(as in "C<LE<lt>Object AttributesE<gt>>"), which was not easily distinguishable
+(as in C<LE<lt>Object AttributesE<gt>>), which was not easily distinguishable
 from C<LE<lt>nameE<gt>> syntax.  This syntax is no longer in the
 specification, and has been replaced by the C<LE<lt>"section"E<gt>> syntax
 (where the quotes were formerly optional).  Pod parsers should tolerate
@@ -1518,7 +1541,7 @@ probably want to format it like so:
 
   Ut Enim
 
-But (for the forseeable future), Pod does not provide any way for Pod
+But (for the foreseeable future), Pod does not provide any way for Pod
 authors to distinguish which grouping is meant by the above
 "=item"-cluster structure.  So formatters should format it like so:
 
