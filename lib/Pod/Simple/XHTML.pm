@@ -434,6 +434,10 @@ sub end_E   {
     }
   }
 
+  if ($entity =~ /^[0-9]/) {
+      $entity = '#' . $entity;
+  }
+
   $self->{'scratch'} = $previous . '&'. $entity . ';'
 }
 
