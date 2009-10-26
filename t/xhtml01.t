@@ -388,7 +388,7 @@ initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
 =pod
 
-A text paragraph using E<sol> and E<verbar> special POD entities.
+<p>A text paragraph using E<sol> and E<verbar> special POD entities.</p>
 
 EOPOD
 is($results, <<"EOHTML", "Text with decodable entities");
