@@ -22,6 +22,7 @@ package Pod::Simple::BlackBox;
 use integer; # vroom!
 use strict;
 use Carp ();
+#use constant DEBUG => 7;
 BEGIN {
   require Pod::Simple;
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG
@@ -1700,15 +1701,30 @@ sub _treelet_from_formatting_codes {
     if(defined $1) {
       if(defined $2) {
         DEBUG > 3 and print "Found complex start-text code \"$1\"\n";
-        push @stack, length($2) + 1; 
-          # length of the necessary complex end-code string
+        # signal that we're looking for simple unless we're in complex.
+        if ($stack[-1]) {
+            # We're in complex already. It's just stuff.
+            DEBUG > 4 and print " It's just stuff.\n";
+            push @{ $lineage[-1] }, $1;
+        } else {
+            # length of the necessary complex end-code string
+            push @stack, length($2) + 1;
+            push @lineage, [ substr($1,0,1), {}, ];  # new node object
+            push @{ $lineage[-2] }, $lineage[-1];
+        }
       } else {
         DEBUG > 3 and print "Found simple start-text code \"$1\"\n";
-        push @stack, 0;  # signal that we're looking for simple
+        if ($stack[-1]) {
+            # We're in complex already. It's just stuff.
+            DEBUG > 4 and print " It's just stuff.\n";
+            push @{ $lineage[-1] }, $1;
+        } else {
+            # signal that we're looking for simple.
+            push @stack, 0;
+            push @lineage, [ substr($1,0,1), {}, ];  # new node object
+            push @{ $lineage[-2] }, $lineage[-1];
+        }
       }
-      push @lineage, [ substr($1,0,1), {}, ];  # new node object
-      push @{ $lineage[-2] }, $lineage[-1];
-      
     } elsif(defined $4) {
       DEBUG > 3 and print "Found apparent complex end-text code \"$3$4\"\n";
       # This is where it gets messy...
@@ -1744,7 +1760,7 @@ sub _treelet_from_formatting_codes {
       pop @lineage;
       
     } elsif(defined $5) {
-      DEBUG > 3 and print "Found apparent simple end-text code \"$4\"\n";
+      DEBUG > 3 and print "Found apparent simple end-text code \"$5\"\n";
 
       if(@stack and ! $stack[-1]) {
         # We're indeed expecting a simple end-code

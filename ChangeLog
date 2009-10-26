@@ -49,6 +49,11 @@
 	Added entity handling for numeric entities to Pod::Simple::XHTML,
 	following perlpod specification.
 
+	A POD tag found inside a complex POD tag (e.g., "C<<< C<foo> >>>")
+	is now properly parsed as text and entities instead of a tag
+	embedded in a tag. This is in compliance with `perldoc perlpod`
+	(RT #12239 from Michael Schwern).
+
 	Thanks to David E. Wheeler for applying patches, resolving bugs,
 	and generally getting ready for the release.
 
