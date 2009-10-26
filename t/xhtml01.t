@@ -384,6 +384,18 @@ is($results, <<"EOHTML", "Verbatim text with encodable entities");
 
 EOHTML
 
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=pod
+
+A text paragraph using E<sol> and E<verbar> special POD entities.
+
+EOPOD
+is($results, <<"EOHTML", "Text with decodable entities");
+A text paragraph using / and | special POD entities.
+
+EOHTML
+
 SKIP: for my $use_html_entities (0, 1) {
   if ($use_html_entities and not $Pod::Simple::XHTML::HAS_HTML_ENTITIES) {
     skip("HTML::Entities not installed", 1);
