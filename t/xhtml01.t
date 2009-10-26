@@ -370,7 +370,7 @@ is($results, <<"EOHTML", "File name in a paragraph");
 
 EOHTML
 
-
+# It's not important that 's (apostrophes) be encoded for XHTML output.
 initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
 =pod
