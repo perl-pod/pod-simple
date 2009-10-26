@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 31;
+use Test::More tests => 32;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -388,11 +388,11 @@ initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
 =pod
 
-<p>A text paragraph using E<sol> and E<verbar> special POD entities.</p>
+A text paragraph using E<sol> and E<verbar> special POD entities.
 
 EOPOD
 is($results, <<"EOHTML", "Text with decodable entities");
-A text paragraph using / and | special POD entities.
+<p>A text paragraph using / and | special POD entities.</p>
 
 EOHTML
 
