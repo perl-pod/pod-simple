@@ -375,11 +375,11 @@ initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
 =pod
 
-  # this header is very important & don't you forget it
+  # this header is very important & dont you forget it
   my $text = "File is: " . <FILE>;
 EOPOD
 is($results, <<"EOHTML", "Verbatim text with encodable entities");
-<pre><code>  # this header is very important &amp; don&#39;t you forget it
+<pre><code>  # this header is very important &amp; dont you forget it
   my \$text = &quot;File is: &quot; . &lt;FILE&gt;;</code></pre>
 
 EOHTML
@@ -393,12 +393,12 @@ SKIP: for my $use_html_entities (0, 1) {
   $parser->parse_string_document(<<'EOPOD');
 =pod
 
-  # this header is very important & don't you forget it
+  # this header is very important & dont you forget it
   B<my $file = <FILEE<gt> || 'Blank!';>
   my $text = "File is: " . <FILE>;
 EOPOD
 is($results, <<"EOHTML", "Verbatim text with markup and embedded formatting");
-<pre><code>  # this header is very important &amp; don&#39;t you forget it
+<pre><code>  # this header is very important &amp; dont you forget it
   <b>my \$file = &lt;FILE&gt; || &#39;Blank!&#39;;</b>
   my \$text = &quot;File is: &quot; . &lt;FILE&gt;;</code></pre>
 

@@ -33,6 +33,8 @@
 
 	Applied URL patch from Leon Brocard for The Perl Journal archives.
 
+	Fixed test failures with older versions of HTML::Entities (RT #43903
+	from Salvador Tercia).
 2009-07-16   Allison Randal <allison@perl.org>
 	* Release 3.08
 
