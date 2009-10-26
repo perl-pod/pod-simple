@@ -42,6 +42,10 @@
 	Added entity handling for E<sol> and E<verbar>. (RT #49615 from
 	Chas Owens.)
 
+	Fixed a bug in Pod::Simple::HTML where a definition term item with
+	no corresponding definition item would be output with no closing
+	</a></dt>. (RT # 37107 from Kevin Ryde).
+
 2009-07-16   Allison Randal <allison@perl.org>
 	* Release 3.08
 
