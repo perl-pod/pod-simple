@@ -426,12 +426,15 @@ sub end_E   {
   my $previous = pop @{ $self->{'saved'} };
   my $entity = $self->{'scratch'};
 
-  my $char = Pod::Escapes::e2char($entity);
-  if (defined($char)) {
-    $self->{'scratch'} = $previous . $char;
-  } else {
-    $self->{'scratch'} = $previous . '&'. $entity . ';'
+  if ($entity =~ 'sol' or $entity =~ 'verbar') {
+    my $char = Pod::Escapes::e2char($entity);
+    if (defined($char)) {
+      $self->{'scratch'} = $previous . $char;
+      return;
+    }
   }
+
+  $self->{'scratch'} = $previous . '&'. $entity . ';'
 }
 
 sub start_F { $_[0]{'scratch'} .= '<i>' }
