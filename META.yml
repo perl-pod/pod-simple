@@ -1,24 +1,36 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Pod-Simple
-version:      3.06
-version_from: lib/Pod/Simple.pm
-installdirs:  site
+--- #YAML:1.0
+name:               Pod-Simple
+version:            3.09
+abstract:           framework for parsing Pod
+author:
+    - Allison Randal <allison@perl.org>
+license:            perl
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
 requires:
-    Carp:                          0
-    Config:                        0
-    constant:                      0
-    Cwd:                           0
-    File::Basename:                0
-    File::Find:                    0
-    File::Spec:                    0
-    integer:                       0
-    overload:                      0
-    Pod::Escapes:                  1.04
-    strict:                        0
-    Symbol:                        0
-    Test:                          1.25
-    Text::Wrap:                    98.112902
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.30
+    Carp:            0
+    Config:          0
+    constant:        0
+    Cwd:             0
+    File::Basename:  0
+    File::Find:      0
+    File::Spec:      0
+    integer:         0
+    overload:        0
+    Pod::Escapes:    1.04
+    strict:          0
+    Symbol:          0
+    Test:            1.25
+    Test::More:      0
+    Text::Wrap:      98.112902
+no_index:
+    directory:
+        - t
+        - inc
+generated_by:       ExtUtils::MakeMaker version 6.55_02
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4
