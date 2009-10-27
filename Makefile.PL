@@ -15,7 +15,6 @@ WriteMakefile(
   NAME		=> 'Pod::Simple',
   VERSION_FROM	=> 'lib/Pod/Simple.pm',
   ABSTRACT_FROM	=> 'lib/Pod/Simple.pod',
-  # INSTALLDIRS        => 'perl',
   PREREQ_PM	  	=> {
    'Text::Wrap' => '98.112902',
    'Pod::Escapes' => '1.04',
@@ -31,6 +30,9 @@ WriteMakefile(
   },
 
   INSTALLDIRS => $] >= 5.009003 ? 'perl' : 'site',
+
+  LICENSE => 'perl',
+  AUTHOR  => 'Allison Randal <allison@perl.org>',
 );
 
 
