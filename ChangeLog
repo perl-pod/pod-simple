@@ -1,6 +1,12 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2009-00-00   Allison Randal <allison@perl.org>
+	* Release 3.10
+
+	Converted test files that had DOS enedings to have Unix endings
+	(RT #50922 from Steve Hay).
+
 2009-10-27   Allison Randal <allison@perl.org>
 	* Release 3.09
 
