@@ -33,7 +33,6 @@ lib/Pod/Simple/XHTML.pm
 lib/Pod/Simple/XMLOutStream.pm
 Makefile.PL
 MANIFEST
-MANIFEST.SKIP
 META.yml			Module meta-data (added by MakeMaker)
 README
 t/00about.t
