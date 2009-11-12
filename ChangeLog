@@ -1,7 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
-2009-00-00   Allison Randal <allison@perl.org>
+2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 
 	Converted test files that had DOS enedings to have Unix endings
@@ -12,6 +12,9 @@
 
 	Fix nested definition list format in the XHTML output
 	(RT #51187 from Lars Dɪᴇᴄᴋᴏᴡ).
+
+	Added some files missing from the MANIFEST (and therefore the
+	distribution) in the last two releases.
 
 2009-10-27   Allison Randal <allison@perl.org>
 	* Release 3.09
