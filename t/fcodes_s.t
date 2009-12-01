@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 14 };
+BEGIN { plan tests => 36 };
 
 #use Pod::Simple::Debug (6);
 
@@ -100,6 +100,118 @@ The Tk::mega manpage showed me how S< > foo is being rendered
 Do they always      lose the rest of the line?
 
 END
+);
+
+$x = 'Pod::Simple::Text';
+# Test text output of links.
+ok(
+    $x->_out(qq{=pod\n\nL<Net::Ping>\n}),
+    "    Net::Ping\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nBe sure to read the L<Net::Ping> docs\n}),
+    "    Be sure to read the Net::Ping docs\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<http://www.perl.com>\n}),
+    "    http://www.perl.com\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<crontab(5)>\n}),
+    "    crontab(5)\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<Net::Ping/Ping-pong>\n}),
+    qq{    "Ping-pong" in Net::Ping\n\n}
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL</"Object Methods">\n}),
+    qq{    "Object Methods"\n\n}
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL</Object Methods>\n}),
+    qq{    "Object Methods"\n\n}
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<"Object Methods">\n}),
+    qq{    "Object Methods"\n\n}
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<Net::Ping/Ping-E<112>ong>\n}),
+    qq{    "Ping-pong" in Net::Ping\n\n}
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<news:comp.lang.perl.misc>\n}),
+    "    news:comp.lang.perl.misc\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<http://www.perl.org>\n}),
+    "    http://www.perl.org\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nSee L<http://www.perl.org>\n}),
+    "    See http://www.perl.org\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/>\n}),
+    "    http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<news:compE<46>lang.perl.misc>\n}),
+    "    news:comp.lang.perl.misc\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<http://wwwE<46>perl.org>\n}),
+    "    http://www.perl.org\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<things|crontab(5)>\n}),
+    "    things\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<things|crontab(5)/ENVIRONMENT>\n}),
+    "    things\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<Perl Error Messages|perldiag>\n}),
+    "    Perl Error Messages\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<Perl\nError\nMessages|perldiag>\n}),
+    "    Perl Error Messages\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<Perl\nError\t  Messages|perldiag>\n}),
+    "    Perl Error Messages\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nL<perl.org|http://www.perl.org>\n}),
+    "    perl.org\n\n"
+);
+
+ok(
+    $x->_out(qq{=pod\n\nSee L<perl.org|http://www.perl.org>\n}),
+    "    See perl.org\n\n"
 );
 
 print "# Wrapping up... one for the road...\n";
