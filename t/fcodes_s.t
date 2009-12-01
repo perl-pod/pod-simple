@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 58 };
+BEGIN { plan tests => 80 };
 
 #use Pod::Simple::Debug (6);
 
@@ -217,6 +217,7 @@ ok(
 
 # Test HTML output of links.
 use Pod::Simple::HTML;
+my $PERLDOC = "http://search.cpan.org/perldoc";
 sub x ($) {
     Pod::Simple::HTML->_out(
         sub {  $_[0]->bare_output(1)  },
@@ -226,17 +227,17 @@ sub x ($) {
 
 ok(
     x(qq{L<Net::Ping>\n}),
-    qq{\n<p><a href="http://search.cpan.org/perldoc?Net%3A%3APing" class="podlinkpod"\n>Net::Ping</a></p>\n}
+    qq{\n<p><a href="$PERLDOC?Net%3A%3APing" class="podlinkpod"\n>Net::Ping</a></p>\n}
 );
 
 ok(
     x(qq{Be sure to read the L<Net::Ping> docs\n}),
-    qq{\n<p>Be sure to read the <a href="http://search.cpan.org/perldoc?Net%3A%3APing" class="podlinkpod"\n>Net::Ping</a> docs</p>\n}
+    qq{\n<p>Be sure to read the <a href="$PERLDOC?Net%3A%3APing" class="podlinkpod"\n>Net::Ping</a> docs</p>\n}
 );
 
 ok(
     x(qq{L<http://www.perl.com>\n}),
-    qq{\n<p><a href=\"http://www.perl.com\" class=\"podlinkurl\"\n>http://www.perl.com</a></p>\n}
+    qq{\n<p><a href="http://www.perl.com" class="podlinkurl"\n>http://www.perl.com</a></p>\n}
 );
 
 ok(
@@ -246,7 +247,7 @@ ok(
 
 ok(
     x(qq{L<Net::Ping/Ping-pong>\n}),
-    qq{\n<p><a href="http://search.cpan.org/perldoc?Net%3A%3APing#Ping-pong" class="podlinkpod"\n>&#34;Ping-pong&#34; in Net::Ping</a></p>\n}
+    qq{\n<p><a href="$PERLDOC?Net%3A%3APing#Ping-pong" class="podlinkpod"\n>&#34;Ping-pong&#34; in Net::Ping</a></p>\n}
 );
 
 ok(
@@ -266,37 +267,37 @@ ok(
 
 ok(
     x(qq{L<Net::Ping/Ping-E<112>ong>\n}),
-    qq{\n<p><a href=\"http://search.cpan.org/perldoc?Net%3A%3APing#Ping-pong\" class=\"podlinkpod\"\n>&#34;Ping-pong&#34; in Net::Ping</a></p>\n}
+    qq{\n<p><a href="$PERLDOC?Net%3A%3APing#Ping-pong" class="podlinkpod"\n>&#34;Ping-pong&#34; in Net::Ping</a></p>\n}
 );
 
 ok(
     x(qq{L<news:comp.lang.perl.misc>\n}),
-    qq{\n<p><a href=\"news:comp.lang.perl.misc\" class=\"podlinkurl\"\n>news:comp.lang.perl.misc</a></p>\n}
+    qq{\n<p><a href="news:comp.lang.perl.misc" class="podlinkurl"\n>news:comp.lang.perl.misc</a></p>\n}
 );
 
 ok(
     x(qq{L<http://www.perl.org>\n}),
-    qq{\n<p><a href=\"http://www.perl.org\" class=\"podlinkurl\"\n>http://www.perl.org</a></p>\n}
+    qq{\n<p><a href="http://www.perl.org" class="podlinkurl"\n>http://www.perl.org</a></p>\n}
 );
 
 ok(
     x(qq{See L<http://www.perl.org>\n}),
-    qq{\n<p>See <a href=\"http://www.perl.org\" class=\"podlinkurl\"\n>http://www.perl.org</a></p>\n}
+    qq{\n<p>See <a href="http://www.perl.org" class="podlinkurl"\n>http://www.perl.org</a></p>\n}
 );
 
 ok(
     x(qq{L<http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/>\n}),
-    qq{\n<p><a href=\"http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/\" class=\"podlinkurl\"\n>http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/</a></p>\n}
+    qq{\n<p><a href="http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/" class="podlinkurl"\n>http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/</a></p>\n}
 );
 
 ok(
     x(qq{L<news:compE<46>lang.perl.misc>\n}),
-    qq{\n<p><a href=\"news:comp.lang.perl.misc\" class=\"podlinkurl\"\n>news:comp.lang.perl.misc</a></p>\n}
+    qq{\n<p><a href="news:comp.lang.perl.misc" class="podlinkurl"\n>news:comp.lang.perl.misc</a></p>\n}
 );
 
 ok(
     x(qq{L<http://wwwE<46>perl.org>\n}),
-    qq{\n<p><a href=\"http://www.perl.org\" class=\"podlinkurl\"\n>http://www.perl.org</a></p>\n}
+    qq{\n<p><a href="http://www.perl.org" class="podlinkurl"\n>http://www.perl.org</a></p>\n}
 );
 
 ok(
@@ -311,27 +312,149 @@ ok(
 
 ok(
     x(qq{L<Perl Error Messages|perldiag>\n}),
-    qq{\n<p><a href=\"http://search.cpan.org/perldoc?perldiag\" class=\"podlinkpod\"\n>Perl Error Messages</a></p>\n}
+    qq{\n<p><a href="$PERLDOC?perldiag" class="podlinkpod"\n>Perl Error Messages</a></p>\n}
 );
 
 ok(
     x(qq{L<Perl\nError\nMessages|perldiag>\n}),
-    qq{\n<p><a href=\"http://search.cpan.org/perldoc?perldiag\" class=\"podlinkpod\"\n>Perl Error Messages</a></p>\n}
+    qq{\n<p><a href="$PERLDOC?perldiag" class="podlinkpod"\n>Perl Error Messages</a></p>\n}
 );
 
 ok(
     x(qq{L<Perl\nError\t  Messages|perldiag>\n}),
-    qq{\n<p><a href=\"http://search.cpan.org/perldoc?perldiag\" class=\"podlinkpod\"\n>Perl Error Messages</a></p>\n}
+    qq{\n<p><a href="$PERLDOC?perldiag" class="podlinkpod"\n>Perl Error Messages</a></p>\n}
 );
 
 ok(
     x(qq{L<perl.org|http://www.perl.org>\n}),
-    qq{\n<p><a href=\"http://www.perl.org\" class=\"podlinkurl\"\n>perl.org</a></p>\n}
+    qq{\n<p><a href="http://www.perl.org" class="podlinkurl"\n>perl.org</a></p>\n}
 );
 
 ok(
     x(qq{See L<perl.org|http://www.perl.org>\n}),
-    qq{\n<p>See <a href=\"http://www.perl.org\" class=\"podlinkurl\"\n>perl.org</a></p>\n}
+    qq{\n<p>See <a href="http://www.perl.org" class="podlinkurl"\n>perl.org</a></p>\n}
+);
+
+# Test link output in XHTML.
+use Pod::Simple::XHTML;
+sub o ($) {
+    my $p = Pod::Simple::XHTML->new;
+    $p->html_header("");
+    $p->html_footer("");
+    my $results = '';
+    $p->output_string( \$results ); # Send the resulting output to a string
+    $p->parse_string_document("=pod\n\n$_[0]");
+    return $results;
+}
+
+ok(
+    o(qq{L<Net::Ping>}),
+    qq{<p><a href="$PERLDOC?Net::Ping">Net::Ping</a></p>\n\n}
+);
+
+ok(
+    o(qq{Be sure to read the L<Net::Ping> docs}),
+    qq{<p>Be sure to read the <a href="$PERLDOC?Net::Ping">Net::Ping</a> docs</p>\n\n}
+);
+
+ok(
+    o(qq{L<http://www.perl.com>}),
+    qq{<p><a href="http://www.perl.com">http://www.perl.com</a></p>\n\n}
+);
+
+ok(
+    o(qq{L<crontab(5)>}),
+    qq{<p><a href="">crontab(5)</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<Net::Ping/Ping-pong>}),
+    qq{<p><a href="$PERLDOC?Net::Ping/Ping-pong">&quot;Ping-pong&quot; in Net::Ping</a></p>\n\n}
+);
+
+ok(
+    o(qq{L</"Object Methods">}),
+    qq{<p><a href="$PERLDOC?/Object Methods">&quot;Object Methods&quot;</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L</Object Methods>}),
+    qq{<p><a href="$PERLDOC?/Object Methods">&quot;Object Methods&quot;</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<"Object Methods">}),
+    qq{<p><a href="$PERLDOC?/Object Methods">&quot;Object Methods&quot;</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<Net::Ping/Ping-E<112>ong>}),
+    qq{<p><a href="$PERLDOC?Net::Ping/Ping-112ong">&quot;Ping-&#112;ong&quot; in Net::Ping</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<news:comp.lang.perl.misc>}),
+    qq{<p><a href="news:comp.lang.perl.misc">news:comp.lang.perl.misc</a></p>\n\n}
+);
+
+ok(
+    o(qq{L<http://www.perl.org>}),
+    qq{<p><a href="http://www.perl.org">http://www.perl.org</a></p>\n\n}
+);
+
+ok(
+    o(qq{See L<http://www.perl.org>}),
+    qq{<p>See <a href="http://www.perl.org">http://www.perl.org</a></p>\n\n}
+);
+
+ok(
+    o(qq{L<http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/>}),
+    qq{<p><a href="http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/">http://www.perl.org/CPAN/authors/id/S/SB/SBURKE/</a></p>\n\n}
+);
+
+ok(
+    o(qq{L<news:compE<46>lang.perl.misc>}),
+    qq{<p><a href="news:comp46lang.perl.misc">news:comp&#46;lang.perl.misc</a></p>\n\n}  # XXX WRONG!
+);
+
+ok(
+    o(qq{L<http://wwwE<46>perl.org>}),
+    qq{<p><a href="http://www46perl.org">http://www&#46;perl.org</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<things|crontab(5)>}),
+    qq{<p><a href="">things</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<things|crontab(5)/ENVIRONMENT>}),
+    qq{<p><a href="">things</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<Perl Error Messages|perldiag>}),
+    qq{<p><a href="$PERLDOC?perldiag">Perl Error Messages</a></p>\n\n}
+);
+
+ok(
+    o(qq{L<PerlErrorMessages|perldiag>}),
+    qq{<p><a href="$PERLDOC?perldiag">PerlErrorMessages</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<PerlError\t  Messages|perldiag>}),
+    qq{<p><a href="$PERLDOC?perldiag">PerlError Messages</a></p>\n\n} # XXX WRONG!
+);
+
+ok(
+    o(qq{L<perl.org|http://www.perl.org>}),
+    qq{<p><a href="http://www.perl.org">perl.org</a></p>\n\n}
+);
+
+ok(
+    o(qq{See L<perl.org|http://www.perl.org>}),
+    qq{<p>See <a href="http://www.perl.org">perl.org</a></p>\n\n}
 );
 
 print "# Wrapping up... one for the road...\n";
