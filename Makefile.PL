@@ -33,8 +33,16 @@ WriteMakefile(
 
   LICENSE => 'perl',
   AUTHOR  => 'Allison Randal <allison@perl.org>',
-);
+  META_MERGE => {
+      resources => {
+          repository => 'git://github.com/theory/pod-simple.git',
+          bugtracker => 'mailto:bug-pod-simple@rt.cpan.org',
+          license    => 'http://dev.perl.org/licenses/',
 
+      },
+  },
+
+);
 
 package MY;
 

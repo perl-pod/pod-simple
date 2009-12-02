@@ -5,7 +5,10 @@
 	* Release 3.11
 
 	Restored code to HTMLBatch that allows the TOC (index) to be created
-	in batch jobs. (RT #52324 from Martin J. Evans)
+	in batch jobs (RT #52324 from Martin J. Evans).
+
+	Added resources to META.yml, including bug tracker, license, and
+	repository.
 
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
