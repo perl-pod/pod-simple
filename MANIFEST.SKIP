@@ -10,3 +10,4 @@ CVS
 \.svn
 blib
 ~
+^.git
