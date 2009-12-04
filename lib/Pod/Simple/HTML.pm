@@ -5,7 +5,7 @@ use strict;
 use Pod::Simple::PullParser ();
 use vars qw(
   @ISA %Tagmap $Computerese $LamePad $Linearization_Limit $VERSION
-  $Perldoc_URL_Prefix $Perldoc_URL_Postfix $Man_URL_Format
+  $Perldoc_URL_Prefix $Perldoc_URL_Postfix $Man_URL_Prefix $Man_URL_Postfix
   $Title_Prefix $Title_Postfix $HTML_EXTENSION %ToIndex
   $Doctype_decl  $Content_decl
 );
@@ -37,7 +37,9 @@ $Perldoc_URL_Prefix  = 'http://search.cpan.org/perldoc?'
 $Perldoc_URL_Postfix = ''
  unless defined $Perldoc_URL_Postfix;
 
-$Man_URL_Format = 'http://man.he.net/man%d/%s';
+
+$Man_URL_Prefix  = 'http://man.he.net/man';
+$Man_URL_Postfix = '';
 
 $Title_Prefix  = '' unless defined $Title_Prefix;
 $Title_Postfix = '' unless defined $Title_Postfix;
@@ -54,8 +56,11 @@ __PACKAGE__->_accessorize(
  'perldoc_url_postfix',
    # what to put after "Foo%3a%3aBar" in the URL.  Normally "".
 
- 'man_url_format',
-   # sprintf format for man page URLs.
+ 'man_url_prefix',
+   # In turning L<crontab(5)> into http://whatever/man/1/crontab, what
+   #  to put before the "1/crontab".
+ 'man_url_postfix',
+   #  what to put after the "1/crontab" in the URL. Normally "".
 
  'batch_mode', # whether we're in batch mode
  'batch_mode_current_level',
@@ -185,7 +190,8 @@ sub new {
 
   $new->perldoc_url_prefix(  $Perldoc_URL_Prefix  );
   $new->perldoc_url_postfix( $Perldoc_URL_Postfix );
-  $new->man_url_format( $Man_URL_Format );
+  $new->man_url_prefix(  $Man_URL_Prefix  );
+  $new->man_url_postfix( $Man_URL_Postfix );
   $new->title_prefix(  $Title_Prefix  );
   $new->title_postfix( $Title_Postfix );
 
@@ -744,11 +750,9 @@ sub batch_mode_rectify_path {
 
 sub resolve_man_page_link {
   my ($self, $section, $page, $anchor) = @_;
-  my $format = $self->man_url_format;
-  my $dpos = index $format, '%d';
-  my $spos = index $format, '%s';
-  $page = $self->manpage_url_escape($page);
-  sprintf $format, $dpos > $spos ? ($page, $section) : ($section, $page);
+  return $self->man_url_prefix . "$section/"
+      . $self->manpage_url_escape($page)
+      . $self->man_url_postfix;
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
