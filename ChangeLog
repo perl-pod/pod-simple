@@ -13,7 +13,7 @@
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 
-	Converted test files that had DOS enedings to have Unix endings
+	Converted test files that had DOS endings to have Unix endings
 	(RT #50922 from Steve Hay).
 
 	Skip tests on VMS where the lack of filename case preservation can
