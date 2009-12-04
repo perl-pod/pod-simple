@@ -218,6 +218,7 @@ ok(
 # Test HTML output of links.
 use Pod::Simple::HTML;
 my $PERLDOC = "http://search.cpan.org/perldoc";
+my $MANURL = "http://man.he.net/man";
 sub x ($) {
     Pod::Simple::HTML->_out(
         sub {  $_[0]->bare_output(1)  },
@@ -242,7 +243,7 @@ ok(
 
 ok(
     x(qq{L<crontab(5)>\n}),
-    qq{\n<p><a href="http://man.he.net/man5/crontab" class="podlinkman"\n>crontab(5)</a></p>\n}
+    qq{\n<p><a href="${MANURL}5/crontab" class="podlinkman"\n>crontab(5)</a></p>\n}
 );
 
 ok(
@@ -302,12 +303,12 @@ ok(
 
 ok(
     x(qq{L<things|crontab(5)>\n}),
-    qq{\n<p><a href="http://man.he.net/man5/crontab" class="podlinkman"\n>things</a></p>\n}
+    qq{\n<p><a href="${MANURL}5/crontab" class="podlinkman"\n>things</a></p>\n}
 );
 
 ok(
     x(qq{L<things|crontab(5)/ENVIRONMENT>\n}),
-    qq{\n<p><a href="http://man.he.net/man5/crontab" class="podlinkman"\n>things</a></p>\n}
+    qq{\n<p><a href="${MANURL}5/crontab" class="podlinkman"\n>things</a></p>\n}
 );
 
 ok(
@@ -364,7 +365,7 @@ ok(
 
 ok(
     o(qq{L<crontab(5)>}),
-    qq{<p><a href="">crontab(5)</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="${MANURL}5/crontab">crontab(5)</a></p>\n\n}
 );
 
 ok(
@@ -424,12 +425,12 @@ ok(
 
 ok(
     o(qq{L<things|crontab(5)>}),
-    qq{<p><a href="">things</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="${MANURL}5/crontab">things</a></p>\n\n}
 );
 
 ok(
     o(qq{L<things|crontab(5)/ENVIRONMENT>}),
-    qq{<p><a href="">things</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="${MANURL}5/crontab">things</a></p>\n\n}
 );
 
 ok(

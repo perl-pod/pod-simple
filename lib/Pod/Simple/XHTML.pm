@@ -76,6 +76,16 @@ to put before the "Foo%3a%3aBar". The default value is
 What to put after "Foo%3a%3aBar" in the URL. This option is not set by
 default.
 
+=head2 man_url_prefix
+
+In turning C<< L<crontab(5)> >> into http://whatever/man/1/crontab, what
+to put before the "1/crontab". The default value is
+"http://man.he.net/man".
+
+=head2 man_url_postfix
+
+What to put after "1/crontab" in the URL. This option is not set by default.
+
 =head2 title_prefix, title_postfix
 
 What to put before and after the title in the head. The values should
@@ -146,6 +156,8 @@ index for the sake of tradition).
 __PACKAGE__->_accessorize(
  'perldoc_url_prefix',
  'perldoc_url_postfix',
+ 'man_url_prefix',
+ 'man_url_postfix',
  'title_prefix',  'title_postfix',
  'html_css', 
  'html_javascript',
@@ -179,6 +191,7 @@ sub new {
   $new->{'output_fh'} ||= *STDOUT{IO};
   $new->accept_targets( 'html', 'HTML' );
   $new->perldoc_url_prefix('http://search.cpan.org/perldoc?');
+  $new->man_url_prefix('http://man.he.net/man');
   $new->html_header_tags('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />');
   $new->nix_X_codes(1);
   $new->codes_in_verbatim(1);
@@ -476,6 +489,11 @@ sub start_L {
       $url .= $self->perldoc_url_postfix || '';
 #    require Data::Dumper;
 #    print STDERR Data::Dumper->Dump([$flags]);
+    } elsif ($flags->{'type'} eq 'man') {
+      my ($page, $section) = $flags->{to} =~ /^([^(]+)(?:[(](\d+)[)])?$/;
+      $url .= $self->man_url_prefix || '';
+      $url .= "$section/" . encode_entities $page;
+      $url .= $self->man_url_postfix || '';
     }
 
     $self->{'scratch'} .= '<a href="'. $url . '">';
