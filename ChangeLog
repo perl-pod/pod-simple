@@ -10,6 +10,10 @@
 	Added resources to META.yml, including bug tracker, license, and
 	repository.
 
+	Turned man page links into links to man.he.net in Pod::Simple::HTML
+	output. Subclass and override resolve_man_page_link() to use a
+	different URL.
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 

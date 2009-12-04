@@ -242,7 +242,7 @@ ok(
 
 ok(
     x(qq{L<crontab(5)>\n}),
-    qq{\n<p><a>crontab(5)</a></p>\n} # XXX WRONG!
+    qq{\n<p><a href="http://man.he.net/man5/crontab" class="podlinkman"\n>crontab(5)</a></p>\n}
 );
 
 ok(
@@ -302,12 +302,12 @@ ok(
 
 ok(
     x(qq{L<things|crontab(5)>\n}),
-    qq{\n<p><a>things</a></p>\n} # XXX WRONG!
+    qq{\n<p><a href="http://man.he.net/man5/crontab" class="podlinkman"\n>things</a></p>\n}
 );
 
 ok(
     x(qq{L<things|crontab(5)/ENVIRONMENT>\n}),
-    qq{\n<p><a>things</a></p>\n} # XXX WRONG!
+    qq{\n<p><a href="http://man.he.net/man5/crontab" class="podlinkman"\n>things</a></p>\n}
 );
 
 ok(

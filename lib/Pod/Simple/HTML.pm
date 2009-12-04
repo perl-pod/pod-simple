@@ -5,7 +5,7 @@ use strict;
 use Pod::Simple::PullParser ();
 use vars qw(
   @ISA %Tagmap $Computerese $LamePad $Linearization_Limit $VERSION
-  $Perldoc_URL_Prefix $Perldoc_URL_Postfix
+  $Perldoc_URL_Prefix $Perldoc_URL_Postfix $Man_URL_Format
   $Title_Prefix $Title_Postfix $HTML_EXTENSION %ToIndex
   $Doctype_decl  $Content_decl
 );
@@ -37,6 +37,8 @@ $Perldoc_URL_Prefix  = 'http://search.cpan.org/perldoc?'
 $Perldoc_URL_Postfix = ''
  unless defined $Perldoc_URL_Postfix;
 
+$Man_URL_Format = 'http://man.he.net/man%d/%s';
+
 $Title_Prefix  = '' unless defined $Title_Prefix;
 $Title_Postfix = '' unless defined $Title_Postfix;
 %ToIndex = map {; $_ => 1 } qw(head1 head2 head3 head4 ); # item-text
@@ -51,6 +53,9 @@ __PACKAGE__->_accessorize(
    # (for singleton mode only?)
  'perldoc_url_postfix',
    # what to put after "Foo%3a%3aBar" in the URL.  Normally "".
+
+ 'man_url_format',
+   # sprintf format for man page URLs.
 
  'batch_mode', # whether we're in batch mode
  'batch_mode_current_level',
@@ -180,6 +185,7 @@ sub new {
 
   $new->perldoc_url_prefix(  $Perldoc_URL_Prefix  );
   $new->perldoc_url_postfix( $Perldoc_URL_Postfix );
+  $new->man_url_format( $Man_URL_Format );
   $new->title_prefix(  $Title_Prefix  );
   $new->title_postfix( $Title_Postfix );
 
@@ -554,9 +560,25 @@ sub do_link {
 
 sub do_url_link { return $_[1]->attr('to') }
 
-sub do_man_link { return undef }
- # But subclasses are welcome to override this if they have man
- #  pages somewhere URL-accessible.
+sub do_man_link {
+  my ($self, $link) = @_;
+  my $to = $link->attr('to');
+  my $anchor = $link->attr('section');
+
+  return undef unless defined $to and length $to; # should never happen
+
+  $anchor = $self->section_escape($anchor)
+   if defined $anchor and length($anchor .= ''); # (stringify)
+
+  my ($page, $section) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
+
+  return undef unless defined $page and length $page;
+  $section ||= 1;
+
+  DEBUG and print "Resolving \"$page($section)", ($anchor ? "/#$anchor" : ''), "\"\n";
+
+  return $self->resolve_man_page_link($section, $page, $anchor);
+}
 
 
 sub do_pod_link {
@@ -646,6 +668,7 @@ sub section_name_tidy {
 
 sub section_url_escape  { shift->general_url_escape(@_) }
 sub pagepath_url_escape { shift->general_url_escape(@_) }
+sub manpage_url_escape  { shift->general_url_escape(@_) }
 
 sub general_url_escape {
   my($self, $string) = @_;
@@ -717,6 +740,15 @@ sub batch_mode_rectify_path {
     unshift @$pathbits, ('..') x $level;
   }
   return;
+}
+
+sub resolve_man_page_link {
+  my ($self, $section, $page, $anchor) = @_;
+  my $format = $self->man_url_format;
+  my $dpos = index $format, '%d';
+  my $spos = index $format, '%s';
+  $page = $self->manpage_url_escape($page);
+  sprintf $format, $dpos > $spos ? ($page, $section) : ($section, $page);
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
