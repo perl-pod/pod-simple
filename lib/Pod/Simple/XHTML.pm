@@ -446,31 +446,6 @@ sub end_B   { $_[0]{'scratch'} .= '</b>' }
 sub start_C { $_[0]{'scratch'} .= '<code>' }
 sub end_C   { $_[0]{'scratch'} .= '</code>' }
 
-sub start_E {
-  my ($self, $flags) = @_;
-  push @{ $self->{'saved'} }, $self->{'scratch'};
-  $self->{'scratch'} = '';
-}
-sub end_E   {
-  my ($self, $flags) = @_;
-  my $previous = pop @{ $self->{'saved'} };
-  my $entity = $self->{'scratch'};
-
-  if ($entity =~ 'sol' or $entity =~ 'verbar') {
-    my $char = Pod::Escapes::e2char($entity);
-    if (defined($char)) {
-      $self->{'scratch'} = $previous . $char;
-      return;
-    }
-  }
-
-  if ($entity =~ /^[0-9]/) {
-      $entity = '#' . $entity;
-  }
-
-  $self->{'scratch'} = $previous . '&'. $entity . ';';
-}
-
 sub start_F { $_[0]{'scratch'} .= '<i>' }
 sub end_F   { $_[0]{'scratch'} .= '</i>' }
 
