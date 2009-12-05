@@ -569,21 +569,16 @@ sub do_url_link { return $_[1]->attr('to') }
 sub do_man_link {
   my ($self, $link) = @_;
   my $to = $link->attr('to');
-  my $anchor = $link->attr('section');
+  my $frag = $link->attr('section');
 
   return undef unless defined $to and length $to; # should never happen
 
-  $anchor = $self->section_escape($anchor)
-   if defined $anchor and length($anchor .= ''); # (stringify)
+  $frag = $self->section_escape($frag)
+   if defined $frag and length($frag .= ''); # (stringify)
 
-  my ($page, $section) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
+  DEBUG and print "Resolving \"$to/$frag\"\n\n";
 
-  return undef unless defined $page and length $page;
-  $section ||= 1;
-
-  DEBUG and print "Resolving \"$page($section)", ($anchor ? "/#$anchor" : ''), "\"\n";
-
-  return $self->resolve_man_page_link($section, $page, $anchor);
+  return $self->resolve_man_page_link($to, $frag);
 }
 
 
@@ -749,7 +744,12 @@ sub batch_mode_rectify_path {
 }
 
 sub resolve_man_page_link {
-  my ($self, $section, $page, $anchor) = @_;
+  my ($self, $to, $frag) = @_;
+  my ($page, $section) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
+
+  return undef unless defined $page and length $page;
+  $section ||= 1;
+
   return $self->man_url_prefix . "$section/"
       . $self->manpage_url_escape($page)
       . $self->man_url_postfix;

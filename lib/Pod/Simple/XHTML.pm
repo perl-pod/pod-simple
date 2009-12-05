@@ -468,7 +468,7 @@ sub end_E   {
       $entity = '#' . $entity;
   }
 
-  $self->{'scratch'} = $previous . '&'. $entity . ';'
+  $self->{'scratch'} = $previous . '&'. $entity . ';';
 }
 
 sub start_F { $_[0]{'scratch'} .= '<i>' }
@@ -477,27 +477,18 @@ sub end_F   { $_[0]{'scratch'} .= '</i>' }
 sub start_I { $_[0]{'scratch'} .= '<i>' }
 sub end_I   { $_[0]{'scratch'} .= '</i>' }
 
-sub start_L { 
+sub start_L {
   my ($self, $flags) = @_;
-    my $url;
-    if ($flags->{'type'} eq 'url') {
-      $url = $flags->{'to'};
-    } elsif ($flags->{'type'} eq 'pod') {
-      $url .= $self->perldoc_url_prefix || '';
-      $url .= $flags->{'to'} || '';
-      $url .= '/' . $flags->{'section'} if ($flags->{'section'});
-      $url .= $self->perldoc_url_postfix || '';
-#    require Data::Dumper;
-#    print STDERR Data::Dumper->Dump([$flags]);
-    } elsif ($flags->{'type'} eq 'man') {
-      my ($page, $section) = $flags->{to} =~ /^([^(]+)(?:[(](\d+)[)])?$/;
-      $url .= $self->man_url_prefix || '';
-      $url .= "$section/" . encode_entities $page;
-      $url .= $self->man_url_postfix || '';
-    }
+    my ($type, $to, $section) = @{$flags}{'type', 'to', 'section'};
+    my $url = $type eq 'url' ? $to
+            : $type eq 'pod' ? $self->resolve_pod_page_link($to, $section)
+            : $type eq 'man' ? $self->resolve_man_page_link($to, $section)
+            :                  undef;
 
-    $self->{'scratch'} .= '<a href="'. $url . '">';
+    # If it's an unknown type, use an attribute-less <a> like HTML.pm.
+    $self->{'scratch'} .= '<a' . ($url ? ' href="'. $url . '">' : '>');
 }
+
 sub end_L   { $_[0]{'scratch'} .= '</a>' }
 
 sub start_S { $_[0]{'scratch'} .= '<nobr>' }
@@ -512,6 +503,69 @@ sub emit {
   }
   $self->{'scratch'} = '';
   return;
+}
+
+=head2 resolve_pod_page_link
+
+  my $url = $pod->resolve_pod_page_link('Net::Ping', 'INSTALL');
+  my $url = $pod->resolve_pod_page_link('perlpodspec');
+  my $url = $pod->resolve_pod_page_link(undef, 'SYNOPSIS');
+
+Resolves a POD link target (typically a module or POD file name) and section
+name to a URL. The resulting link will be returned for the above examples as:
+
+  http://search.cpan.org/perldoc?Net::Ping#INSTALL
+  http://search.cpan.org/perldoc?perlpodspec
+  #SYNOPSIS
+
+Note that when there is only a section argument the URL will simply be a link
+to a section in the current document.
+
+=cut
+
+sub resolve_pod_page_link {
+    my ($self, $to, $section) = @_;
+    return undef unless defined $to || defined $section;
+    if (defined $section) {
+        $section = '#' . $self->idify($section, 1);
+        return $section unless defined $to;
+    } else {
+        $section = ''
+    }
+
+    return ($self->perldoc_url_prefix || '')
+        . encode_entities($to) . $section
+        . ($self->perldoc_url_postfix || '');
+}
+
+=head2 resolve_man_page_link
+
+  my $url = $pod->resolve_man_page_link('crontab(5)', 'EXAMPLE CRON FILE');
+  my $url = $pod->resolve_man_page_link('crontab');
+
+Resolves a man page link target and numeric section to a URL. The resulting
+link will be returned for the above examples as:
+
+    http://man.he.net/man5/crontab
+    http://man.he.net/man1/crontab
+
+Note that the first argument is required. The section number will be parsed
+from it, and if it's missing will default to 1. The second argument is
+currently ignored, as L<man.he.net|http://man.he.net> does not currently
+include linkable IDs or anchor names in its pages. Subclass to link to a
+different man page HTTP server.
+
+=cut
+
+sub resolve_man_page_link {
+    my ($self, $to, $section) = @_;
+    return undef unless defined $to;
+    my ($page, $part) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
+    return undef unless $page;
+    return ($self->man_url_prefix || '')
+        . ($part || 1) . "/" . encode_entities($page)
+        . ($self->man_url_postfix || '');
+
 }
 
 =head2 idify
@@ -562,9 +616,6 @@ sub idify {
     $i++ while $self->{ids}{"$t$i"}++;
     return "$t$i";
 }
-
-# Bypass built-in E<> handling to preserve entity encoding
-sub _treat_Es {} 
 
 1;
 

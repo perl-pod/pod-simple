@@ -370,27 +370,27 @@ ok(
 
 ok(
     o(qq{L<Net::Ping/Ping-pong>}),
-    qq{<p><a href="$PERLDOC?Net::Ping/Ping-pong">&quot;Ping-pong&quot; in Net::Ping</a></p>\n\n}
+    qq{<p><a href="$PERLDOC?Net::Ping#Ping-pong">&quot;Ping-pong&quot; in Net::Ping</a></p>\n\n}
 );
 
 ok(
     o(qq{L</"Object Methods">}),
-    qq{<p><a href="$PERLDOC?/Object Methods">&quot;Object Methods&quot;</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="#Object-Methods">&quot;Object Methods&quot;</a></p>\n\n}
 );
 
 ok(
     o(qq{L</Object Methods>}),
-    qq{<p><a href="$PERLDOC?/Object Methods">&quot;Object Methods&quot;</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="#Object-Methods">&quot;Object Methods&quot;</a></p>\n\n}
 );
 
 ok(
     o(qq{L<"Object Methods">}),
-    qq{<p><a href="$PERLDOC?/Object Methods">&quot;Object Methods&quot;</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="#Object-Methods">&quot;Object Methods&quot;</a></p>\n\n}
 );
 
 ok(
     o(qq{L<Net::Ping/Ping-E<112>ong>}),
-    qq{<p><a href="$PERLDOC?Net::Ping/Ping-112ong">&quot;Ping-&#112;ong&quot; in Net::Ping</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="$PERLDOC?Net::Ping#Ping-pong">&quot;Ping-pong&quot; in Net::Ping</a></p>\n\n}
 );
 
 ok(
@@ -415,12 +415,12 @@ ok(
 
 ok(
     o(qq{L<news:compE<46>lang.perl.misc>}),
-    qq{<p><a href="news:comp46lang.perl.misc">news:comp&#46;lang.perl.misc</a></p>\n\n}  # XXX WRONG!
+    qq{<p><a href="news:comp.lang.perl.misc">news:comp.lang.perl.misc</a></p>\n\n}
 );
 
 ok(
     o(qq{L<http://wwwE<46>perl.org>}),
-    qq{<p><a href="http://www46perl.org">http://www&#46;perl.org</a></p>\n\n} # XXX WRONG!
+    qq{<p><a href="http://www.perl.org">http://www.perl.org</a></p>\n\n}
 );
 
 ok(

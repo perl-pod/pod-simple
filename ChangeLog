@@ -14,6 +14,16 @@
 	and Pod::Simple::XHTML output. Subclass and override
 	resolve_man_page_link() to use a different URL.
 
+	Added the resolve_pod_page_link() and resolve_man_page_link() methods
+	to Pod::Simple::XHTML to make it easier for subclasses to change the
+	URLs created for POD and man page links.
+
+	Fixed the output of entities in L<> tags by Pod::Simple::XHTML.
+
+	Fixed the output of POD links from Pod::Simple::XHTML so that the
+	section part (/foo) is turned into a proper fragment identfier (#foo)
+	in the resulting search.cpan.org link.
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 
