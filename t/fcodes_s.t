@@ -439,13 +439,13 @@ ok(
 );
 
 ok(
-    o(qq{L<PerlErrorMessages|perldiag>}),
-    qq{<p><a href="$PERLDOC?perldiag">PerlErrorMessages</a></p>\n\n} # XXX WRONG!
+    o(qq{L<Perl\nError\nMessages|perldiag>}),
+    qq{<p><a href="$PERLDOC?perldiag">Perl Error Messages</a></p>\n\n}
 );
 
 ok(
-    o(qq{L<PerlError\t  Messages|perldiag>}),
-    qq{<p><a href="$PERLDOC?perldiag">PerlError Messages</a></p>\n\n} # XXX WRONG!
+    o(qq{L<Perl\nError\t  Messages|perldiag>}),
+    qq{<p><a href="$PERLDOC?perldiag">Perl Error Messages</a></p>\n\n}
 );
 
 ok(
