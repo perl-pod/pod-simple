@@ -24,6 +24,10 @@
 	section part (/foo) is turned into a proper fragment identfier (#foo)
 	in the resulting search.cpan.org link.
 
+	Pod::Simple::Text now outputs URLs for links created in the
+	L<text|URL> format. For example, L<Perl|http://perl.org> is now
+	output as "Perl <http://perl.org>" rather than just as "Perl".
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 

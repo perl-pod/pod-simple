@@ -206,12 +206,12 @@ ok(
 
 ok(
     $x->_out(qq{=pod\n\nL<perl.org|http://www.perl.org>\n}),
-    "    perl.org\n\n"
+    "    perl.org <http://www.perl.org>\n\n"
 );
 
 ok(
     $x->_out(qq{=pod\n\nSee L<perl.org|http://www.perl.org>\n}),
-    "    See perl.org\n\n"
+    "    See perl.org <http://www.perl.org>\n\n"
 );
 
 
