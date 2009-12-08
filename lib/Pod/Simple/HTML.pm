@@ -420,7 +420,7 @@ sub index_as_html {
     $indent = '  '  x $level;
     push @out, sprintf
       "%s<li class='indexItem indexItem%s'><a href='#%s'>%s</a>",
-      $indent, $level, $anchorname, esc($text)
+      $indent, $level, esc($anchorname), esc($text)
     ;
   }
   push @out, "</div>\n";
@@ -499,7 +499,7 @@ sub _do_middle_main_loop {
           next;
         }
         DEBUG and print "    raw text ", $next->text, "\n";
-        printf $fh "\n" . $next->text . "\n";
+        print $fh "\n" . $next->text . "\n";
         next;
        
       } else {
