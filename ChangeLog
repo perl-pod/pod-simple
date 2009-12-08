@@ -28,6 +28,12 @@
 	L<text|URL> format. For example, L<Perl|http://perl.org> is now
 	output as "Perl <http://perl.org>" rather than just as "Perl".
 
+	Updated perlpod.pod and perlpodspec.pod to sync up with Perl core
+	(and to be released in Perl 5.12). Changes include:
+	* Removing the prohibition against L<text|href>
+	* Deprecation of L<section> and L<"section">
+	* Legalization of "=begin formatname parameter"
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 

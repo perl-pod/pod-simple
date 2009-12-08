@@ -293,6 +293,8 @@ by the most recent "=over" command.  It permits no text after the
 
 =item "=begin formatname"
 
+=item "=begin formatname parameter"
+
 This marks the following paragraphs (until the matching "=end
 formatname") as being for some special kind of processing.  Unless
 "formatname" begins with a colon, the contained non-command
@@ -302,9 +304,11 @@ or data paragraphs.  This is discussed in detail in the section
 L</About Data Paragraphs and "=beginE<sol>=end" Regions>.
 
 It is advised that formatnames match the regexp
-C<m/\A:?[-a-zA-Z0-9_]+\z/>.  Implementors should anticipate future
-expansion in the semantics and syntax of the first parameter
-to "=begin"/"=end"/"=for".
+C<m/\A:?[−a−zA−Z0−9_]+\z/>.  Everything following whitespace after the
+formatname is a parameter that may be used by the formatter when dealing
+with this region.  This parameter must not be repeated in the "=end"
+paragraph.  Implementors should anticipate future expansion in the
+semantics and syntax of the first parameter to "=begin"/"=end"/"=for".
 
 =item "=end formatname"
 
@@ -1208,6 +1212,14 @@ For example:
         'url',                          # what sort of link
         "http://www.perl.org/"          # original content
 
+  L<Perl.org|http://www.perl.org/>
+    =>  "Perl.org",                     # link text
+        "http://www.perl.org/",         # possibly inferred link text
+        "http://www.perl.org/",         # name
+        undef,                          # section
+        'url',                          # what sort of link
+        "Perl.org|http://www.perl.org/" # original content
+
 Note that you can distinguish URL-links from anything else by the
 fact that they match C<m/\A\w+:[^:\s]\S*\z/>.  So
 C<LE<lt>http://www.perl.comE<gt>> is a URL, but
@@ -1332,15 +1344,16 @@ given C<LE<lt>fooE<gt>> code.
 
 =item *
 
-Previous versions of perlpod allowed for a C<LE<lt>sectionE<gt>> syntax
-(as in C<LE<lt>Object AttributesE<gt>>), which was not easily distinguishable
-from C<LE<lt>nameE<gt>> syntax.  This syntax is no longer in the
-specification, and has been replaced by the C<LE<lt>"section"E<gt>> syntax
-(where the quotes were formerly optional).  Pod parsers should tolerate
-the C<LE<lt>sectionE<gt>> syntax, for a while at least.  The suggested
-heuristic for distinguishing C<LE<lt>sectionE<gt>> from C<LE<lt>nameE<gt>>
-is that if it contains any whitespace, it's a I<section>.  Pod processors
-may warn about this being deprecated syntax.
+Previous versions of perlpod allowed for a C<LE<lt>sectionE<gt>> syntax (as in
+C<LE<lt>Object AttributesE<gt>>), which was not easily distinguishable from
+C<LE<lt>nameE<gt>> syntax and for C<LE<lt>"section"E<gt>> which was only
+slightly less ambiguous.  This syntax is no longer in the specification, and
+has been replaced by the C<LE<lt>/sectionE<gt>> syntax (where the slash was
+formerly optional).  Pod parsers should tolerate the C<LE<lt>"section"E<gt>>
+syntax, for a while at least.  The suggested heuristic for distinguishing
+C<LE<lt>sectionE<gt>> from C<LE<lt>nameE<gt>> is that if it contains any
+whitespace, it's a I<section>.  Pod processors should warn about this being
+deprecated syntax.
 
 =back
 
