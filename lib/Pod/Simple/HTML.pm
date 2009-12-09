@@ -469,7 +469,8 @@ sub _do_middle_main_loop {
         }
 
         my $name = $self->linearize_tokens(@to_unget);
-        
+        $name = $self->do_section($name, $token) if defined $name;
+
         print $fh "<a ";
         print $fh "class='u' href='#___top' title='click to go to top of document'\n"
          if $tagname =~ m/^head\d$/s;
@@ -547,6 +548,11 @@ sub _do_middle_main_loop {
 
 ###########################################################################
 #
+
+sub do_section {
+  my($self, $name, $token) = @_;
+  return $name;
+}
 
 sub do_link {
   my($self, $token) = @_;

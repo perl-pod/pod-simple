@@ -35,6 +35,9 @@
 	* Legalization of "=begin formatname parameter"
 
 	A couple of bug fixes in Pod::Simple::HTML from Graham Barr.
+
+	Added the do_section() method to Pod::Simple::HTML. Graham Barr.
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 
