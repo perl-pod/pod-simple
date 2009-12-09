@@ -2,8 +2,10 @@
 require 5;
 package Pod::Simple::PullParserTextToken;
 use Pod::Simple::PullParserToken ();
-@ISA = ('Pod::Simple::PullParserToken');
 use strict;
+use vars qw(@ISA $VERSION);
+@ISA = ('Pod::Simple::PullParserToken');
+$VERSION = '3.11';
 
 sub new {  # Class->new(text);
   my $class = shift;

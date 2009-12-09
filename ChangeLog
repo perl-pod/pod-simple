@@ -1,7 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
-
+0000-00-00   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 
 	Restored code to HTMLBatch that allows the TOC (index) to be created
@@ -40,8 +40,12 @@
 
 	Word-smithed the "DESCRIPTION" a bit and wrote the README.
 
+	Synced up all module version numbers to 3.11 except for
+	Pod::Simple::HTMLLegacy, which is at 5.01 and should not have its
+	version number lowered.
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
-	* Release 3.10
+	* Release 3.11
 
 	Converted test files that had DOS endings to have Unix endings
 	(RT #50922 from Steve Hay).

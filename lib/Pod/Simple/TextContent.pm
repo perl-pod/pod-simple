@@ -6,7 +6,7 @@ use strict;
 use Carp ();
 use Pod::Simple ();
 use vars qw( @ISA $VERSION );
-$VERSION = '2.02';
+$VERSION = '3.11';
 @ISA = ('Pod::Simple');
 
 sub new {
