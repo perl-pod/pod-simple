@@ -38,6 +38,8 @@
 
 	Added the do_section() method to Pod::Simple::HTML. Graham Barr.
 
+	Word-smithed the "DESCRIPTION" a bit and wrote the README.
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.10
 
