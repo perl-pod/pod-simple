@@ -598,10 +598,6 @@ __END__
 
 =head1 SEE ALSO
 
-L<Pod::Simple>, L<Pod::Simple::Methody>
-
-=head1 SEE ALSO
-
 L<Pod::Simple>, L<Pod::Simple::Text>, L<Pod::Spell>
 
 =head1 SUPPORT
@@ -627,6 +623,14 @@ under the same terms as Perl itself.
 This program is distributed in the hope that it will be useful, but
 without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.
+
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to L<Hurricane Electrict|http://he.net/> for permission to use its
+L<Linux man pages online|http://man.he.net/> site for man page links.
+
+Thanks to L<search.cpan.org|http://search.cpan.org/> for permission to use the
+site for Perl module links.
 
 =head1 AUTHOR
 

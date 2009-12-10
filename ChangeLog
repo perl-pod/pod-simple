@@ -6,6 +6,10 @@
 
 	Removed "All rights reserved" from all files.
 
+	Added acknowledgements to man.he.net and search.cpan.org for
+	permission to link man pages and Perl module links to their sites
+	in the output of Pod::Simple::HTML and Pod::Simple::XHTML.
+
 2009-12-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 
