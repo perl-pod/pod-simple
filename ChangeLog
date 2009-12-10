@@ -1,6 +1,11 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+0000-00-00
+	* Release 3.12
+
+	Removed "All rights reserved" from all files.
+
 2009-12-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 
