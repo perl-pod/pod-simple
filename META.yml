@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Pod-Simple
-version:            3.10
+version:            3.11
 abstract:           framework for parsing Pod
 author:
     - Allison Randal <allison@perl.org>
@@ -26,11 +26,15 @@ requires:
     Test:            1.25
     Test::More:      0
     Text::Wrap:      98.112902
+resources:
+    bugtracker:  mailto:bug-pod-simple@rt.cpan.org
+    license:     http://dev.perl.org/licenses/
+    repository:  git://github.com/theory/pod-simple.git
 no_index:
     directory:
         - t
         - inc
-generated_by:       ExtUtils::MakeMaker version 6.55_02
+generated_by:       ExtUtils::MakeMaker version 6.55_03
 meta-spec:
     url:      http://module-build.sourceforge.net/META-spec-v1.4.html
     version:  1.4
