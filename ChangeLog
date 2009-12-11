@@ -10,6 +10,9 @@
 	permission to link man pages and Perl module links to their sites
 	in the output of Pod::Simple::HTML and Pod::Simple::XHTML.
 
+	Add "html_h_level" option to Pod::Simple::XHTML and ::HTML to allow
+	a =head1 to become an <h2> and so on.  (rjbs)
+
 2009-12-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 
@@ -53,11 +56,8 @@
 	Pod::Simple::HTMLLegacy, which is at 5.01 and should not have its
 	version number lowered.
 
-	Add "html_h_level" option to Pod::Simple::XHTML and ::HTML to allow
-	a =head1 to become an <h2> and so on.  (rjbs)
-
 2009-11-12   David E. Wheeler <david@justatheory.org>
-	* Release 3.11
+	* Release 3.10
 
 	Converted test files that had DOS endings to have Unix endings
 	(RT #50922 from Steve Hay).
