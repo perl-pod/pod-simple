@@ -117,6 +117,12 @@ default value is just a content type header tag:
 Add additional meta tags here, or blocks of inline CSS or JavaScript
 (wrapped in the appropriate tags).
 
+=head2 html_h_level
+
+This is the level of HTML "Hn" element to which a Pod "head1" corresponds.  For
+example, if C<html_h_level> is set to 2, a head1 will produce an H2, a head2
+will produce an H3, and so on.
+
 =head2 default_title
 
 Set a default title for the page if no title can be determined from the
@@ -163,6 +169,7 @@ __PACKAGE__->_accessorize(
  'html_javascript',
  'html_doctype',
  'html_header_tags',
+ 'html_h_level',
  'title', # Used internally for the title extracted from the content
  'default_title',
  'force_title',
@@ -314,6 +321,11 @@ sub end_Verbatim {
 
 sub _end_head {
     my $h = delete $_[0]{in_head};
+
+    my $add = $_[0]->html_h_level;
+    $add = 1 unless defined $add;
+    $h += $add - 1;
+
     my $id = $_[0]->idify($_[0]{scratch});
     my $text = $_[0]{scratch};
     $_[0]{'scratch'} = qq{<h$h id="$id">$text</h$h>};

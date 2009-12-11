@@ -26,6 +26,11 @@ $parser->parse_string_document( "=head1 Poit!" );
 is($results, qq{<h1 id="Poit-">Poit!</h1>\n\n}, "head1 level output");
 
 initialize($parser, $results);
+$parser->html_h_level(2);
+$parser->parse_string_document( "=head1 Poit!" );
+is($results, qq{<h2 id="Poit-">Poit!</h2>\n\n}, "head1 level output h_level 2");
+
+initialize($parser, $results);
 $parser->parse_string_document( "=head2 I think so Brain." );
 is($results, qq{<h2 id="I-think-so-Brain.">I think so Brain.</h2>\n\n}, "head2 level output");
 

@@ -53,6 +53,9 @@
 	Pod::Simple::HTMLLegacy, which is at 5.01 and should not have its
 	version number lowered.
 
+	Add "html_h_level" option to Pod::Simple::XHTML to allow a =head1 to
+	become an <h2> and so on.  (rjbs)
+
 2009-11-12   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 
