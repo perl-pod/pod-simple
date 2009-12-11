@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 44;
+use Test::More tests => 47;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -567,6 +567,13 @@ is $parser->resolve_man_page_link('crontab(5)'),
     "${MANURL}5/crontab", 'Man link without fragment';
 is $parser->resolve_man_page_link('crontab'),
     "${MANURL}1/crontab", 'Man link without section';
+
+# Make sure that batch_mode_page_object_init() works.
+ok $parser->batch_mode_page_object_init(0, 0, 0, 0, 6),
+    'Call batch_mode_page_object_init()';
+ok $parser->batch_mode, 'We should be in batch mode';
+is $parser->batch_mode_current_level, 6,
+    'The level should have been set';
 
 ######################################
 

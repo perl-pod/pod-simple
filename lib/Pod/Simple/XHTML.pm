@@ -604,6 +604,24 @@ sub idify {
     return "$t$i";
 }
 
+=head2 batch_mode_page_object_init
+
+  $pod->batch_mode_page_object_init($batchconvobj, $module, $infile, $outfile, $depth);
+
+Called by L<Pod::Simple::HTMLBatch> so that the class has a chance to
+initialize the converter. Internally it sets the C<batch_mode> property to
+true and sets C<batch_mode_current_level()>, but Pod::Simple::XHTML does not
+currently use those features. Subclasses might, though.
+
+=cut
+
+sub batch_mode_page_object_init {
+  my ($self, $batchconvobj, $module, $infile, $outfile, $depth) = @_;
+  $self->batch_mode(1);
+  $self->batch_mode_current_level($depth);
+  return $self;
+}
+
 1;
 
 __END__

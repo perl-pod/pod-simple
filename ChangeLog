@@ -13,6 +13,9 @@
 	Add "html_h_level" option to Pod::Simple::XHTML and ::HTML to allow
 	a =head1 to become an <h2> and so on.  (rjbs)
 
+	Add batch_mode_page_object_init() method to Pod::Simple::XHTML.
+	This allows it to be used by Pod::Simple::HTMLBatch.
+
 2009-12-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 
