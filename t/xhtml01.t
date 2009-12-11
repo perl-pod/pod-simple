@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 43;
+use Test::More tests => 44;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
