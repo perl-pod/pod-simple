@@ -196,7 +196,6 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
-  $new->accept_targets( 'html', 'HTML' );
   $new->perldoc_url_prefix('http://search.cpan.org/perldoc?');
   $new->man_url_prefix('http://man.he.net/man');
   $new->html_header_tags('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />');
@@ -207,6 +206,11 @@ sub new {
   $new->{'output'} = [];
   $new->{'saved'} = [];
   $new->{'ids'} = {};
+
+  $new->{'__region_targets'}  = [];
+  $new->{'__literal_targets'} = {};
+  $new->accept_targets_as_html( 'html', 'HTML' );
+
   return $new;
 }
 
@@ -242,11 +246,31 @@ something like:
       }
   }
 
+=head2 accept_targets_as_html
+
+This method behaves like C<accept_targets_as_text>, but also marks the region
+as one whose content should be emitted literally, without HTML entity escaping
+or wrapping in a C<div> element.
+
 =cut
+
+sub __in_literal_xhtml_region {
+    return unless @{ $_[0]{__region_targets} };
+    my $target = $_[0]{__region_targets}[-1];
+    return $_[0]{__literal_targets}{ $target };
+}
+
+sub accept_targets_as_html {
+    my ($self, @targets) = @_;
+    $self->accept_targets(@targets);
+    $self->{__literal_targets}{$_} = 1 for @targets;
+}
 
 sub handle_text {
     # escape special characters in HTML (<, >, &, etc)
-    $_[0]{'scratch'} .= encode_entities( $_[1] )
+    $_[0]{'scratch'} .= $_[0]->__in_literal_xhtml_region
+                      ? $_[1]
+                      : encode_entities( $_[1] );
 }
 
 sub start_Para     { $_[0]{'scratch'} = '<p>' }
@@ -350,15 +374,24 @@ sub end_item_text   {
 # This handles =begin and =for blocks of all kinds.
 sub start_for { 
   my ($self, $flags) = @_;
-  $self->{'scratch'} .= '<div';
-  $self->{'scratch'} .= ' class="'.$flags->{'target'}.'"' if ($flags->{'target'});
-  $self->{'scratch'} .= '>';
+
+  push @{ $self->{__region_targets} }, $flags->{target_matching};
+
+  unless ($self->__in_literal_xhtml_region) {
+    $self->{scratch} .= '<div';
+    $self->{scratch} .= qq( class="$flags->{target}") if $flags->{target};
+    $self->{scratch} .= '>';
+  }
+
   $self->emit;
 
 }
 sub end_for { 
   my ($self) = @_;
-  $self->{'scratch'} .= '</div>';
+
+  $self->{'scratch'} .= '</div>' unless $self->__in_literal_xhtml_region;
+
+  pop @{ $self->{__region_targets} };
   $self->emit;
 }
 

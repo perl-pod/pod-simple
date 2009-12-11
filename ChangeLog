@@ -11,11 +11,14 @@
 	in the output of Pod::Simple::HTML and Pod::Simple::XHTML.
 
 	Add "html_h_level" option to Pod::Simple::XHTML and ::HTML to allow
-	a =head1 to become an <h2> and so on.  (rjbs)
+	a =head1 to become an <h2> and so on. RJBS.
 
 	Add batch_mode_page_object_init() method to Pod::Simple::XHTML.
 	This allows it to be used by Pod::Simple::HTMLBatch.
 
+	Fixed a regression in Pod::Simple::XHTML where '=begin html' blocks
+	were incorrectly escaped rather than simply passed through unmolested.
+	RJBS.
 2009-12-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 

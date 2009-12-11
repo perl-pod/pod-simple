@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 47;
+use Test::More tests => 48;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -42,6 +42,18 @@ initialize($parser, $results);
 $parser->parse_string_document( "=head4 Zort & Zog!" );
 is($results, qq{<h4 id="Zort-Zog-">Zort &amp; Zog!</h4>\n\n}, "head4 level output");
 
+sub x ($;&) {
+  my $code = $_[1];
+  Pod::Simple::XHTML->_out(
+  sub { $code->($_[0]) if $code },
+  "=pod\n\n$_[0]",
+) }
+
+like(
+  x("=head1 Header\n\n=for html <div>RAW<span>!</span></div>\n\nDone."),
+  qr/.+<\/h1>\s+<div>RAW<span>!<\/span><\/div>\s+.*/sm,
+  "heading building"
+) or exit;
 
 initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
