@@ -19,6 +19,10 @@
 	Fixed a regression in Pod::Simple::XHTML where '=begin html' blocks
 	were incorrectly escaped rather than simply passed through unmolested.
 	RJBS.
+
+	Removed the undocumented "fullstop_space_harden" attribute, which
+	apparently was only used by Pod::Text a very long time ago.
+
 2009-12-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.11
 
