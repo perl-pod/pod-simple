@@ -114,7 +114,6 @@ t/fcodes_l.t
 t/fcodes_s.t
 t/for.t
 t/fornot.t
-t/fullstop.t
 t/heads.t
 t/html01.t
 t/html02.t

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Pod-Simple
-version:            3.11
+version:            3.12
 abstract:           framework for parsing Pod
 author:
     - Allison Randal <allison@perl.org>

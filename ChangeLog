@@ -1,7 +1,12 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
-2009-12-17
+2009-12-17   David E. Wheeler <david@justatheory.org>
+	* Release 3.13
+
+	Removed deleted test file from MANIFEST.
+
+2009-12-17   David E. Wheeler <david@justatheory.org>
 	* Release 3.12
 
 	Removed "All rights reserved" from all files.
