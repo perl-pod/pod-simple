@@ -4,7 +4,7 @@ package Pod::Simple::Methody;
 use strict;
 use Pod::Simple ();
 use vars qw(@ISA $VERSION);
-$VERSION = '3.11';
+$VERSION = '3.12';
 @ISA = ('Pod::Simple');
 
 # Yes, we could use named variables, but I want this to be impose
