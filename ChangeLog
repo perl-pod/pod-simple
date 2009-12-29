@@ -4,6 +4,8 @@
 0000-0-00   
 	* Release 3.14
 
+	Removed explicit loading of UNIVERSAL. RJBS.
+
 2009-12-17   David E. Wheeler <david@justatheory.org>
 	* Release 3.13
 
