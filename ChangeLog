@@ -1,7 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
-0000-0-00   
+2009-04-19
 	* Release 3.14
 
 	Removed explicit loading of UNIVERSAL. RJBS.
