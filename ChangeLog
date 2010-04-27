@@ -1,6 +1,11 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+	* Release 3.15
+
+	Removed "perlpod.pod" and "perlpodspec.pod". These now just live
+	in the Perl core.
+
 2009-04-27
 	* Release 3.14
 
