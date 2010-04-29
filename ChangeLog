@@ -8,8 +8,7 @@
 
 	Fixed stylesheet names output by HTMLBatch to match the names of
 	the actual stylesheet files (broken in 3.09). Thanks to Kevin Ryde
-	for the report
-	(RT #56725).
+	for the report (RT #56725).
 
 2009-04-27
 	* Release 3.14
