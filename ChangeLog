@@ -10,6 +10,9 @@
 	the actual stylesheet files (broken in 3.09). Thanks to Kevin Ryde
 	for the report (RT #56725).
 
+	Added missing closing slash to the CSS links in the XHTML output.
+	Thanks to HarleyPig for the patch!
+
 2009-04-27
 	* Release 3.14
 
