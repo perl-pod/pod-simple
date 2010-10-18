@@ -16,6 +16,9 @@
 	Added parens around bar "qw(...)" in t/xhtml05.t. Thanks to Jerry
 	D. Hedden for the patch.
 
+	Improved the Pod::Simple::HTML docs. Thanks to Gabor Szabo for the
+	patch.
+
 2009-04-27
 	* Release 3.14
 
