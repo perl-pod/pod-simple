@@ -76,13 +76,13 @@ B: Now, Pinky, if by any chance you are captured during this mission,
 remember you are Gunther Heindriksen from Appenzell. You moved to
 Grindelwald to drive the cog train to Murren. Can you repeat that?
 
-P: Mmmm, no, Brain, don't think I can.
+P: Mmmm, no, Brain, dont think I can.
 EOPOD
 
 is($results, <<'EOHTML', "multiple paragraphs");
 <p>B: Now, Pinky, if by any chance you are captured during this mission, remember you are Gunther Heindriksen from Appenzell. You moved to Grindelwald to drive the cog train to Murren. Can you repeat that?</p>
 
-<p>P: Mmmm, no, Brain, don&#39;t think I can.</p>
+<p>P: Mmmm, no, Brain, dont think I can.</p>
 
 EOHTML
 
@@ -551,12 +551,12 @@ SKIP: for my $use_html_entities (0, 1) {
 =pod
 
   # this header is very important & dont you forget it
-  B<my $file = <FILEE<gt> || 'Blank!';>
+  B<my $file = <FILEE<gt> || Blank!;>
   my $text = "File is: " . <FILE>;
 EOPOD
 is($results, <<"EOHTML", "Verbatim text with markup and embedded formatting");
 <pre><code>  # this header is very important &amp; dont you forget it
-  <b>my \$file = &lt;FILE&gt; || &#39;Blank!&#39;;</b>
+  <b>my \$file = &lt;FILE&gt; || Blank!;</b>
   my \$text = &quot;File is: &quot; . &lt;FILE&gt;;</code></pre>
 
 EOHTML
