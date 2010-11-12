@@ -28,7 +28,7 @@
 	were stripped out but not the space between them (RT-56572).
 
 2009-04-27
-	* Release 3.14
+	* Release 3.15
 
 	Removed explicit loading of UNIVERSAL. RJBS.
 
