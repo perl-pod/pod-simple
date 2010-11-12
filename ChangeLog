@@ -28,6 +28,9 @@
 	and IDs (in XHTML). Such whitespace appeared when "X<>" entities
 	were stripped out but not the space between them (RT-56572).
 
+	Make test "t/search50.t" always pass on case-insensitive file
+	systems rather than just skip VMS.
+
 2009-04-27
 	* Release 3.14
 
