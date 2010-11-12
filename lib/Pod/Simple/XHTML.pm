@@ -500,10 +500,12 @@ sub end_I   { $_[0]{'scratch'} .= '</i>' }
 sub start_L {
   my ($self, $flags) = @_;
     my ($type, $to, $section) = @{$flags}{'type', 'to', 'section'};
-    my $url = $type eq 'url' ? $to
+    my $url = encode_entities(
+        $type eq 'url' ? $to
             : $type eq 'pod' ? $self->resolve_pod_page_link($to, $section)
             : $type eq 'man' ? $self->resolve_man_page_link($to, $section)
-            :                  undef;
+            :                  undef
+    );
 
     # If it's an unknown type, use an attribute-less <a> like HTML.pm.
     $self->{'scratch'} .= '<a' . ($url ? ' href="'. $url . '">' : '>');

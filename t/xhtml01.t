@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 48;
+use Test::More tests => 49;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -456,6 +456,17 @@ A plain paragraph with a L<http://link.included.here>.
 EOPOD
 is($results, <<"EOHTML", "A link in a paragraph");
 <p>A plain paragraph with a <a href="http://link.included.here">http://link.included.here</a>.</p>
+
+EOHTML
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=pod
+
+A plain paragraph with a L<http://link.included.here?o=1&p=2>.
+EOPOD
+is($results, <<"EOHTML", "A link in a paragraph");
+<p>A plain paragraph with a <a href="http://link.included.here?o=1&amp;p=2">http://link.included.here?o=1&amp;p=2</a>.</p>
 
 EOHTML
 

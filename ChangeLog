@@ -19,6 +19,9 @@
 	Improved the Pod::Simple::HTML docs. Thanks to Gabor Szabo for the
 	patch.
 
+	Pod::Simple::XHTML now properly encodes entities in URLs in the
+	anchor tag. Thanks to John McNamara for the report.
+
 2009-04-27
 	* Release 3.14
 
