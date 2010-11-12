@@ -20,7 +20,12 @@
 	patch.
 
 	Pod::Simple::XHTML now properly encodes entities in URLs in the
-	anchor tag. Thanks to John McNamara for the report.
+	anchor tag. Thanks to John McNamara for the report (RT-60249).
+
+	Pod::Simple::HTML and XHTML now strip whitespace from the end of
+	section names that appear as anchor names for headers (in HTML)
+	and IDs (in XHTML). Such whitespace appeared when "X<>" entities
+	were stripped out but not the space between them (RT-56572).
 
 2009-04-27
 	* Release 3.14

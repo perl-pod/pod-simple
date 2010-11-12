@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 49;
+use Test::More tests => 50;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -24,6 +24,11 @@ my $MANURL = "http://man.he.net/man";
 initialize($parser, $results);
 $parser->parse_string_document( "=head1 Poit!" );
 is($results, qq{<h1 id="Poit-">Poit!</h1>\n\n}, "head1 level output");
+
+initialize($parser, $results);
+$parser->parse_string_document( "=head2 Yada Yada Operator
+X<...> X<... operator> X<yada yada operator>" );
+is($results, qq{<h2 id="Yada-Yada-Operator">Yada Yada Operator   </h2>\n\n}, "head ID with X<>");
 
 initialize($parser, $results);
 $parser->html_h_level(2);

@@ -629,6 +629,7 @@ sub idify {
     for ($t) {
         s/<[^>]+>//g;            # Strip HTML.
         s/&[^;]+;//g;            # Strip entities.
+        s/^\s+//; s/\s+$//;      # Strip white space.
         s/^([^a-zA-Z]+)$/pod$1/; # Prepend "pod" if no valid chars.
         s/^[^a-zA-Z]+//;         # First char must be a letter.
         s/[^-a-zA-Z0-9_:.]+/-/g; # All other chars must be valid.
