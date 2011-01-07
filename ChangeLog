@@ -89,7 +89,7 @@
 	Fixed the output of entities in L<> tags by Pod::Simple::XHTML.
 
 	Fixed the output of POD links from Pod::Simple::XHTML so that the
-	section part (/foo) is turned into a proper fragment identfier (#foo)
+	section part (/foo) is turned into a proper fragment identifier (#foo)
 	in the resulting search.cpan.org link.
 
 	Pod::Simple::Text now outputs URLs for links created in the

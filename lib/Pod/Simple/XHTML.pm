@@ -692,7 +692,7 @@ merchantability or fitness for a particular purpose.
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks to L<Hurricane Electrict|http://he.net/> for permission to use its
+Thanks to L<Hurricane Electric|http://he.net/> for permission to use its
 L<Linux man pages online|http://man.he.net/> site for man page links.
 
 Thanks to L<search.cpan.org|http://search.cpan.org/> for permission to use the
