@@ -206,6 +206,7 @@ sub new {
   $new->{'output'} = [];
   $new->{'saved'} = [];
   $new->{'ids'} = {};
+  $new->{'in_li'} = [];
 
   $new->{'__region_targets'}  = [];
   $new->{'__literal_targets'} = {};
@@ -282,15 +283,15 @@ sub start_head3 {  $_[0]{'in_head'} = 3 }
 sub start_head4 {  $_[0]{'in_head'} = 4 }
 
 sub start_item_number {
-    $_[0]{'scratch'} = "</li>\n" if $_[0]{'in_li'};
+    $_[0]{'scratch'} = "</li>\n" if ($_[0]{'in_li'}->[-1] && pop @{$_[0]{'in_li'}});
     $_[0]{'scratch'} .= '<li><p>';
-    $_[0]{'in_li'} = 1
+    push @{$_[0]{'in_li'}}, 1;
 }
 
 sub start_item_bullet {
-    $_[0]{'scratch'} = "</li>\n" if $_[0]{'in_li'};
+    $_[0]{'scratch'} = "</li>\n" if ($_[0]{'in_li'}->[-1] && pop @{$_[0]{'in_li'}});
     $_[0]{'scratch'} .= '<li><p>';
-    $_[0]{'in_li'} = 1
+    push @{$_[0]{'in_li'}}, 1;
 }
 
 sub start_item_text   {
@@ -301,9 +302,9 @@ sub start_item_text   {
     $_[0]{'scratch'} .= '<dt>';
 }
 
-sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
+sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
 sub start_over_block  { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
-sub start_over_number { $_[0]{'scratch'} = '<ol>'; $_[0]->emit }
+sub start_over_number { $_[0]{'scratch'} = '<ol>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
 sub start_over_text   {
     $_[0]{'scratch'} = '<dl>';
     $_[0]{'dl_level'}++;
@@ -314,14 +315,16 @@ sub start_over_text   {
 sub end_over_block  { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
 
 sub end_over_number   {
-    $_[0]{'scratch'} = "</li>\n" if delete $_[0]{'in_li'};
+    $_[0]{'scratch'} = "</li>\n" if ( pop @{$_[0]{'in_li'}} );
     $_[0]{'scratch'} .= '</ol>';
+    pop @{$_[0]{'in_li'}};
     $_[0]->emit;
 }
 
 sub end_over_bullet   {
-    $_[0]{'scratch'} = "</li>\n" if delete $_[0]{'in_li'};
+    $_[0]{'scratch'} = "</li>\n" if ( pop @{$_[0]{'in_li'}} );
     $_[0]{'scratch'} .= '</ul>';
+    pop @{$_[0]{'in_li'}};
     $_[0]->emit;
 }
 

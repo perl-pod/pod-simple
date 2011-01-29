@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 50;
+use Test::More tests => 52;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -125,6 +125,59 @@ initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
 =over
 
+=item *
+
+P: Gee, Brain, what do you want to do tonight?
+
+=item *
+
+B: The same thing we do every night, Pinky. Try to take over the world!
+
+=over
+
+=item *
+
+Take over world
+
+=item *
+
+Do laundry
+
+=back
+
+=back
+
+EOPOD
+
+is($results, <<'EOHTML', "nested bulleted list");
+<ul>
+
+<li><p>P: Gee, Brain, what do you want to do tonight?</p>
+
+</li>
+<li><p>B: The same thing we do every night, Pinky. Try to take over the world!</p>
+
+<ul>
+
+<li><p>Take over world</p>
+
+</li>
+<li><p>Do laundry</p>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+EOHTML
+
+
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=over
+
 =item 1
 
 P: Gee, Brain, what do you want to do tonight?
@@ -144,6 +197,58 @@ is($results, <<'EOHTML', "numbered list");
 
 </li>
 <li><p>B: The same thing we do every night, Pinky. Try to take over the world!</p>
+
+</li>
+</ol>
+
+EOHTML
+
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=over
+
+=item 1
+
+P: Gee, Brain, what do you want to do tonight?
+
+=item 2
+
+B: The same thing we do every night, Pinky. Try to take over the world!
+
+=over
+
+=item 1
+
+Take over world
+
+=item 2
+
+Do laundry
+
+=back
+
+=back
+
+EOPOD
+
+is($results, <<'EOHTML', "nested numbered list");
+<ol>
+
+<li><p>P: Gee, Brain, what do you want to do tonight?</p>
+
+</li>
+<li><p>B: The same thing we do every night, Pinky. Try to take over the world!</p>
+
+<ol>
+
+<li><p>Take over world</p>
+
+</li>
+<li><p>Do laundry</p>
+
+</li>
+</ol>
 
 </li>
 </ol>
