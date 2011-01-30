@@ -516,8 +516,8 @@ sub start_L {
 
 sub end_L   { $_[0]{'scratch'} .= '</a>' }
 
-sub start_S { $_[0]{'scratch'} .= '<nobr>' }
-sub end_S   { $_[0]{'scratch'} .= '</nobr>' }
+sub start_S { $_[0]{'scratch'} .= '<span style="white-space: nowrap;">' }
+sub end_S   { $_[0]{'scratch'} .= '</span>' }
 
 sub emit {
   my($self) = @_;

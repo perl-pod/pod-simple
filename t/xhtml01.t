@@ -521,7 +521,7 @@ $parser->parse_string_document(<<'EOPOD');
 A plain paragraph with S<non breaking text>.
 EOPOD
 is($results, <<"EOHTML", "Non breaking text in a paragraph");
-<p>A plain paragraph with <nobr>non breaking text</nobr>.</p>
+<p>A plain paragraph with <span style="white-space: nowrap;">non breaking text</span>.</p>
 
 EOHTML
 
