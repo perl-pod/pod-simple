@@ -4,11 +4,10 @@
 	* Release 3.16
 
 	Fixed invalid HTML generated for nested lists by Pod::Simple::XHTML
-	Thanks to GitHub user "felliott" for the patch!
+	(Fitz Elliott).
 
 	Replaced the invalid "<nobr>" tag -- created for "S<>" -- with
-	'<span style="white-space: nowrap;">'. Thanks to GitHub user
-	"felliott" for the patch!
+	'<span style="white-space: nowrap;">' (Fitz Elliott).
 
 2010-11-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.15
