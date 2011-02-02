@@ -16,7 +16,6 @@ WriteMakefile(
   VERSION_FROM	=> 'lib/Pod/Simple.pm',
   ABSTRACT_FROM	=> 'lib/Pod/Simple.pod',
   EXE_FILES => [ "scripts/podchecker" ],
-  PL_FILES => { "scripts/podchecker.PL" => "scripts/podchecker" },
   PREREQ_PM	  	=> {
    'Text::Wrap' => '98.112902',
    'Pod::Escapes' => '1.04',
