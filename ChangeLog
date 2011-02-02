@@ -9,6 +9,8 @@
 	Replaced the invalid "<nobr>" tag -- created for "S<>" -- with
 	'<span style="white-space: nowrap;">' (Fitz Elliott).
 
+	Fixed some nerbles in our own Pod (Michael Stevens)
+
 2010-11-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.15
 
