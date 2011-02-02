@@ -275,7 +275,7 @@ some link text.)
 For example, this Pod source:
 
   L<hell itself!|crontab(5)>
-  
+
 will produce this event structure:
 
   <L to="crontab(5)" type="man">
@@ -509,15 +509,15 @@ The I<indent> attribute is as with the other over-* events.
 For example, this Pod source:
 
   =over
-  
+
   =item Foo
-  
+
   Stuff
-  
+
   =item Bar I<baz>!
-  
+
   Quux
-  
+
   =back
 
 produces this event structure:
@@ -559,18 +559,18 @@ The I<indent> attribute is as with the other over-* events.
 For example, this Pod source:
 
   =over
-  
+
   For cutting off our trade with all parts of the world
-  
+
   For transporting us beyond seas to be tried for pretended offenses
-  
+
   He is at this time transporting large armies of foreign mercenaries to
   complete the works of death, desolation and tyranny, already begun with
   circumstances of cruelty and perfidy scarcely paralleled in the most
   barbarous ages, and totally unworthy the head of a civilized nation.
-  
+
   =cut
-  
+
 will produce this event structure:
 
   <over-block indent="4" start_line="2">
