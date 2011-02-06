@@ -902,10 +902,10 @@ TODO
 =head2 Minimal code
 
   use Pod::Simple::HTML;
-  my $html;
-  $p->output_string(\$html);
+  my $p = Pod::Simple::HTML->new;
+  $p->output_string(\my $html);
   $p->parse_from_file('path/to/Module/Name.pm');
-  open my $out, '>', 'out.html' or die;
+  open my $out, '>', 'out.html' or die "Cannot open 'out.html': $!\n";
   print $out $html;
 
 =head2 More detailed example
