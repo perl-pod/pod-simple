@@ -11,8 +11,11 @@
 
 	Fixed some nerbles in our own Pod (Michael Stevens)
 
-	Improved the "Minimal code" example in Pod::Simple::HTML, thanks to
-	prodding from Ævar Arnfjörð Bjarmason (RT #65428).
+	Improved the "Minimal code" example in Pod::Simple::HTML. The key
+	is to use pase_file(), not parse_from_file() (which should
+	otherwise be undocumented, and is just there for Pod::Parser
+	compatibility. Thanks to prodding from Ævar Arnfjörð Bjarmason (RT
+	#65428).
 
 2010-11-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.15

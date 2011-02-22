@@ -904,7 +904,7 @@ TODO
   use Pod::Simple::HTML;
   my $p = Pod::Simple::HTML->new;
   $p->output_string(\my $html);
-  $p->parse_from_file('path/to/Module/Name.pm');
+  $p->parse_file('path/to/Module/Name.pm');
   open my $out, '>', 'out.html' or die "Cannot open 'out.html': $!\n";
   print $out $html;
 
@@ -946,7 +946,7 @@ Tell the parser where should the output go. In this case it will be placed in th
 
 Parse and process a file with pod in it:
 
-  $p->parse_from_file('path/to/Module/Name.pm');
+  $p->parse__file('path/to/Module/Name.pm');
 
 =head1 METHODS
 
@@ -1064,7 +1064,7 @@ Meanwhile in script.pl:
 
   my $html;
   $p->output_string(\$html);
-  $p->parse_from_file('path/to/Module/Name.pm');
+  $p->parse_file('path/to/Module/Name.pm');
   open my $out, '>', 'out.html' or die;
   print $out $html;
 
