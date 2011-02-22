@@ -946,7 +946,7 @@ Tell the parser where should the output go. In this case it will be placed in th
 
 Parse and process a file with pod in it:
 
-  $p->parse__file('path/to/Module/Name.pm');
+  $p->parse_file('path/to/Module/Name.pm');
 
 =head1 METHODS
 
