@@ -23,6 +23,23 @@ This is a subclass of L<Pod::Simple::Methody> and inherits all its
 methods. The implementation is entirely different than
 L<Pod::Simple::HTML>, but it largely preserves the same interface.
 
+=head2 Minimal code
+
+  use Pod::Simple::XHTML;
+  my $psx = Pod::Simple::XHTML->new;
+  $psx->output_string(\my $html);
+  $psx->parse_file('path/to/Module/Name.pm');
+  open my $out, '>', 'out.html' or die "Cannot open 'out.html': $!\n";
+  print $out $html;
+
+You can also control the character encoding and entities. For example, if
+you're sure that the POD is properly encoded (using the C<=encoding> command),
+you can prevent high-bit characters from being encoded as HTML entities and
+declare the output character set as UTF-8 before parsing, like so:
+
+  $psx->html_charset('UTF-8');
+  $psx->html_encode_chars('&<>">');
+
 =cut
 
 package Pod::Simple::XHTML;
@@ -45,10 +62,17 @@ my %entities = (
 );
 
 sub encode_entities {
-  return HTML::Entities::encode_entities( $_[0] ) if $HAS_HTML_ENTITIES;
+  my $self = shift;
+  my $ents = $self->html_encode_chars;
+  return HTML::Entities::encode_entities( $_[0], $ents ) if $HAS_HTML_ENTITIES;
+  if (defined $ents) {
+      $ents =~ s,(?<!\\)([]/]),\\$1,g;
+      $ents =~ s,(?<!\\)\\\z,\\\\,;
+  } else {
+      $ents = join '', keys %entities;
+  }
   my $str = $_[0];
-  my $ents = join '', keys %entities;
-  $str =~ s/([$ents])/'&' . $entities{$1} . ';'/ge;
+  $str =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', ord $1) . ';'/ge;
   return $str;
 }
 
@@ -122,6 +146,15 @@ default value is just a content type header tag:
 Add additional meta tags here, or blocks of inline CSS or JavaScript
 (wrapped in the appropriate tags).
 
+=head3 html_encode_chars
+
+A string containing all characters that should be encoded as HTML entities,
+specified using the regular expression character class syntax (what you find
+within brackets in regular expressions). This value will be passed as the
+second argument to the C<encode_entities> fuction of L<HTML::Entities>. IF
+L<HTML::Entities> is not installed, then any characters other than C<&<>"'>
+will be encoded numerically.
+
 =head2 html_h_level
 
 This is the level of HTML "Hn" element to which a Pod "head1" corresponds.  For
@@ -174,6 +207,7 @@ __PACKAGE__->_accessorize(
  'html_javascript',
  'html_doctype',
  'html_charset',
+ 'html_encode_chars',
  'html_h_level',
  'title', # Used internally for the title extracted from the content
  'default_title',
@@ -284,7 +318,7 @@ sub handle_text {
     # escape special characters in HTML (<, >, &, etc)
     $_[0]{'scratch'} .= $_[0]->__in_literal_xhtml_region
                       ? $_[1]
-                      : encode_entities( $_[1] );
+                      : $_[0]->encode_entities( $_[1] );
 }
 
 sub start_Para     { $_[0]{'scratch'} = '<p>' }
@@ -516,7 +550,7 @@ sub end_I   { $_[0]{'scratch'} .= '</i>' }
 sub start_L {
   my ($self, $flags) = @_;
     my ($type, $to, $section) = @{$flags}{'type', 'to', 'section'};
-    my $url = encode_entities(
+    my $url = $self->encode_entities(
         $type eq 'url' ? $to
             : $type eq 'pod' ? $self->resolve_pod_page_link($to, $section)
             : $type eq 'man' ? $self->resolve_man_page_link($to, $section)
@@ -572,7 +606,7 @@ sub resolve_pod_page_link {
     }
 
     return ($self->perldoc_url_prefix || '')
-        . encode_entities($to) . $section
+        . $self->encode_entities($to) . $section
         . ($self->perldoc_url_postfix || '');
 }
 
@@ -601,7 +635,7 @@ sub resolve_man_page_link {
     my ($page, $part) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
     return undef unless $page;
     return ($self->man_url_prefix || '')
-        . ($part || 1) . "/" . encode_entities($page)
+        . ($part || 1) . "/" . $self->encode_entities($page)
         . ($self->man_url_postfix || '');
 
 }

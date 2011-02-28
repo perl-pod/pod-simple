@@ -8,8 +8,8 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 56;
-#use Test::More 'no_plan';
+#use Test::More tests => 56;
+use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -670,6 +670,24 @@ is($results, <<"EOHTML", "Verbatim text with markup and embedded formatting");
   my \$text = &quot;File is: &quot; . &lt;FILE&gt;;</code></pre>
 
 EOHTML
+
+  # Specify characters to encode.
+  initialize($parser, $results);
+  $parser->html_encode_chars('><"&T');
+  $parser->parse_string_document(<<'EOPOD');
+=pod
+
+This is Anna's "Answer" to the <q>Question</q>.
+
+=cut
+
+EOPOD
+my $T = $use_html_entities ? 84 : 'x54';
+is($results, <<"EOHTML", 'HTML Entities should be only for specified characters');
+<p>&#$T;his is Anna's &quot;Answer&quot; to the &lt;q&gt;Question&lt;/q&gt;.</p>
+
+EOHTML
+
 }
 
 

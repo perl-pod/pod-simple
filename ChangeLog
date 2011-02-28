@@ -17,7 +17,11 @@
 	compatibility. Thanks to prodding from Ævar Arnfjörð Bjarmason (RT
 	#65428).
 
-	Added the html_charset() attribute to Pod::Simple::XHTML.
+	Added the html_charset() and html_encode_chars() attributes to
+	Pod::Simple::XHTML. Inspired by a bug report from Agent Zhang
+	(章亦春) (RT #29587).
+
+	Added "Minimal code" example to the Pod::Simple::XHTML documentation.
 
 2010-11-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.15
