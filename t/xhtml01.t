@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 52;
+use Test::More tests => 56;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -677,8 +677,16 @@ ok $parser = Pod::Simple::XHTML->new, 'Construct a new parser';
 $results = '';
 $parser->output_string( \$results ); # Send the resulting output to a string
 ok $parser->parse_string_document( "=head1 Poit!" ), 'Parse with headers';
-like $results, qr{<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />},
+like $results, qr{\Q<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />},
     'Should have proper http-equiv meta tag';
+
+ok $parser = Pod::Simple::XHTML->new, 'Construct a new parser again';
+ok $parser->html_charset('UTF-8'), 'Set the html charset to UTF-8';
+$results = '';
+$parser->output_string( \$results ); # Send the resulting output to a string
+ok $parser->parse_string_document( "=head1 Poit!" ), 'Parse with headers';
+like $results, qr{\Q<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />},
+    'Should have http-equiv meta tag with UTF-8';
 
 # Test the link generation methods.
 is $parser->resolve_pod_page_link('Net::Ping', 'INSTALL'),

@@ -106,6 +106,12 @@ not set by default.
 
 A document type tag for the file. This option is not set by default.
 
+=head2 html_charset
+
+The charater set to declare in the Content-Type meta tag created by default
+for C<html_header_tags>. Note that this option will be ignored if the value of
+C<html_header_tags> is changed. Defaults to "ISO-8859-1".
+
 =head2 html_header_tags
 
 Additional arbitrary HTML tags for the header of the document. The
@@ -167,7 +173,7 @@ __PACKAGE__->_accessorize(
  'html_css',
  'html_javascript',
  'html_doctype',
- 'html_header_tags',
+ 'html_charset',
  'html_h_level',
  'title', # Used internally for the title extracted from the content
  'default_title',
@@ -197,7 +203,7 @@ sub new {
   $new->{'output_fh'} ||= *STDOUT{IO};
   $new->perldoc_url_prefix('http://search.cpan.org/perldoc?');
   $new->man_url_prefix('http://man.he.net/man');
-  $new->html_header_tags('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />');
+  $new->html_charset('ISO-8859-1');
   $new->nix_X_codes(1);
   $new->codes_in_verbatim(1);
   $new->{'scratch'} = '';
@@ -212,6 +218,14 @@ sub new {
   $new->accept_targets_as_html( 'html', 'HTML' );
 
   return $new;
+}
+
+sub html_header_tags {
+    my $self = shift;
+    return $self->{html_header_tags} = shift if @_;
+    return $self->{html_header_tags}
+        ||= '<meta http-equiv="Content-Type" content="text/html; charset='
+            . $self->html_charset . '" />';
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

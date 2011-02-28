@@ -17,6 +17,8 @@
 	compatibility. Thanks to prodding from Ævar Arnfjörð Bjarmason (RT
 	#65428).
 
+	Added the html_charset() attribute to Pod::Simple::XHTML.
+
 2010-11-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.15
 
