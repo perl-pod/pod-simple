@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2011-03-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.16
 
 	Fixed invalid HTML generated for nested lists by Pod::Simple::XHTML
