@@ -27,7 +27,7 @@
 	spelled "=encode"). Thanks to "TTY" for the patch. (RT #24820).
 
 2010-11-11   David E. Wheeler <david@justatheory.org>
-	* Release 3.15
+	* Release 3.16
 
 	Removed "perlpod.pod" and "perlpodspec.pod". These now just live
 	in the Perl core.
