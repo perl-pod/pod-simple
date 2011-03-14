@@ -23,6 +23,9 @@
 
 	Added "Minimal code" example to the Pod::Simple::XHTML documentation.
 
+	Fixed mispelling of the "=encoding" markup in the parser (it was
+	spelled "=encode"). Thanks to "TTY" for the patch. (RT #24820).
+
 2010-11-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.15
 
