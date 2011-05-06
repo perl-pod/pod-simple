@@ -290,7 +290,7 @@ specified for this type of L code.
 In the most common case, the simple case of a LE<lt>podpageE<gt> code
 produces this event structure:
 
-  <L content-implicit="yes" to="Net::Ping" type="pod">
+  <L content-implicit="yes" to="podpage" type="pod">
     podpage
   </L>
 
