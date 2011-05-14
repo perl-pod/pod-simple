@@ -194,6 +194,10 @@ to the empty string.
 Whether to add a table-of-contents at the top of each page (called an
 index for the sake of tradition).
 
+=head2 backlink
+
+Whether to turn every =head1 directive into a link pointing to the top 
+of the page (specifically, the opening body tag).
 
 =cut
 
@@ -215,6 +219,7 @@ __PACKAGE__->_accessorize(
  'html_header',
  'html_footer',
  'index',
+ 'backlink',
  'batch_mode', # whether we're in batch mode
  'batch_mode_current_level',
     # When in batch mode, how deep the current module is: 1 for "LWP",
@@ -402,7 +407,9 @@ sub _end_head {
 
     my $id = $_[0]->idify($_[0]{scratch});
     my $text = $_[0]{scratch};
-    $_[0]{'scratch'} = qq{<h$h id="$id">$text</h$h>};
+    $_[0]{'scratch'} = $_[0]->backlink && ($h - $add == 0) # backlinks enabled && =head1
+	                  ? qq{<a href="#top"><h$h id="$id">$text</h$h></a>}
+                          : qq{<h$h id="$id">$text</h$h>};
     $_[0]->emit;
     push @{ $_[0]{'to_index'} }, [$h, $id, $text];
 }
@@ -470,7 +477,7 @@ $doctype
 <title>$title</title>
 $metatags
 </head>
-<body>
+<body id="top">
 HTML
     $self->emit;
   }

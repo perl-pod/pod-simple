@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 44;
+use Test::More tests => 52;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -44,7 +44,7 @@ is $results, <<'EOF', 'Should have the index';
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 </head>
-<body>
+<body id="top">
 
 
 <ul id="index">
@@ -394,6 +394,126 @@ is $results, <<'EOF', 'And it should work!';
 <h4 id="Ouch">Ouch</h4>
 
 <h1 id="Drip">Drip</h1>
+
+EOF
+
+initialize($parser, $results);
+$parser->html_header($header);
+$parser->html_footer($footer);
+$parser->backlink(1);
+ok $parser->parse_string_document( '=head1 Foo' ), 'Parse a header';
+is $results, <<'EOF', 'Should have the index and a backlink';
+
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+</head>
+<body id="top">
+
+
+<ul id="index">
+  <li><a href="#Foo">Foo</a></li>
+</ul>
+
+<a href="#top"><h1 id="Foo">Foo</h1></a>
+
+</body>
+</html>
+
+EOF
+
+initialize($parser, $results);
+$parser->html_header($header);
+$parser->html_footer($footer);
+$parser->backlink(1);
+ok $parser->parse_string_document( "=head1 Foo \n\n=head2 Bar \n\n=head1 Baz" ), 'Parse headers';
+is $results, <<'EOF', 'Should have the index and backlinks';
+
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+</head>
+<body id="top">
+
+
+<ul id="index">
+  <li><a href="#Foo">Foo</a>
+    <ul>
+      <li><a href="#Bar">Bar</a></li>
+    </ul>
+  </li>
+  <li><a href="#Baz">Baz</a></li>
+</ul>
+
+<a href="#top"><h1 id="Foo">Foo</h1></a>
+
+<h2 id="Bar">Bar</h2>
+
+<a href="#top"><h1 id="Baz">Baz</h1></a>
+
+</body>
+</html>
+
+EOF
+
+initialize($parser, $results);
+$parser->html_header($header);
+$parser->html_footer($footer);
+$parser->index(0);
+$parser->backlink(1);
+ok $parser->parse_string_document( "=head1 Foo \n\n=head1 Bar" ), 'Parse headers';
+is $results, <<'EOF', 'Should have backlinks but no index';
+
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+</head>
+<body id="top">
+
+
+<a href="#top"><h1 id="Foo">Foo</h1></a>
+
+<a href="#top"><h1 id="Bar">Bar</h1></a>
+
+</body>
+</html>
+
+EOF
+
+initialize($parser, $results);
+$parser->html_header($header);
+$parser->html_footer($footer);
+$parser->backlink(1);
+$parser->html_h_level(2);
+ok $parser->parse_string_document( "=head1 Foo \n\n=head1 Bar" ), 'Parse headers';
+is $results, <<'EOF', 'Should have index and backlinks around h2 elements';
+
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+</head>
+<body id="top">
+
+
+<ul id="index">
+  <li>
+    <ul>
+      <li><a href="#Foo">Foo</a></li>
+      <li><a href="#Bar">Bar</a></li>
+    </ul>
+  </li>
+</ul>
+
+<a href="#top"><h2 id="Foo">Foo</h2></a>
+
+<a href="#top"><h2 id="Bar">Bar</h2></a>
+
+</body>
+</html>
 
 EOF
 
