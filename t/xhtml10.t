@@ -447,6 +447,7 @@ is $results, <<'EOF', 'Should have the index and backlinks';
   <li><a href="#Baz">Baz</a></li>
 </ul>
 
+
 <a href="#top"><h1 id="Foo">Foo</h1></a>
 
 <h2 id="Bar">Bar</h2>
