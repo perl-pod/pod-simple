@@ -44,7 +44,7 @@ is $results, <<'EOF', 'Should have the index';
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 </head>
-<body id="top">
+<body id="_podtop_">
 
 
 <ul id="index">
@@ -409,14 +409,14 @@ is $results, <<'EOF', 'Should have the index and a backlink';
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 </head>
-<body id="top">
+<body id="_podtop_">
 
 
 <ul id="index">
   <li><a href="#Foo">Foo</a></li>
 </ul>
 
-<a href="#top"><h1 id="Foo">Foo</h1></a>
+<a href="#_podtop_"><h1 id="Foo">Foo</h1></a>
 
 </body>
 </html>
@@ -435,7 +435,7 @@ is $results, <<'EOF', 'Should have the index and backlinks';
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 </head>
-<body id="top">
+<body id="_podtop_">
 
 
 <ul id="index">
@@ -447,12 +447,11 @@ is $results, <<'EOF', 'Should have the index and backlinks';
   <li><a href="#Baz">Baz</a></li>
 </ul>
 
-
-<a href="#top"><h1 id="Foo">Foo</h1></a>
+<a href="#_podtop_"><h1 id="Foo">Foo</h1></a>
 
 <h2 id="Bar">Bar</h2>
 
-<a href="#top"><h1 id="Baz">Baz</h1></a>
+<a href="#_podtop_"><h1 id="Baz">Baz</h1></a>
 
 </body>
 </html>
@@ -472,12 +471,12 @@ is $results, <<'EOF', 'Should have backlinks but no index';
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 </head>
-<body id="top">
+<body id="_podtop_">
 
 
-<a href="#top"><h1 id="Foo">Foo</h1></a>
+<a href="#_podtop_"><h1 id="Foo">Foo</h1></a>
 
-<a href="#top"><h1 id="Bar">Bar</h1></a>
+<a href="#_podtop_"><h1 id="Bar">Bar</h1></a>
 
 </body>
 </html>
@@ -497,7 +496,7 @@ is $results, <<'EOF', 'Should have index and backlinks around h2 elements';
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 </head>
-<body id="top">
+<body id="_podtop_">
 
 
 <ul id="index">
@@ -509,9 +508,9 @@ is $results, <<'EOF', 'Should have index and backlinks around h2 elements';
   </li>
 </ul>
 
-<a href="#top"><h2 id="Foo">Foo</h2></a>
+<a href="#_podtop_"><h2 id="Foo">Foo</h2></a>
 
-<a href="#top"><h2 id="Bar">Bar</h2></a>
+<a href="#_podtop_"><h2 id="Bar">Bar</h2></a>
 
 </body>
 </html>

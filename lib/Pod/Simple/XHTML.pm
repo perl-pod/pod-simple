@@ -249,7 +249,7 @@ sub new {
   $new->{'to_index'} = [];
   $new->{'output'} = [];
   $new->{'saved'} = [];
-  $new->{'ids'} = {};
+  $new->{'ids'} = { '_podtop_' => 1 }; # used in <body>
   $new->{'in_li'} = [];
 
   $new->{'__region_targets'}  = [];
@@ -408,7 +408,7 @@ sub _end_head {
     my $id = $_[0]->idify($_[0]{scratch});
     my $text = $_[0]{scratch};
     $_[0]{'scratch'} = $_[0]->backlink && ($h - $add == 0) # backlinks enabled && =head1
-	                  ? qq{<a href="#top"><h$h id="$id">$text</h$h></a>}
+	                  ? qq{<a href="#_podtop_"><h$h id="$id">$text</h$h></a>}
                           : qq{<h$h id="$id">$text</h$h>};
     $_[0]->emit;
     push @{ $_[0]{'to_index'} }, [$h, $id, $text];
@@ -477,7 +477,7 @@ $doctype
 <title>$title</title>
 $metatags
 </head>
-<body id="top">
+<body id="_podtop_">
 HTML
     $self->emit;
   }
