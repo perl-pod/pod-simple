@@ -5,6 +5,9 @@
 
 	Documented tertiary methods. Patch from Shawn H Corey.
 
+	Added "backlink" option to Pod::Simple::XHTML. Thanks to Marc Green
+	for the pull request.
+
 2011-03-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.16
 
