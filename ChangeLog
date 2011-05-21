@@ -10,6 +10,9 @@
 
 	Typos fixed in Pod::Simple::HTMLBatch. Reported by Shawn H Corey.
 
+	Fixed quoting of value returned by a "strip_verbatim_indent()"
+	code reference so that regex meta characters are properly escaped.
+
 2011-03-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.16
 
