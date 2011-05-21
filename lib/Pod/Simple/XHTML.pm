@@ -458,7 +458,7 @@ sub start_Document {
     $self->{'scratch'} .= $self->html_header;
     $self->emit unless $self->html_header eq "";
   } else {
-    my ($doctype, $title, $metatags);
+    my ($doctype, $title, $metatags, $bodyid);
     $doctype = $self->html_doctype || '';
     $title = $self->force_title || $self->title || $self->default_title || '';
     $metatags = $self->html_header_tags || '';
@@ -470,6 +470,7 @@ sub start_Document {
       $metatags .= "\n<script type='text/javascript' src='" .
                     $self->html_javascript . "'></script>";
     }
+    $bodyid = $self->backlink ? ' id="_podtop_"' : '';
     $self->{'scratch'} .= <<"HTML";
 $doctype
 <html>
@@ -477,7 +478,7 @@ $doctype
 <title>$title</title>
 $metatags
 </head>
-<body id="_podtop_">
+<body$bodyid>
 HTML
     $self->emit;
   }
