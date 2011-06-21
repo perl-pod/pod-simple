@@ -43,11 +43,14 @@ declare the output character set as UTF-8 before parsing, like so:
 =cut
 
 package Pod::Simple::XHTML;
+use 5.14.0;
 use strict;
 use vars qw( $VERSION @ISA $HAS_HTML_ENTITIES );
 $VERSION = '3.17';
 use Pod::Simple::Methody ();
 @ISA = ('Pod::Simple::Methody');
+
+use Data::Dumper;
 
 BEGIN {
   $HAS_HTML_ENTITIES = eval "require HTML::Entities; 1";
@@ -351,7 +354,9 @@ sub start_item_text   {
         $_[0]{'scratch'} = "</dd>\n";
         $_[0]{'in_dd'}[ $_[0]{'dl_level'} ] = 0;
     }
-    $_[0]{'scratch'} .= '<dt>';
+
+    my $id = $_[0]->idify($_[1]{'current_dt'});
+    $_[0]{'scratch'} .= "<dt id=$id>";
 }
 
 sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
