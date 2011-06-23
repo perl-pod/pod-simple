@@ -633,9 +633,7 @@ sub _ponder_paragraph_buffer {
           DEBUG and print " Item is of type ", $para->[0], " under $over_type\n";
           
           if($item_type eq 'text') {
-            # Allow =item text to be available outside of _handle_text
-            # (e.g., it can be accessed in start_item_text)
-            $para->[1]{'current_dt'} = $para->[2];
+	    # Nothing special needs doing for 'text'
           } elsif($item_type eq 'number' or $item_type eq 'bullet') {
             die "Unknown item type $item_type"
              unless $item_type eq 'number' or $item_type eq 'bullet';

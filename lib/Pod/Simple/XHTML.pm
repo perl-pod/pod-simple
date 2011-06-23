@@ -347,13 +347,7 @@ sub start_item_bullet {
 }
 
 sub start_item_text   {
-    if ($_[0]{'in_dd'}[ $_[0]{'dl_level'} ]) {
-        $_[0]{'scratch'} = "</dd>\n";
-        $_[0]{'in_dd'}[ $_[0]{'dl_level'} ] = 0;
-    }
-
-    my $id = $_[0]->idify($_[1]{'current_dt'});
-    $_[0]{'scratch'} .= "<dt id=$id>";
+    # see end_item_text
 }
 
 sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
@@ -425,7 +419,19 @@ sub end_item_bullet { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 sub end_item_number { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 
 sub end_item_text   {
-    $_[0]{'scratch'} .= "</dt>\n<dd>";
+    # idify =item content, reset 'scratch'
+    my $id = $_[0]->idify($_[0]{'scratch'});
+    my $text = $_[0]{scratch};
+    $_[0]{'scratch'} = '';
+
+    # construct whole element here because we need the
+    # contents of the =item to idify it
+    if ($_[0]{'in_dd'}[ $_[0]{'dl_level'} ]) {
+        $_[0]{'scratch'} = "</dd>\n";
+        $_[0]{'in_dd'}[ $_[0]{'dl_level'} ] = 0;
+    }
+
+    $_[0]{'scratch'} .= qq{<dt id="$id">$text</dt>\n<dd>};
     $_[0]{'in_dd'}[ $_[0]{'dl_level'} ] = 1;
     $_[0]->emit;
 }
