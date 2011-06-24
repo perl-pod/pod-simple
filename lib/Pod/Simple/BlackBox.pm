@@ -633,7 +633,7 @@ sub _ponder_paragraph_buffer {
           DEBUG and print " Item is of type ", $para->[0], " under $over_type\n";
           
           if($item_type eq 'text') {
-	    # Nothing special needs doing for 'text'
+            # Nothing special needs doing for 'text'
           } elsif($item_type eq 'number' or $item_type eq 'bullet') {
             die "Unknown item type $item_type"
              unless $item_type eq 'number' or $item_type eq 'bullet';

@@ -194,6 +194,12 @@ to the empty string.
 Whether to add a table-of-contents at the top of each page (called an
 index for the sake of tradition).
 
+=head2 anchor_items
+
+Whether to anchor every definition =item directive. This needs to be 
+enabled if you want to be able to link to specific =item directives.
+It is disabled by default.
+
 =head2 backlink
 
 Whether to turn every =head1 directive into a link pointing to the top 
@@ -219,6 +225,7 @@ __PACKAGE__->_accessorize(
  'html_header',
  'html_footer',
  'index',
+ 'anchor_items',
  'backlink',
  'batch_mode', # whether we're in batch mode
  'batch_mode_current_level',
@@ -403,9 +410,10 @@ sub _end_head {
 
     my $id = $_[0]->idify($_[0]{scratch});
     my $text = $_[0]{scratch};
-    $_[0]{'scratch'} = $_[0]->backlink && ($h - $add == 0) # backlinks enabled && =head1
-	                  ? qq{<a href="#_podtop_"><h$h id="$id">$text</h$h></a>}
-                          : qq{<h$h id="$id">$text</h$h>};
+    $_[0]{'scratch'} = $_[0]->backlink && ($h - $add == 0) 
+                         # backlinks enabled && =head1
+                         ? qq{<a href="#_podtop_"><h$h id="$id">$text</h$h></a>}
+                         : qq{<h$h id="$id">$text</h$h>};
     $_[0]->emit;
     push @{ $_[0]{'to_index'} }, [$h, $id, $text];
 }
@@ -419,19 +427,21 @@ sub end_item_bullet { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 sub end_item_number { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 
 sub end_item_text   {
-    # idify =item content, reset 'scratch'
-    my $id = $_[0]->idify($_[0]{'scratch'});
+    # idify and anchor =item content if wanted
+    my $dt_id = $_[0]{'anchor_items'} 
+                 ? ' id="'. $_[0]->idify($_[0]{'scratch'}) .'"'
+                 : '';
+
+    # reset scratch
     my $text = $_[0]{scratch};
     $_[0]{'scratch'} = '';
 
-    # construct whole element here because we need the
-    # contents of the =item to idify it
     if ($_[0]{'in_dd'}[ $_[0]{'dl_level'} ]) {
         $_[0]{'scratch'} = "</dd>\n";
         $_[0]{'in_dd'}[ $_[0]{'dl_level'} ] = 0;
     }
 
-    $_[0]{'scratch'} .= qq{<dt id="$id">$text</dt>\n<dd>};
+    $_[0]{'scratch'} .= qq{<dt$dt_id>$text</dt>\n<dd>};
     $_[0]{'in_dd'}[ $_[0]{'dl_level'} ] = 1;
     $_[0]->emit;
 }
