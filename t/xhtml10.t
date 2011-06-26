@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 52;
+use Test::More tests => 56;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -517,6 +517,142 @@ is $results, <<'EOF', 'Should have index and backlinks around h2 elements';
 
 EOF
 
+initialize($parser, $results);
+$parser->anchor_items(1);
+ok $parser->parse_string_document( <<'EOPOD' ), 'Parse POD';
+=head1 Foo
+
+=over
+
+=item test
+
+=item Test 2
+
+body of item
+
+=back
+
+=over
+
+=item *
+
+not anchored
+
+=back
+
+=over
+
+=item 1
+
+still not anchored
+
+=back
+EOPOD
+
+is $results, <<'EOF', 'Anchor =item directives';
+<ul id="index">
+  <li><a href="#Foo">Foo</a></li>
+</ul>
+
+<h1 id="Foo">Foo</h1>
+
+<dl>
+
+<dt id="test">test</dt>
+<dd>
+
+</dd>
+<dt id="Test-2">Test 2</dt>
+<dd>
+
+<p>body of item</p>
+
+</dd>
+</dl>
+
+<ul>
+
+<li><p>not anchored</p>
+
+</li>
+</ul>
+
+<ol>
+
+<li><p>still not anchored</p>
+
+</li>
+</ol>
+
+EOF
+
+initialize($parser, $results);
+$parser->anchor_items(0);
+ok $parser->parse_string_document( <<'EOPOD' ), 'Parse POD';
+=head1 Foo
+
+=over
+
+=item test
+
+=item Test 2
+
+body of item
+
+=back
+
+=over
+
+=item *
+
+not anchored
+
+=back
+
+=over
+
+=item 1
+
+still not anchored
+
+=back
+EOPOD
+is $results, <<'EOF', 'Do not anchor =item directives';
+<ul id="index">
+  <li><a href="#Foo">Foo</a></li>
+</ul>
+
+<h1 id="Foo">Foo</h1>
+
+<dl>
+
+<dt>test</dt>
+<dd>
+
+</dd>
+<dt>Test 2</dt>
+<dd>
+
+<p>body of item</p>
+
+</dd>
+</dl>
+
+<ul>
+
+<li><p>not anchored</p>
+
+</li>
+</ul>
+
+<ol>
+
+<li><p>still not anchored</p>
+
+</li>
+</ol>
+
+EOF
 sub initialize {
 	$_[0] = Pod::Simple::XHTML->new;
         $_[0]->html_header('');
