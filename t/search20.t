@@ -93,7 +93,7 @@ print "# OK, starting run without recurse...\n# [[\n";
 ($name2where, $where2name) = $x->survey($here1, $here2);
 print "# ]]\n#OK, run without recurse done.\n";
 
-my $p = pretty( $where2name, $name2where )."\n";
+$p = pretty( $where2name, $name2where )."\n";
 $p =~ s/, +/,\n/g;
 $p =~ s/^/#  /mg;
 print $p;
