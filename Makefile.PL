@@ -36,7 +36,7 @@ WriteMakefile(
   META_MERGE => {
       resources => {
           repository => 'git://github.com/theory/pod-simple.git',
-          homepage   => 'https://github.com/theory/pod-simple',
+          homepage   => 'http://search.cpan.org/dist/Pod-Simple/',
           bugtracker => 'mailto:bug-pod-simple@rt.cpan.org',
           license    => 'http://dev.perl.org/licenses/',
 
