@@ -85,9 +85,9 @@ the last call) ends with an C<undef> value.
 
 =item C<< $parser->content_seen >>
 
-This returns true only if there has been any real content seen
-for this document.
-
+This returns true only if there has been any real content seen for this
+document. Returns false in cases where the document contains content,
+but does not make use of any Pod markup.
 
 =item C<< I<SomeClass>->filter( I<$filename> ); >>
 
