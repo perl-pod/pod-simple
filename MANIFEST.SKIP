@@ -59,3 +59,5 @@ delme
 \.rej$
 ~
 
+^MYMETA\.yml$
+^MYMETA\.json$
