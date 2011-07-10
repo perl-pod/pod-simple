@@ -196,9 +196,9 @@ index for the sake of tradition).
 
 =head2 anchor_items
 
-Whether to anchor every definition =item directive. This needs to be 
-enabled if you want to be able to link to specific =item directives.
-It is disabled by default.
+Whether to anchor every definition C<=item> directive. This needs to be
+enabled if you want to be able to link to specific C<=item> directives, which
+are output as C<< <dt> >> elements. Disabled by default.
 
 =head2 backlink
 
