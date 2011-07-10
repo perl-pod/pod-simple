@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2011-07-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.17
 
 	Documented tertiary methods. Patch from Shawn H Corey.
