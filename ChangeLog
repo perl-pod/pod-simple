@@ -1,6 +1,8 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+	* Release 3.18
+
 2011-07-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.17
 
@@ -53,7 +55,7 @@
 	spelled "=encode"). Thanks to "TTY" for the patch. (RT #24820).
 
 2010-11-11   David E. Wheeler <david@justatheory.org>
-	* Release 3.17
+	* Release 3.15
 
 	Removed "perlpod.pod" and "perlpodspec.pod". These now just live
 	in the Perl core.
