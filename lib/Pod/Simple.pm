@@ -420,7 +420,7 @@ sub parse_file {
     }
 
     my $at_eof = ! $lines[-1]; # keep track of the undef
-    pop @lines if $at_eof;
+    pop @lines if $at_eof; # silence warnings
 
     # be eol agnostic
     s/\r\n?/\n/g for @lines;
@@ -428,7 +428,7 @@ sub parse_file {
     # make sure there are only one line elements for parse_lines
     @lines = split(/(?<=\n)/, join('', @lines));
 
-    # put the undef back b/c the previous split(join()) removes it
+    # push the undef back after popping it to set source_dead to true
     push @lines, undef if $at_eof;
 
     $self->parse_lines(@lines);
