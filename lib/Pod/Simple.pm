@@ -419,7 +419,8 @@ sub parse_file {
        # but pass thru the undef, which will set source_dead to true
     }
 
-    my $at_eof = !$lines[-1]; # keep track of the undef
+    my $at_eof = ! $lines[-1]; # keep track of the undef
+    pop @lines if $at_eof;
 
     # be eol agnostic
     s/\r\n?/\n/g for @lines;
