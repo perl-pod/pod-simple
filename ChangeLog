@@ -3,6 +3,9 @@
 
 	* Release 3.18
 
+	Pod::Simple now properly parses Pod files using Mac OS Classic line-
+	endings (\r). Marc Green/Google Summer of Code.
+
 2011-07-09   David E. Wheeler <david@justatheory.org>
 	* Release 3.17
 
