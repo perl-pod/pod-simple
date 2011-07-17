@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2011-07-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.18
 
 	Pod::Simple now properly parses Pod files using Mac OS Classic line-
