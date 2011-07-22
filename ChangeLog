@@ -3,6 +3,10 @@
 
 	* Release 3.19
 
+	Fixed occasional test failure when tests are run in parallel
+	(HARNESS_OPTIONS=j6:c). Thanks to Alexei Znamensky for the report and
+	Marc Green for the fix.
+
 2011-07-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.18
 
