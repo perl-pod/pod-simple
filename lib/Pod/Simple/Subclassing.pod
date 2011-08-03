@@ -854,6 +854,11 @@ conventions as two spaces after periods will be preserved by the parser.
 This is primarily useful for output formats that treat whitespace as
 significant (such as text or *roff, but not HTML).
 
+=item C<< $parser->parse_empty_lists( I<SOMEVALUE> ) >>
+
+If this attribute is set to true, the parser will not ignore empty
+C<=over>/C<=back> blocks. The type of C<=over> will be I<block>.
+
 =back
 
 
