@@ -7,6 +7,14 @@
 	(HARNESS_OPTIONS=j6:c). Thanks to Alexei Znamensky for the report and
 	Marc Green for the fix.
 
+	Added "pod_handler" option. This is a callback that can be used to
+	inspect the content on a "=pod" line. Marc Green/Google Summer of
+	Code.
+
+	Added tests for proper line-ending parsing from the previous
+	release. The tests were in the repository, but didn't make it into
+	the MANIFEST or, therefore, the release. Reported by Marc Green.
+
 2011-07-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.18
 
