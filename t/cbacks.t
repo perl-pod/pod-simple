@@ -43,9 +43,16 @@ while(@from) {
     sub {
      $_[0]->code_handler(sub { $more .= $_[1] . ":" . $_[0] . "\n"       } );
      $_[0]->cut_handler( sub { $more .= "~" . $_[1] . ":" .  $_[0]. "\n" } );
+     $_[0]->pod_handler( sub { $more .= "~" . $_[1] . ":" .  $_[0]. "\n" } );
     } => join "\n",
     "",
     "\t# This is handy...",
+    "=pod text",
+    "",
+    "=cut more text",
+    "",
+    "=pod",
+    "",
     "=head1 I  LIKE   PIE",
     "",
     "=cut",
@@ -64,10 +71,14 @@ while(@from) {
   ok scalar($got = $more), scalar($exp = join "\n" =>
    "1:",
    "2:\t# This is handy...",
-   "~5:=cut",
-   "6:use Test::Harness;",
-   "7:runtests(sort glob 't/*.t');",
-   "8:",
+   "~3:=pod text",
+   "~5:=cut more text",
+   "6:",
+   "~7:=pod",
+   "~11:=cut",
+   "12:use Test::Harness;",
+   "13:runtests(sort glob 't/*.t');",
+   "14:",
    "",
   );
   unless($got eq $exp) {
