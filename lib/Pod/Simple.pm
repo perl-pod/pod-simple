@@ -979,7 +979,7 @@ sub _treat_Zs {  # Nix Z<...>'s
 # possibly a man page name (like "crontab(5)" is).
 #
 
-############# Not implemented, I guess.
+############# The "raw" attribute that is already there.
 # Sixth:
 # The raw original L<...> content, before text is split on "|", "/", etc,
 # and before E<...> codes are expanded.

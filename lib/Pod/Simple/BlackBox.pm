@@ -1652,6 +1652,10 @@ sub _treelet_from_formatting_codes {
   
   my @stack;
   my @lineage = ($treelet);
+  my $raw = ''; # raw content of L<> fcode before splitting/processing
+    # XXX 'raw' is not 100% accurate: all surrounding whitespace is condensed
+    # into just 1 ' '. Is this the regex's doing or 'raw's?
+  my $inL = 0;
 
   DEBUG > 4 and print "Paragraph:\n$para\n\n";
  
@@ -1723,7 +1727,13 @@ sub _treelet_from_formatting_codes {
       }
       push @lineage, [ substr($1,0,1), {}, ];  # new node object
       push @{ $lineage[-2] }, $lineage[-1];
-      
+      if ('L' eq substr($1,0,1)) {
+        $raw = $inL ? $raw.$1 : ''; # reset raw content accumulator
+        $inL = 1;
+      } else {
+        $raw .= $1 if $inL;
+      }
+
     } elsif(defined $4) {
       DEBUG > 3 and print "Found apparent complex end-text code \"$3$4\"\n";
       # This is where it gets messy...
@@ -1757,6 +1767,14 @@ sub _treelet_from_formatting_codes {
       
       pop @stack;
       pop @lineage;
+
+      unless (@stack) { # not in an L if there are no open fcodes
+        $inL = 0;
+        if (ref $lineage[-1][-1] && $lineage[-1][-1][0] eq 'L') {
+          $lineage[-1][-1][1]{'raw'} = $raw
+        }
+      }
+      $raw .= $3.$4 if $inL;
       
     } elsif(defined $5) {
       DEBUG > 3 and print "Found apparent simple end-text code \"$5\"\n";
@@ -1778,10 +1796,21 @@ sub _treelet_from_formatting_codes {
         push @{ $lineage[-1] }, $5;
       }
 
+      unless (@stack) { # not in an L if there are no open fcodes
+        $inL = 0;
+        if (ref $lineage[-1][-1] && $lineage[-1][-1][0] eq 'L') {
+          $lineage[-1][-1][1]{'raw'} = $raw
+        }
+      }
+      $raw .= $5 if $inL;
+
     } elsif(defined $6) {
       DEBUG > 3 and print "Found stuff \"$6\"\n";
       push @{ $lineage[-1] }, $6;
-      
+      $raw .= $6 if $inL;
+        # XXX does not capture multiplace whitespaces -- 'raw' ends up with
+        #     at most 1 leading/trailing whitespace, why not all of it?
+
     } else {
       # should never ever ever ever happen
       DEBUG and print "AYYAYAAAAA at line ", __LINE__, "\n";
@@ -1809,7 +1838,7 @@ sub _treelet_from_formatting_codes {
       "Unterminated $x sequence",
     );
   }
-  
+
   return $treelet;
 }
 
