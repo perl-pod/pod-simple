@@ -490,7 +490,7 @@ message might be issued to the user.
 
 =item events with an element_name of over-text
 
-These events are are somewhat unlike the other over-*
+These events are somewhat unlike the other over-*
 structures, as far as what their contents are.  When
 an "=over ... Z<>=back" block is parsed where the items are
 a list of text "subheadings", it will produce this event structure:
@@ -545,7 +545,7 @@ produces this event structure:
 
 =item events with an element_name of over-block
 
-These events are are somewhat unlike the other over-*
+These events are somewhat unlike the other over-*
 structures, as far as what their contents are.  When
 an "=over ... Z<>=back" block is parsed where there are no items,
 it will produce this event structure:
@@ -569,7 +569,7 @@ For example, this Pod source:
   circumstances of cruelty and perfidy scarcely paralleled in the most
   barbarous ages, and totally unworthy the head of a civilized nation.
 
-  =cut
+  =back
 
 will produce this event structure:
 
@@ -584,6 +584,42 @@ will produce this event structure:
       He is at this time transporting large armies of [...more text...]
     </Para>
   </over-block>
+
+=item events with an element_name of over-empty
+
+B<Note: These events are only triggered if C<parse_empty_lists()> is set to a
+true value.>
+
+These events are somewhat unlike the other over-*
+structures, as far as what their contents are.  When
+an "=over ... Z<>=back" block is parsed where there is no content,
+it will produce this event structure:
+
+  <over-empty indent="4" start_line="543">
+  </over-empty>
+
+The I<indent> attribute is as with the other over-* events.
+
+For example, this Pod source:
+
+  =over
+
+  =over
+
+  =back
+
+  =back
+
+will produce this event structure:
+
+  <over-block indent="4" start_line="1">
+    <over-empty indent="4" start_line="3">
+    </over-empty>
+  </over-block>
+
+Note that the outer C<=over> is a block because it has no C<=item>s but still
+has content: the inner C<=over>. The inner C<=over>, in turn, is completely 
+empty, and is treated as such.
 
 =item events with an element_name of item-bullet
 
@@ -857,9 +893,8 @@ significant (such as text or *roff, but not HTML).
 =item C<< $parser->parse_empty_lists( I<SOMEVALUE> ) >>
 
 If this attribute is set to true, the parser will not ignore empty
-C<=over>/C<=back> blocks. The type of C<=over> will be I<block>.
-
-=back
+C<=over>/C<=back> blocks. The type of C<=over> will be I<empty>, documented
+above, L<events with an element_name of over-empty>.
 
 
 =head1 SEE ALSO

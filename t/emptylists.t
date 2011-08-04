@@ -60,7 +60,7 @@ ok( $x->_out(\&off, $pod),
 print "# Testing parse_empty_lists( TRUE ) ...\n";
 
 ok( $x->_out(\&on, $pod),
-  '<Document><over-block indent="4"><over-block indent="4"><over-block indent="4"><over-block indent="4"></over-block><over-block indent="4"></over-block></over-block></over-block></over-block></Document>'
+  '<Document><over-block indent="4"><over-block indent="4"><over-block indent="4"><over-empty indent="4"></over-empty><over-empty indent="4"></over-empty></over-block></over-block></over-block></Document>'
 );
 
 print "# Wrapping up... one for the road...\n";

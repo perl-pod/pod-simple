@@ -1118,7 +1118,7 @@ sub _ponder_over {
   } elsif($paras->[0][0] eq '=back') {
     # Ignore empty lists by default
     if ($self->{'parse_empty_lists'}) {
-      $list_type = 'block'; # Not sure what else it would be
+      $list_type = 'empty';
     } else {
       shift @$paras;
       return 1;
