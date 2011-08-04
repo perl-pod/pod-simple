@@ -896,6 +896,7 @@ If this attribute is set to true, the parser will not ignore empty
 C<=over>/C<=back> blocks. The type of C<=over> will be I<empty>, documented
 above, L<events with an element_name of over-empty>.
 
+=back
 
 =head1 SEE ALSO
 
