@@ -917,7 +917,7 @@ sub _ponder_begin {
   $para->[1]{'title'} = $title if ($title);
   $para->[1]{'target'} = $target;  # without any ':'
   $content = $target; # strip off the title
-
+  
   $content =~ s/^:!/!:/s;
   my $neg;  # whether this is a negation-match
   $neg = 1        if $content =~ s/^!//s;
@@ -983,7 +983,7 @@ sub _ponder_end {
   $content =~ s/^\s+//s;
   $content =~ s/\s+$//s;
   DEBUG and print "Ogling '=end $content' directive\n";
-  
+
   unless(length($content)) {
     $self->whine(
       $para->[1]{'start_line'},
@@ -1039,7 +1039,7 @@ sub _ponder_end {
       # what's that for?
     
     $self->{'content_seen'} ||= 1;
-    $self->_handle_element_end( my $scratch = 'for' );
+    $self->_handle_element_end( my $scratch = 'for', $para->[1]);
   }
   DEBUG > 1 and print "Popping $curr_open->[-1][0] $curr_open->[-1][1]{'target'} because of =end $content\n";
   pop @$curr_open;
@@ -1183,7 +1183,7 @@ sub _ponder_back {
     #my $over = pop @$curr_open;
     $self->{'content_seen'} ||= 1;
     $self->_handle_element_end( my $scratch =
-      'over-' . ( (pop @$curr_open)->[1]{'~type'} )
+      'over-' . ( (pop @$curr_open)->[1]{'~type'} ), $para->[1]
     );
   } else {
     DEBUG > 1 and print "=back found without a matching =over.  Stack: (",
@@ -1485,7 +1485,9 @@ sub _closers_for_all_curr_open {
       $copy[-1] = '' unless defined $copy[-1];
        # since =over's don't have targets
     }
-    
+
+    $copy[1]{'fake-closer'} = 1;
+
     DEBUG and print "Queuing up fake-o event: ", pretty(\@copy), "\n";
     unshift @closers, \@copy;
   }
