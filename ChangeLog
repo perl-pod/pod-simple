@@ -15,6 +15,11 @@
 	release. The tests were in the repository, but didn't make it into
 	the MANIFEST or, therefore, the release. Reported by Marc Green.
 
+	Added the "parse_empty_lists" option. When enabled, Pod::Simple
+	will recognize empty lists (that is, a blocks with '=over' and
+	'=back' but nothing in between). Disabled by default. Marc
+	Green/Google Summer of Code.
+
 2011-07-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.18
 
