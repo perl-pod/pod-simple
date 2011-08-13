@@ -1349,6 +1349,10 @@ sub _treat_Es {
 
       DEBUG > 1 and print "Ogling E<$content>\n";
 
+      # XXX E<>'s contents *should* be a valid char in the scope of the current
+      # =encoding directive. Defaults to iso-8859-1, I believe. Fix this in the
+      # future sometime.
+
       $charnum  = Pod::Escapes::e2charnum($content);
       DEBUG > 1 and print " Considering E<$content> with char ",
         defined($charnum) ? $charnum : "undef", ".\n";
