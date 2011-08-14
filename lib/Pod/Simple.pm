@@ -93,13 +93,14 @@ __PACKAGE__->_accessorize(
  'codes_in_verbatim', # for PseudoPod extensions
 
  'code_handler',      # coderef to call when a code (non-pod) line is seen
- 'cut_handler',       # coderef to call when a =cut line is seen
- 'pod_handler',       # coderef to call when a =pod line is seen
+ 'cut_handler',       # ... when a =cut line is seen
+ 'pod_handler',       # ... when a =pod line is seen
+ 'whiteline_handler', # ... when a line with only whitespace is seen
  #Called like:
  # $code_handler->($line, $self->{'line_count'}, $self) if $code_handler;
  #  $cut_handler->($line, $self->{'line_count'}, $self) if $cut_handler;
  #  $pod_handler->($line, $self->{'line_count'}, $self) if $pod_handler;
-
+ #   $wl_handler->($line, $self->{'line_count'}, $self) if $wl_handler;
  'parse_empty_lists', # whether to acknowledge empty =over/=back blocks
 
 );
