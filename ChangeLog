@@ -20,6 +20,11 @@
 	'=back' but nothing in between). Disabled by default. Marc
 	Green/Google Summer of Code.
 
+	Added the "whiteline_handler" attribute. It's much like
+	"code_handler", "cut_handler", and "pod_handler", except it's
+	triggered on lines that contain only whitespace characters. Marc
+	Green/Google Summer of Code.
+
 2011-07-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.18
 
