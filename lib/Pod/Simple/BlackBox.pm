@@ -42,6 +42,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
   my $code_handler = $self->{'code_handler'};
   my $cut_handler  = $self->{'cut_handler'};
+  my $wl_handler   = $self->{'whiteline_handler'};
   $self->{'line_count'} ||= 0;
  
   my $scratch;
@@ -191,7 +192,12 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # TODO: add to docs: Note: this may cause cuts to be processed out
       #  of order relative to pods, but in order relative to code.
       
-    } elsif($line =~ m/^\s*$/s) {  # it's a blank line
+    } elsif($line =~ m/^(\s*)$/s) {  # it's a blank line
+      if (defined $1 and $1 =~ /[\t ]/) { # it's a white line
+        $wl_handler->(map $_, $line, $self->{'line_count'}, $self)
+          if $wl_handler;
+      }
+
       if(!$self->{'start_of_pod_block'} and @$paras and $paras->[-1][0] eq '~Verbatim') {
         DEBUG > 1 and print "Saving blank line at line ${$self}{'line_count'}\n";
         push @{$paras->[-1]}, $line;
