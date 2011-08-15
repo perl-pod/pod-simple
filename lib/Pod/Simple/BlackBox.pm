@@ -598,7 +598,8 @@ sub _ponder_paragraph_buffer {
       if($para_type eq '=item') {
 
         my $over;
-        unless(@$curr_open and ($over = $curr_open->[-1])->[0] eq '=over') {
+        unless(@$curr_open and
+               $over = (grep { $_->[0] eq '=over' } @$curr_open)[-1]) {
           $self->whine(
             $para->[1]{'start_line'},
             "'=item' outside of any '=over'"
@@ -1205,7 +1206,8 @@ sub _ponder_back {
 sub _ponder_item {
   my ($self,$para,$curr_open,$paras) = @_;
   my $over;
-  unless(@$curr_open and ($over = $curr_open->[-1])->[0] eq '=over') {
+  unless(@$curr_open and
+         $over = (grep { $_->[0] eq '=over' } @$curr_open)[-1]) {
     $self->whine(
       $para->[1]{'start_line'},
       "'=item' outside of any '=over'"
