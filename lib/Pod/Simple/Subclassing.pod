@@ -826,6 +826,14 @@ This is just like the code_handler attribute, except that it's for
 unlikely to be interesting, but this is included for completeness.
 
 
+=item C<< $parser->whiteline_handler(  I<CODE_REF>  ) >>
+
+This is just like the code_handler attribute, except that it's for
+lines that are seemingly blank but have whitespace (" " and/or "\t") on them,
+not code lines. The same caveats apply. These lines are unlikely to be
+interesting, but this is included for completeness.
+
+
 =item C<< $parser->whine( I<linenumber>, I<complaint string> ) >>
 
 This notes a problem in the Pod, which will be reported to in the "Pod
