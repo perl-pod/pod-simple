@@ -227,7 +227,7 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" raw ="http://www.perl.com/CPAN/authors/" to="http://www.perl.com/CPAN/authors/" type="url">
+  <L content-implicit="yes" raw="http://www.perl.com/CPAN/authors/" to="http://www.perl.com/CPAN/authors/" type="url">
     http://www.perl.com/CPAN/authors/
   </L>
 
@@ -258,7 +258,7 @@ in a I<section> attribute. For example, this Pod source:
 
 will produce this event structure:
 
-  <L content-implicit="yes" raw="crontab(5)/\"ENVIRONMENT\"" section="ENVIRONMENT" to="crontab(5)" type="man">
+  <L content-implicit="yes" raw="crontab(5)/&quot;ENVIRONMENT&quot;" section="ENVIRONMENT" to="crontab(5)" type="man">
     "ENVIRONMENT" in crontab(5)
   </L>
 
@@ -325,7 +325,7 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" raw="/\"Member Data\"" section="Member Data" type="pod">
+  <L content-implicit="yes" raw="/&quot;Member Data&quot;" section="Member Data" type="pod">
     "Member Data"
   </L>
 
@@ -335,7 +335,7 @@ As another example, this Pod source:
 
 produces this event structure:
 
-  <L raw="the various attributes|/\"Member Data\"" section="Member Data" type="pod">
+  <L raw="the various attributes|/&quot;Member Data&quot;" section="Member Data" type="pod">
     the various attributes
   </L>
 
@@ -347,7 +347,7 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" raw="perlsyn/\"Basic BLOCKs and Switch Statements\"" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
+  <L content-implicit="yes" raw="perlsyn/&quot;Basic BLOCKs and Switch Statements&quot;" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
     "Basic BLOCKs and Switch Statements" in perlsyn
   </L>
 
@@ -357,7 +357,7 @@ As another example, this Pod source:
 
 produces this event structure:
 
-  <L raw="SWITCH statements|perlsyn/\"Basic BLOCKs and Switch Statements\"" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
+  <L raw="SWITCH statements|perlsyn/&quot;Basic BLOCKs and Switch Statements&quot;" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
     SWITCH statements
   </L>
 
@@ -370,7 +370,7 @@ Incidentally, note that we do not distinguish between these syntaxes:
 
 That is, they all produce the same event structure (for the most part), namely:
 
-  <L content-implicit="yes" raw=depends section="Member Data" type="pod">
+  <L content-implicit="yes" raw="$depends_on_syntax" section="Member Data" type="pod">
     &#34;Member Data&#34;
   </L>
 
