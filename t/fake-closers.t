@@ -6,11 +6,13 @@ BEGIN {
 }
 
 use strict;
-use Test;
+use Test::More;
 use Data::Dumper;
 BEGIN { plan tests => 9 };
 
 ok 1;
+
+my $i = 0;
 
 print "# Real closers ...\n";
 
@@ -20,8 +22,10 @@ for my $pod ( "=over\n\nblock\n\n=back",
               ) {
     my $parser = Pod::Simple::Blurb->new();
     $parser->parse_string_document($pod);
-    ok($parser->{'closer-flag'}, -1);
+    is($parser->{'closer-flag'}, -1, "real closer ". ++$i);
 }
+
+$i = 0;
 
 print "# Fake closers ...\n";
 
@@ -32,7 +36,7 @@ for my $pod ("=begin html\n\ntag=cut",
               ) {
     my $parser = Pod::Simple::Blurb->new();
     $parser->parse_string_document($pod);
-    ok($parser->{'closer-flag'}, 1);
+    is($parser->{'closer-flag'}, 1, "fake closer ". ++$i);
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
