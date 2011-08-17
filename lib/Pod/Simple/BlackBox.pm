@@ -193,7 +193,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       #  of order relative to pods, but in order relative to code.
       
     } elsif($line =~ m/^(\s*)$/s) {  # it's a blank line
-      if (defined $1 and $1 =~ /[\t ]/) { # it's a white line
+      if (defined $1 and $1 =~ /[^\S\r\n]/) { # it's a white line
         $wl_handler->(map $_, $line, $self->{'line_count'}, $self)
           if $wl_handler;
       }
