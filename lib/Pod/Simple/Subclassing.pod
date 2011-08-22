@@ -214,7 +214,7 @@ There are, at first glance, three kinds of L links: URL, man, and pod.
 When a LE<lt>I<some_url>E<gt> code is parsed, it produces this event
 structure:
 
-  <L content-implicit="yes" to="that_url" type="url">
+  <L content-implicit="yes" raw="that_url" to="that_url" type="url">
     that_url
   </L>
 
@@ -227,14 +227,14 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" to="http://www.perl.com/CPAN/authors/" type="url">
+  <L content-implicit="yes" raw="http://www.perl.com/CPAN/authors/" to="http://www.perl.com/CPAN/authors/" type="url">
     http://www.perl.com/CPAN/authors/
   </L>
 
 When a LE<lt>I<manpage(section)>E<gt> code is parsed (and these are
 fairly rare and not terribly useful), it produces this event structure:
 
-  <L content-implicit="yes" to="manpage(section)" type="man">
+  <L content-implicit="yes" raw="manpage(section)" to="manpage(section)" type="man">
     manpage(section)
   </L>
 
@@ -247,7 +247,7 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" to="crontab(5)" type="man">
+  <L content-implicit="yes" raw="crontab(5)" to="crontab(5)" type="man">
     crontab(5)
   </L>
 
@@ -258,7 +258,7 @@ in a I<section> attribute. For example, this Pod source:
 
 will produce this event structure:
 
-  <L content-implicit="yes" section="ENVIRONMENT" to="crontab(5)" type="man">
+  <L content-implicit="yes" raw="crontab(5)/&quot;ENVIRONMENT&quot;" section="ENVIRONMENT" to="crontab(5)" type="man">
     "ENVIRONMENT" in crontab(5)
   </L>
 
@@ -278,7 +278,7 @@ For example, this Pod source:
 
 will produce this event structure:
 
-  <L to="crontab(5)" type="man">
+  <L raw="hell itself!|crontab(5)" to="crontab(5)" type="man">
     hell itself!
   </L>
 
@@ -290,7 +290,7 @@ specified for this type of L code.
 In the most common case, the simple case of a LE<lt>podpageE<gt> code
 produces this event structure:
 
-  <L content-implicit="yes" to="podpage" type="pod">
+  <L content-implicit="yes" raw="podpage" to="podpage" type="pod">
     podpage
   </L>
 
@@ -300,7 +300,7 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" to="Net::Ping" type="pod">
+  <L content-implicit="yes" raw="Net::Ping" to="Net::Ping" type="pod">
     Net::Ping
   </L>
 
@@ -313,7 +313,7 @@ case discussed above.  For example, this Pod source:
 
 produces this event structure:
 
-  <L to="perldiag" type="pod">
+  <L raw="Perl Error Messages|perldiag" to="perldiag" type="pod">
     Perl Error Messages
   </L>
 
@@ -325,7 +325,7 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" section="Member Data" type="pod">
+  <L content-implicit="yes" raw="/&quot;Member Data&quot;" section="Member Data" type="pod">
     "Member Data"
   </L>
 
@@ -335,7 +335,7 @@ As another example, this Pod source:
 
 produces this event structure:
 
-  <L section="Member Data" type="pod">
+  <L raw="the various attributes|/&quot;Member Data&quot;" section="Member Data" type="pod">
     the various attributes
   </L>
 
@@ -347,7 +347,7 @@ For example, this Pod source:
 
 produces this event structure:
 
-  <L content-implicit="yes" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
+  <L content-implicit="yes" raw="perlsyn/&quot;Basic BLOCKs and Switch Statements&quot;" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
     "Basic BLOCKs and Switch Statements" in perlsyn
   </L>
 
@@ -357,7 +357,7 @@ As another example, this Pod source:
 
 produces this event structure:
 
-  <L section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
+  <L raw="SWITCH statements|perlsyn/&quot;Basic BLOCKs and Switch Statements&quot;" section="Basic BLOCKs and Switch Statements" to="perlsyn" type="pod">
     SWITCH statements
   </L>
 
@@ -368,11 +368,32 @@ Incidentally, note that we do not distinguish between these syntaxes:
   L</Member Data>
   L<Member Data>    [deprecated syntax]
 
-That is, they all produce the same event structure, namely:
+That is, they all produce the same event structure (for the most part), namely:
 
-  <L content-implicit="yes" section="Member Data" type="pod">
+  <L content-implicit="yes" raw="$depends_on_syntax" section="Member Data" type="pod">
     &#34;Member Data&#34;
   </L>
+
+The I<raw> attribute depends on what the raw content of the L<> is, so that is
+why the event structure is the same "for the most part".
+
+If you have not guessed it yet, the I<raw> attribute contains the raw,
+original, unescaped content of the L<> formatting code. In addition to the
+examples above, take notice of the following event structure produced by
+the following L<> formatting code.
+
+  L<click B<here>|page/About the C<-M> switch>
+
+  <L raw="click B<here>|page/About the C<-M> switch" section="About the -M switch" to="page" type="pod">
+    click B<here>
+  </L>
+
+Specifically, notice that the formatting codes are present and unescaped
+in I<raw>.
+
+There is a known bug in the I<raw> attribute where any surrounding whitespace
+is condensed into a single ' '. For example, given LE<60>   linkE<62>, I<raw>
+will be " link".
 
 =item events with an element_name of E or Z
 
