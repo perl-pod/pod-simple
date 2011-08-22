@@ -25,6 +25,13 @@
 	triggered on lines that contain only whitespace characters. Marc
 	Green/Google Summer of Code.
 
+	Added "raw" attribute to L<> treelet that contains the L<>'s raw
+	contents. Marc Green/Google Summer of Code.
+
+	Pod directives autoclosed by Pod::Simple are now denoted as such
+	by the new "fake_closer" attribue. Marc Green/Google Summer of
+	Code.
+
 2011-07-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.18
 
