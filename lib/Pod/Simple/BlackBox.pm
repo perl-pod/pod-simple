@@ -193,7 +193,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       #  of order relative to pods, but in order relative to code.
       
     } elsif($line =~ m/^(\s*)$/s) {  # it's a blank line
-      if (defined $1 and $1 =~ /[\t ]/) { # it's a white line
+      if (defined $1 and $1 =~ /[^\S\r\n]/) { # it's a white line
         $wl_handler->(map $_, $line, $self->{'line_count'}, $self)
           if $wl_handler;
       }
@@ -598,7 +598,8 @@ sub _ponder_paragraph_buffer {
       if($para_type eq '=item') {
 
         my $over;
-        unless(@$curr_open and ($over = $curr_open->[-1])->[0] eq '=over') {
+        unless(@$curr_open and
+               $over = (grep { $_->[0] eq '=over' } @$curr_open)[-1]) {
           $self->whine(
             $para->[1]{'start_line'},
             "'=item' outside of any '=over'"
@@ -923,7 +924,7 @@ sub _ponder_begin {
   $para->[1]{'title'} = $title if ($title);
   $para->[1]{'target'} = $target;  # without any ':'
   $content = $target; # strip off the title
-
+  
   $content =~ s/^:!/!:/s;
   my $neg;  # whether this is a negation-match
   $neg = 1        if $content =~ s/^!//s;
@@ -989,7 +990,7 @@ sub _ponder_end {
   $content =~ s/^\s+//s;
   $content =~ s/\s+$//s;
   DEBUG and print "Ogling '=end $content' directive\n";
-  
+
   unless(length($content)) {
     $self->whine(
       $para->[1]{'start_line'},
@@ -1045,7 +1046,7 @@ sub _ponder_end {
       # what's that for?
     
     $self->{'content_seen'} ||= 1;
-    $self->_handle_element_end( my $scratch = 'for' );
+    $self->_handle_element_end( my $scratch = 'for', $para->[1]);
   }
   DEBUG > 1 and print "Popping $curr_open->[-1][0] $curr_open->[-1][1]{'target'} because of =end $content\n";
   pop @$curr_open;
@@ -1189,7 +1190,7 @@ sub _ponder_back {
     #my $over = pop @$curr_open;
     $self->{'content_seen'} ||= 1;
     $self->_handle_element_end( my $scratch =
-      'over-' . ( (pop @$curr_open)->[1]{'~type'} )
+      'over-' . ( (pop @$curr_open)->[1]{'~type'} ), $para->[1]
     );
   } else {
     DEBUG > 1 and print "=back found without a matching =over.  Stack: (",
@@ -1205,7 +1206,8 @@ sub _ponder_back {
 sub _ponder_item {
   my ($self,$para,$curr_open,$paras) = @_;
   my $over;
-  unless(@$curr_open and ($over = $curr_open->[-1])->[0] eq '=over') {
+  unless(@$curr_open and
+         $over = (grep { $_->[0] eq '=over' } @$curr_open)[-1]) {
     $self->whine(
       $para->[1]{'start_line'},
       "'=item' outside of any '=over'"
@@ -1491,7 +1493,9 @@ sub _closers_for_all_curr_open {
       $copy[-1] = '' unless defined $copy[-1];
        # since =over's don't have targets
     }
-    
+
+    $copy[1]{'fake-closer'} = 1;
+
     DEBUG and print "Queuing up fake-o event: ", pretty(\@copy), "\n";
     unshift @closers, \@copy;
   }
@@ -1658,6 +1662,10 @@ sub _treelet_from_formatting_codes {
   
   my @stack;
   my @lineage = ($treelet);
+  my $raw = ''; # raw content of L<> fcode before splitting/processing
+    # XXX 'raw' is not 100% accurate: all surrounding whitespace is condensed
+    # into just 1 ' '. Is this the regex's doing or 'raw's?
+  my $inL = 0;
 
   DEBUG > 4 and print "Paragraph:\n$para\n\n";
  
@@ -1729,7 +1737,13 @@ sub _treelet_from_formatting_codes {
       }
       push @lineage, [ substr($1,0,1), {}, ];  # new node object
       push @{ $lineage[-2] }, $lineage[-1];
-      
+      if ('L' eq substr($1,0,1)) {
+        $raw = $inL ? $raw.$1 : ''; # reset raw content accumulator
+        $inL = 1;
+      } else {
+        $raw .= $1 if $inL;
+      }
+
     } elsif(defined $4) {
       DEBUG > 3 and print "Found apparent complex end-text code \"$3$4\"\n";
       # This is where it gets messy...
@@ -1763,6 +1777,14 @@ sub _treelet_from_formatting_codes {
       
       pop @stack;
       pop @lineage;
+
+      unless (@stack) { # not in an L if there are no open fcodes
+        $inL = 0;
+        if (ref $lineage[-1][-1] && $lineage[-1][-1][0] eq 'L') {
+          $lineage[-1][-1][1]{'raw'} = $raw
+        }
+      }
+      $raw .= $3.$4 if $inL;
       
     } elsif(defined $5) {
       DEBUG > 3 and print "Found apparent simple end-text code \"$5\"\n";
@@ -1784,10 +1806,21 @@ sub _treelet_from_formatting_codes {
         push @{ $lineage[-1] }, $5;
       }
 
+      unless (@stack) { # not in an L if there are no open fcodes
+        $inL = 0;
+        if (ref $lineage[-1][-1] && $lineage[-1][-1][0] eq 'L') {
+          $lineage[-1][-1][1]{'raw'} = $raw
+        }
+      }
+      $raw .= $5 if $inL;
+
     } elsif(defined $6) {
       DEBUG > 3 and print "Found stuff \"$6\"\n";
       push @{ $lineage[-1] }, $6;
-      
+      $raw .= $6 if $inL;
+        # XXX does not capture multiplace whitespaces -- 'raw' ends up with
+        #     at most 1 leading/trailing whitespace, why not all of it?
+
     } else {
       # should never ever ever ever happen
       DEBUG and print "AYYAYAAAAA at line ", __LINE__, "\n";
@@ -1815,7 +1848,7 @@ sub _treelet_from_formatting_codes {
       "Unterminated $x sequence",
     );
   }
-  
+
   return $treelet;
 }
 

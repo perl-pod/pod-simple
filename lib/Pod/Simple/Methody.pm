@@ -32,7 +32,7 @@ sub _handle_element_end {
   ( $_[0]->can( 'end_' . $_[1] )
     || return
   )->(
-    $_[0]
+    $_[0], $_[2]
   );
 }
 
