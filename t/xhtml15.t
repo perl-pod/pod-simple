@@ -16,19 +16,18 @@ initialize();
 my $style = 'http://amazingpants.com/style.css';
 $parser->html_css($style);
 $parser->parse_string_document( '=head1 Foo' );
-like $results, qr/ href='$style' /, 'CSS is correct when link is passed in';
+like $results, qr/ href="$style" /, 'CSS is correct when link is passed in';
 
 initialize();
-my $link = "<link rel='stylesheet' href='$style' type='text/css'>";
+my $link = qq{<link rel="stylesheet" href="$style" type="text/css">};
 $parser->html_css($link);
 $parser->parse_string_document( '=head1 Foo' );
-like $results, qr/ href='$style' /, 'CSS is correct when <link> is passed in';
+like $results, qr/ href="$style" /, 'CSS is correct when <link> is passed in';
 
-note('These methods are called when XHTML is used by HtmlBatch');
+#note('These methods are called when XHTML is used by HtmlBatch');
 can_ok $parser, qw/batch_mode_page_object_init html_header_after_title/;
 
 done_testing;
-
 
 sub initialize {
     $parser = Pod::Simple::XHTML->new;

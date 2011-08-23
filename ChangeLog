@@ -32,6 +32,9 @@
 	by the new "fake_closer" attribue. Marc Green/Google Summer of
 	Code.
 
+	Fixed incompatibility with Pod::Simple::HTMLBatch in
+	Pod::Simple::XHTML. Patch by Eric Johnson.
+
 2011-07-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.18
 
