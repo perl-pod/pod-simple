@@ -45,7 +45,7 @@ declare the output character set as UTF-8 before parsing, like so:
 package Pod::Simple::XHTML;
 use strict;
 use vars qw( $VERSION @ISA $HAS_HTML_ENTITIES );
-$VERSION = '3.19';
+$VERSION = '3.18';
 use Pod::Simple::Methody ();
 @ISA = ('Pod::Simple::Methody');
 
@@ -481,6 +481,10 @@ sub start_Document {
     $title = $self->force_title || $self->title || $self->default_title || '';
     $metatags = $self->html_header_tags || '';
     if ($self->html_css) {
+      $metatags .= $self->html_css;
+    }
+    if ($self->html_css && $self->html_css !~ /\<link/) {
+      # this is required to be compatible with Pod::Simple::BatchHTML
       $metatags .= "\n<link rel='stylesheet' href='" .
              $self->html_css . "' type='text/css' />";
     }
@@ -733,6 +737,10 @@ sub batch_mode_page_object_init {
   $self->batch_mode_current_level($depth);
   return $self;
 }
+
+sub html_header_after_title {
+}
+
 
 1;
 
