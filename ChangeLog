@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2011-08-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.19
 
 	Fixed occasional test failure when tests are run in parallel
