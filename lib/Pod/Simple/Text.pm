@@ -71,7 +71,7 @@ sub end_L           {
     if (my $link = delete $_[0]{'Link'}) {
         # Append the URL to the output unless it's already present.
         $_[0]{'Thispara'} .= " <$link->{to}>"
-            unless $_[0]{'Thispara'} =~ /\b\E$link->{to}/;
+            unless $_[0]{'Thispara'} =~ /\b\Q$link->{to}/;
     }
 }
 

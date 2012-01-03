@@ -6,6 +6,9 @@
 	Removed use of 'done_testing' in t/xhtml15.t, which was added in
 	v3.19. Thanks to Paul Howarth for the catch.
 
+	Fixed quoting of links in a regular expression Pod::Simple::Text.
+	Reported by Father Chrysostomos.
+
 2011-08-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.19
 
