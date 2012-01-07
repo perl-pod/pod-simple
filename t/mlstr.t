@@ -100,5 +100,7 @@ $str = q{my $var = q(asdf)};
 $re = $p->is_starting_mlstr($str);
 is $re, undef;
 
-
+$str = q{#Doesn't actually use any of the utf8 bytes.};
+$re = $p->is_starting_mlstr($str);
+is $re, undef;
 
