@@ -9,6 +9,9 @@
 	Fixed quoting of links in a regular expression Pod::Simple::Text.
 	Reported by Father Chrysostomos.
 
+	Fix test failure on case-insensitive, non-case-preserving file systems
+	(VMS I'm looking at *you*). Patch from Craig A. Berry.
+
 2011-08-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.19
 
