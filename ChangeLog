@@ -12,6 +12,9 @@
 	Fix test failure on case-insensitive, non-case-preserving file systems
 	(VMS I'm looking at *you*). Patch from Craig A. Berry.
 
+	Pod::Simple::HTML no longer emits "href='#___top'" if a TOC
+	(index) is not output. Patch from Rick Myers.
+
 2011-08-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.19
 

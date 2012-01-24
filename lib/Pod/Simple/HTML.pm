@@ -491,8 +491,11 @@ sub _do_middle_main_loop {
         $name = $self->do_section($name, $token) if defined $name;
 
         print $fh "<a ";
-        print $fh "class='u' href='#___top' title='click to go to top of document'\n"
-         if $tagname =~ m/^head\d$/s;
+        if ($tagname =~ m/^head\d$/s) {
+            print $fh "class='u'", $self->index
+                ? " href='#___top' title='click to go to top of document'\n"
+                : "\n";
+        }
         
         if(defined $name) {
           my $esc = esc(  $self->section_name_tidy( $name ) );
