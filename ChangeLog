@@ -20,6 +20,12 @@
 	generated for the section. Thanks to Randy Stauner for the report
 	(with test case!) (RT #72544).
 
+	PullParser now throws an exception on an attempt to set a source
+	more than once. Necessary because data from the previous source
+	will be cached, so the new source would be ignored anyway. Create a
+	new PullParser, instead. Thanks to Paul Boldra for the report (RT
+	#74265).
+
 2011-08-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.19
 
