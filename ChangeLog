@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2012-03-01   David E. Wheeler <david@justatheory.org>
 	* Release 3.20
 
 	Removed use of 'done_testing' in t/xhtml15.t, which was added in
