@@ -15,6 +15,11 @@
 	Pod::Simple::HTML no longer emits "href='#___top'" if a TOC
 	(index) is not output. Patch from Rick Myers.
 
+	Fixed links in the TOC of XHTML output to use IDs derived from encoded
+	text, rather than raw Pod, so that it will link to the ID actually
+	generated for the section. Thanks to Randy Stauner for the report
+	(with test case!) (RT #72544).
+
 2011-08-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.19
 
