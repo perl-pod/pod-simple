@@ -151,7 +151,7 @@ Add additional meta tags here, or blocks of inline CSS or JavaScript
 A string containing all characters that should be encoded as HTML entities,
 specified using the regular expression character class syntax (what you find
 within brackets in regular expressions). This value will be passed as the
-second argument to the C<encode_entities> fuction of L<HTML::Entities>. IF
+second argument to the C<encode_entities> function of L<HTML::Entities>. If
 L<HTML::Entities> is not installed, then any characters other than C<&<>"'>
 will be encoded numerically.
 

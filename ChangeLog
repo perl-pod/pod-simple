@@ -3,6 +3,9 @@
 
 	* Release 3.21
 
+	Fixed some typos in the documentation. Thanks to Jonathan Yu via
+	the Debian packagers via Florian Ragwitz (RT #75532).
+
 2012-03-01   David E. Wheeler <david@justatheory.org>
 	* Release 3.20
 
