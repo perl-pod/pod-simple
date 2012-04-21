@@ -305,6 +305,12 @@ something like:
       $self->SUPER::handle_text($text);
   }
 
+=head2 handle_code
+
+This method handles the body of text that is marked up to be code.
+You might for instance override this to plug in a syntax highlighter.
+The base implementation just escapes the text and wraps it in C<<< <code>...</code> >>>.
+
 =head2 accept_targets_as_html
 
 This method behaves like C<accept_targets_as_text>, but also marks the region
@@ -326,14 +332,21 @@ sub accept_targets_as_html {
 }
 
 sub handle_text {
+    if ($_[0]{'in_code'}) {
+	return $_[0]->handle_code( $_[1] );
+    }
     # escape special characters in HTML (<, >, &, etc)
     $_[0]{'scratch'} .= $_[0]->__in_literal_xhtml_region
                       ? $_[1]
                       : $_[0]->encode_entities( $_[1] );
 }
 
+sub handle_code {
+    $_[0]{'scratch'} .= '<code>' . $_[0]->encode_entities( $_[1] ) . '</code>';
+}
+
 sub start_Para     { $_[0]{'scratch'} = '<p>' }
-sub start_Verbatim { $_[0]{'scratch'} = '<pre><code>' }
+sub start_Verbatim { $_[0]{'scratch'} = '<pre>'; $_[0]{'in_code'} = 1; }
 
 sub start_head1 {  $_[0]{'in_head'} = 1 }
 sub start_head2 {  $_[0]{'in_head'} = 2 }
@@ -396,7 +409,8 @@ sub end_over_text   {
 
 sub end_Para     { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 sub end_Verbatim {
-    $_[0]{'scratch'}     .= '</code></pre>';
+    $_[0]{'scratch'} .= '</pre>';
+    delete $_[0]{'in_code'};
     $_[0]->emit;
 }
 
@@ -567,8 +581,8 @@ sub end_Document   {
 sub start_B { $_[0]{'scratch'} .= '<b>' }
 sub end_B   { $_[0]{'scratch'} .= '</b>' }
 
-sub start_C { $_[0]{'scratch'} .= '<code>' }
-sub end_C   { $_[0]{'scratch'} .= '</code>' }
+sub start_C { $_[0]{'in_code'} = 1; }
+sub end_C   { delete $_[0]{'in_code'}; }
 
 sub start_F { $_[0]{'scratch'} .= '<i>' }
 sub end_F   { $_[0]{'scratch'} .= '</i>' }
