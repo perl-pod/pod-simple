@@ -300,9 +300,9 @@ something like:
       my ($self, $text) = @_;
       if ($self->{'in_foo'}) {
           $self->{'scratch'} .= build_foo_html($text);
-      } else {
-          $self->{'scratch'} .= $text;
+          return;
       }
+      $self->SUPER::handle_text($text);
   }
 
 =head2 accept_targets_as_html
