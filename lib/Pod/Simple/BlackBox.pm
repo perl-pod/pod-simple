@@ -1459,10 +1459,12 @@ sub _traverse_treelet_bit {  # for use only by the routine above
   my $scratch;
   $self->_handle_element_start(($scratch=$name), shift @_);
   
-  foreach my $x (@_) {
-    if(ref($x)) {
+  while (@_) {
+    my $x = shift;
+    if (ref($x)) {
       &_traverse_treelet_bit($self, @$x);
     } else {
+      $x .= shift while @_ && !ref($_[0]);
       $self->_handle_text($x);
     }
   }
