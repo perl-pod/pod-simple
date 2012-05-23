@@ -45,7 +45,7 @@ declare the output character set as UTF-8 before parsing, like so:
 package Pod::Simple::XHTML;
 use strict;
 use vars qw( $VERSION @ISA $HAS_HTML_ENTITIES );
-$VERSION = '3.21';
+$VERSION = '3.22';
 use Pod::Simple::Methody ();
 @ISA = ('Pod::Simple::Methody');
 
