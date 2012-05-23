@@ -21,6 +21,19 @@
 	select UTF-8 encoding if the non-ASCII bytes form a valid UTF-8
 	byte sequence, or Latin-1 otherwise. Grant McLean.
 
+	Added 'handle_code' method to Pod::Simple::XHTML. This allows
+	subclasses to override the handling of verbatim blocks, and makes
+	for a more cohesive interface, to boot. Gisle Aas.
+
+	Subsequent text segments are now joined together and passed as a
+	single unit to text handling code. This makes it easier for custom
+	handlers to process complete blocks of text in a single call to
+	'handle_text', rather than in dribs and drabs. Gisle Aas.
+
+	Replaced naive text wrapping code in Pod::Simple::DumpAsXML with
+	Text::Wrap, which was already used for similar purposes elsewhere
+	in Pod::Simple. Gisle Aas.
+
 2012-03-01   David E. Wheeler <david@justatheory.org>
 	* Release 3.20
 
