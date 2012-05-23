@@ -251,7 +251,6 @@ sub new {
   $new->man_url_prefix('http://man.he.net/man');
   $new->html_charset('ISO-8859-1');
   $new->nix_X_codes(1);
-  $new->codes_in_verbatim(1);
   $new->{'scratch'} = '';
   $new->{'to_index'} = [];
   $new->{'output'} = [];

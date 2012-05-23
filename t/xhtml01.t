@@ -657,6 +657,7 @@ SKIP: for my $use_html_entities (0, 1) {
   }
   local $Pod::Simple::XHTML::HAS_HTML_ENTITIES = $use_html_entities;
   initialize($parser, $results);
+  $parser->codes_in_verbatim(1);
   $parser->parse_string_document(<<'EOPOD');
 =pod
 
