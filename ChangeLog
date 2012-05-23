@@ -3,6 +3,13 @@
 
 	* Release 3.21
 
+	NOTE: COMPATABILITY CHANGE: The 'codes_in_verbatim' option in
+	Pod::Simple::XHTML is no longer enabled by default. This brings it
+	agreement with the other formatting classes, and eliminates
+	unexpected behavior in XHTML-formatted Pod. Users who depended on
+	this functionality can still get it by enabling
+	'codes_in_verbatim' in their code.
+
 	Fixed some typos in the documentation. Thanks to Jonathan Yu via
 	the Debian packagers via Florian Ragwitz (RT #75532).
 
