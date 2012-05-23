@@ -6,6 +6,14 @@
 	Fixed some typos in the documentation. Thanks to Jonathan Yu via
 	the Debian packagers via Florian Ragwitz (RT #75532).
 
+	Now emit a warning the first time a non-ASCII byte is encountered
+	when no "=encoding" has been seen. Grant McLean.
+
+	When a non-ASCII byte is encounted before an "=encoding" line has
+	been seen, a heuristic (as described in perlpodspec) is applied to
+	select UTF-8 encoding if the non-ASCII bytes form a valid UTF-8
+	byte sequence, or Latin-1 otherwise. Grant McLean.
+
 2012-03-01   David E. Wheeler <david@justatheory.org>
 	* Release 3.20
 
