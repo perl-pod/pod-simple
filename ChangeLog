@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2012-05-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.21
 
 	NOTE: COMPATABILITY CHANGE: The 'codes_in_verbatim' option in
