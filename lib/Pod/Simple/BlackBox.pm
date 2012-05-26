@@ -401,6 +401,10 @@ sub _handle_encoding_second_level {
 sub _try_encoding_guess {
   my ($self,$line) = @_;
 
+  if(!$self->{'in_pod'}  and  $line !~ /^=/m) {
+    return;  # don't whine about non-ASCII bytes in code/comments
+  }
+
   return unless $line =~ /[^\x00-\x7f]/;  # Look for non-ASCII byte
 
   my $encoding = $line =~ /[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
