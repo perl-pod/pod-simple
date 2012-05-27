@@ -3,6 +3,10 @@
 
 	* Release 3.22
 
+	Fix but where Pod::Simple would whine about non-ASCII bytes in
+	code or comments. Now only does so for Pod (in the absence of an
+	"=encoding" tag. Broken in 3.21. Grant McLean.
+
 2012-05-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.21
 
