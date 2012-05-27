@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2012-05-27   David E. Wheeler <david@justatheory.org>
 	* Release 3.22
 
 	Fix but where Pod::Simple would whine about non-ASCII bytes in
