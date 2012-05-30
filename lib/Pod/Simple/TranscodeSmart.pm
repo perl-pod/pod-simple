@@ -32,7 +32,7 @@ sub make_transcoder {
   my $x;
   return sub {
     foreach $x (@_) {
-      $x = Encode::decode($e, $x);
+      $x = Encode::decode($e, $x) unless Encode::is_utf8($x);
     }
     return;
   };
