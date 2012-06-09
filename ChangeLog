@@ -1,6 +1,14 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+	* Release 3.22
+
+	Eliminated nested elements in table of contents (index) items
+	output of Pod::Simple::XHTML. This was especially problematic for
+	headers that included links, as the TOC then got nested anchor
+	elements, which simply would not work. Thanks to Ben Bullock for
+	the report and test case (RT #77686).
+
 2012-05-27   David E. Wheeler <david@justatheory.org>
 	* Release 3.22
 

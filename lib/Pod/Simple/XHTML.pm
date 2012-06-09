@@ -336,9 +336,12 @@ sub handle_text {
 	return $_[0]->handle_code( $_[1] );
     }
     # escape special characters in HTML (<, >, &, etc)
-    $_[0]{'scratch'} .= $_[0]->__in_literal_xhtml_region
-                      ? $_[1]
-                      : $_[0]->encode_entities( $_[1] );
+    my $text = $_[0]->__in_literal_xhtml_region
+        ? $_[1]
+        : $_[0]->encode_entities( $_[1] );
+
+    $_[0]{'scratch'} .= $text;
+    $_[0]{htext} .= $text if $_[0]{'in_head'};
 }
 
 sub handle_code {
@@ -348,10 +351,10 @@ sub handle_code {
 sub start_Para     { $_[0]{'scratch'} = '<p>' }
 sub start_Verbatim { $_[0]{'scratch'} = '<pre>'; $_[0]{'in_code'} = 1; }
 
-sub start_head1 {  $_[0]{'in_head'} = 1 }
-sub start_head2 {  $_[0]{'in_head'} = 2 }
-sub start_head3 {  $_[0]{'in_head'} = 3 }
-sub start_head4 {  $_[0]{'in_head'} = 4 }
+sub start_head1 {  $_[0]{'in_head'} = 1; $_[0]{htext} = ''; }
+sub start_head2 {  $_[0]{'in_head'} = 2; $_[0]{htext} = ''; }
+sub start_head3 {  $_[0]{'in_head'} = 3; $_[0]{htext} = ''; }
+sub start_head4 {  $_[0]{'in_head'} = 4; $_[0]{htext} = ''; }
 
 sub start_item_number {
     $_[0]{'scratch'} = "</li>\n" if ($_[0]{'in_li'}->[-1] && pop @{$_[0]{'in_li'}});
@@ -421,14 +424,14 @@ sub _end_head {
     $add = 1 unless defined $add;
     $h += $add - 1;
 
-    my $id = $_[0]->idify($_[0]{scratch});
+    my $id = $_[0]->idify($_[0]{htext});
     my $text = $_[0]{scratch};
-    $_[0]{'scratch'} = $_[0]->backlink && ($h - $add == 0) 
+    $_[0]{'scratch'} = $_[0]->backlink && ($h - $add == 0)
                          # backlinks enabled && =head1
                          ? qq{<a href="#_podtop_"><h$h id="$id">$text</h$h></a>}
                          : qq{<h$h id="$id">$text</h$h>};
     $_[0]->emit;
-    push @{ $_[0]{'to_index'} }, [$h, $id, $text];
+    push @{ $_[0]{'to_index'} }, [$h, $id, delete $_[0]{'htext'}];
 }
 
 sub end_head1       { shift->_end_head(@_); }
