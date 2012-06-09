@@ -554,6 +554,10 @@ sub end_Document   {
 
           next unless $level;
           $space = '  '  x $indent;
+          # Remove a link from a header.
+          my $indexed_item = $h->[2];
+          $indexed_item =~ s!<a[^>]+>(.*)</a>!$1!g;
+          $h->[2] = $indexed_item;
           push @out, sprintf '%s<li><a href="#%s">%s</a>',
               $space, $h->[1], $h->[2];
       }

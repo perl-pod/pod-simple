@@ -18,7 +18,4 @@ $d->index (1);
 my $e;
 $d->output_string (\$e);
 $d->parse_string_document ($c);
-TODO: {
-    local $TODO = 'See bug report';
-    unlike ($e, qr!<a[^>]+><a[^>]+>!);
-};
+unlike ($e, qr!<a[^>]+><a[^>]+>!);
