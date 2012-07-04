@@ -342,8 +342,8 @@ sub accept_targets_as_html {
 }
 
 sub handle_text {
-    if ($_[0]{'in_code'}) {
-	return $_[0]->handle_code( $_[1] );
+    if ($_[0]{'in_code'} && @{$_[0]{'in_code'}}) {
+	return $_[0]->handle_code( $_[1], $_[0]{'in_code'}[-1] );
     }
     # escape special characters in HTML (<, >, &, etc)
     my $text = $_[0]->__in_literal_xhtml_region
@@ -366,8 +366,15 @@ sub handle_code {
     $_[0]{'scratch'} .= $_[0]->encode_entities( $_[1] );
 }
 
-sub start_Para     { $_[0]{'scratch'} = '<p>' }
-sub start_Verbatim { $_[0]{'scratch'} = '<pre>'; $_[0]{'in_code'} = 1; $_[0]->start_code('Verbatim'); }
+sub start_Para {
+    $_[0]{'scratch'} = '<p>';
+}
+
+sub start_Verbatim {
+    $_[0]{'scratch'} = '<pre>';
+    push(@{$_[0]{'in_code'}}, 'Verbatim');
+    $_[0]->start_code($_[0]{'in_code'}[-1]);
+}
 
 sub start_head1 {  $_[0]{'in_head'} = 1; $_[0]{htext} = ''; }
 sub start_head2 {  $_[0]{'in_head'} = 2; $_[0]{htext} = ''; }
@@ -430,9 +437,8 @@ sub end_over_text   {
 
 sub end_Para     { $_[0]{'scratch'} .= '</p>'; $_[0]->emit }
 sub end_Verbatim {
-    $_[0]->end_code('Verbatim');
+    $_[0]->end_code(pop(@{$_[0]->{'in_code'}}));
     $_[0]{'scratch'} .= '</pre>';
-    delete $_[0]{'in_code'};
     $_[0]->emit;
 }
 
@@ -603,8 +609,8 @@ sub end_Document   {
 sub start_B { $_[0]{'scratch'} .= '<b>' }
 sub end_B   { $_[0]{'scratch'} .= '</b>' }
 
-sub start_C { $_[0]{'in_code'} = 1; $_[0]->start_code('C'); }
-sub end_C   { $_[0]->end_code('C'); delete $_[0]{'in_code'}; }
+sub start_C { push(@{$_[0]{'in_code'}}, 'C'); $_[0]->start_code($_[0]{'in_code'}[-1]); }
+sub end_C   { $_[0]->end_code(pop(@{$_[0]{'in_code'}})); }
 
 sub start_F { $_[0]{'scratch'} .= '<i>' }
 sub end_F   { $_[0]{'scratch'} .= '</i>' }
