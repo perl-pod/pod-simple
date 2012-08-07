@@ -407,6 +407,11 @@ sub _try_encoding_guess {
 
   return unless $line =~ /[^\x00-\x7f]/;  # Look for non-ASCII byte
 
+  if($ENV{POD_SIMPLE_RAW_ENCODING}) {
+    $self->_handle_encoding_line( "=encoding HACKRAW" );
+    return;
+  }
+
   my $encoding = $line =~ /[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
   $self->_handle_encoding_line( "=encoding $encoding" );
   $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
