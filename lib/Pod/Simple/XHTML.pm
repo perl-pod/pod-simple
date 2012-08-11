@@ -92,7 +92,7 @@ the call to C<parse_file>:
 
 In turning L<Foo::Bar> into http://whatever/Foo%3a%3aBar, what
 to put before the "Foo%3a%3aBar". The default value is
-"http://search.cpan.org/perldoc?".
+"http://metacpan.org/module/".
 
 =head2 perldoc_url_postfix
 
@@ -247,7 +247,7 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
-  $new->perldoc_url_prefix('http://search.cpan.org/perldoc?');
+  $new->perldoc_url_prefix('http://metacpan.org/module/');
   $new->man_url_prefix('http://man.he.net/man');
   $new->html_charset('ISO-8859-1');
   $new->nix_X_codes(1);
@@ -632,8 +632,8 @@ sub emit {
 Resolves a POD link target (typically a module or POD file name) and section
 name to a URL. The resulting link will be returned for the above examples as:
 
-  http://search.cpan.org/perldoc?Net::Ping#INSTALL
-  http://search.cpan.org/perldoc?perlpodspec
+  http://metacpan.org/module/Net::Ping#INSTALL
+  http://metacpan.org/module/perlpodspec
   #SYNOPSIS
 
 Note that when there is only a section argument the URL will simply be a link
@@ -795,7 +795,7 @@ merchantability or fitness for a particular purpose.
 Thanks to L<Hurricane Electric|http://he.net/> for permission to use its
 L<Linux man pages online|http://man.he.net/> site for man page links.
 
-Thanks to L<search.cpan.org|http://search.cpan.org/> for permission to use the
+Thanks to L<metacpan.org|http://metacpan.org/> for permission to use the
 site for Perl module links.
 
 =head1 AUTHOR
