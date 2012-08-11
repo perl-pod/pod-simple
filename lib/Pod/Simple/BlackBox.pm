@@ -123,7 +123,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       }
     }
 
-    if(!$self->{'encoding'}) {
+    if(!$self->parse_characters && !$self->{'encoding'}) {
       $self->_try_encoding_guess($line)
     }
 
@@ -272,6 +272,8 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 sub _handle_encoding_line {
   my($self, $line) = @_;
   
+  return if $self->parse_characters;
+
   # The point of this routine is to set $self->{'_transcoder'} as indicated.
 
   return $line unless $line =~ m/^=encoding\s+(\S+)\s*$/s;
