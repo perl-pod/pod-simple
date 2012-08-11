@@ -87,6 +87,8 @@ __PACKAGE__->_accessorize(
   'preserve_whitespace', # whether to try to keep whitespace as-is
   'strip_verbatim_indent', # What indent to strip from verbatim
 
+  'parse_characters',  # Whether parser should expect chars rather than octets
+
  'content_seen',      # whether we've seen any real Pod content
  'errors_seen',       # TODO: document.  whether we've seen any errors (fatal or not)
 
