@@ -31,7 +31,7 @@ $LamePad = '' unless defined $LamePad;
 
 $Linearization_Limit = 120 unless defined $Linearization_Limit;
  # headings/items longer than that won't get an <a name="...">
-$Perldoc_URL_Prefix  = 'http://search.cpan.org/perldoc?'
+$Perldoc_URL_Prefix  = 'http://metacpan.org/module/'
  unless defined $Perldoc_URL_Prefix;
 $Perldoc_URL_Postfix = ''
  unless defined $Perldoc_URL_Postfix;
@@ -1111,7 +1111,7 @@ merchantability or fitness for a particular purpose.
 Thanks to L<Hurricane Electric|http://he.net/> for permission to use its
 L<Linux man pages online|http://man.he.net/> site for man page links.
 
-Thanks to L<search.cpan.org|http://search.cpan.org/> for permission to use the
+Thanks to L<metacpan.org|http://metacpan.org/> for permission to use the
 site for Perl module links.
 
 =head1 AUTHOR

@@ -1,6 +1,9 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+        Switched L<ModuleName> links from http://search.cpan.org to
+	http://metacpan.org (Karen Etheridge)
+
 	* Release 3.22
 
 	Eliminated nested elements in table of contents (index) items
