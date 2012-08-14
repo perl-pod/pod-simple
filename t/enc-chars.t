@@ -52,7 +52,4 @@ else {
   ok(0);
 }
 
-
-
-warn $output;
 exit;

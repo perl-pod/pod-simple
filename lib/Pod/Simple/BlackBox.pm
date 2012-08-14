@@ -179,6 +179,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
     # HERE WE CATCH =encoding EARLY!
     if( $line =~ m/^=encoding\s+\S+\s*$/s ) {
+      next if $self->parse_characters;   # Ignore this line
       $line = $self->_handle_encoding_line( $line );
     }
 
