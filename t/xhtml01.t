@@ -474,9 +474,14 @@ $parser->parse_string_document(<<'EOPOD');
 =pod
 
 A plain paragraph with a C<functionname>.
+
+C<< This code is B<important> to E<lt>me>! >>
+
 EOPOD
 is($results, <<"EOHTML", "code entity in a paragraph");
 <p>A plain paragraph with a <code>functionname</code>.</p>
+
+<p><code>This code is <b>important</b> to &lt;me&gt;!</code></p>
 
 EOHTML
 
@@ -667,7 +672,7 @@ SKIP: for my $use_html_entities (0, 1) {
 EOPOD
 is($results, <<"EOHTML", "Verbatim text with markup and embedded formatting");
 <pre><code>  # this header is very important &amp; dont you forget it
-  </code><b><code>my \$file = &lt;FILE&gt; || Blank!;</code></b><code>
+  <b>my \$file = &lt;FILE&gt; || Blank!;</b>
   my \$text = &quot;File is: &quot; . &lt;FILE&gt;;</code></pre>
 
 EOHTML
