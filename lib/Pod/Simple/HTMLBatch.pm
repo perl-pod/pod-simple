@@ -1093,7 +1093,7 @@ Example:
 
   % mkdir ../seekrut
   % chmod og-rx ../seekrut
-  % perl -MPod::Simple::HTMLBatch -e Pod::Simple::HTMLBatch::go . ../htmlversion
+  % perl -MPod::Simple::HTMLBatch -e Pod::Simple::HTMLBatch::go . ../seekrut
       (to convert the pod under the current dir into HTML
        files under the directory ./seekrut)
 
