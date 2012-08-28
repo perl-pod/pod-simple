@@ -3,6 +3,9 @@
 
 	* Release 3.24
 
+	Fixed corner case bug for unlikely scenario in which non-UTF-8
+	text could be parsed as UTF-8. Grant McLean.
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
