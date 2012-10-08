@@ -733,6 +733,11 @@ underscores (_), colons (:), and periods (.).
 
 =item *
 
+The final character can't be a hyphen, colon, or period. URLs ending with these
+characters, while allowed by XHTML, can be awkward to extract from plain text.
+
+=item *
+
 Each id must be unique within the document.
 
 =back
@@ -754,6 +759,7 @@ sub idify {
         s/^([^a-zA-Z]+)$/pod$1/; # Prepend "pod" if no valid chars.
         s/^[^a-zA-Z]+//;         # First char must be a letter.
         s/[^-a-zA-Z0-9_:.]+/-/g; # All other chars must be valid.
+        s/[-:.]+$//;             # Strip trailing punctuation.
     }
     return $t if $not_unique;
     my $i = '';

@@ -23,7 +23,7 @@ for my $spec (
     [ 'fo$bar' => 'fo-bar', 'fo-bar' ],
     [ 'f12'    => 'f12',    'f12'    ],
     [ '13'     => 'pod13',  'pod13'  ],
-    [ '**.:'   => 'pod-.:', 'pod-.:' ],
+    [ '**.:'   => 'pod', 'pod' ],
 ) {
     is $parser->idify( $spec->[0] ), $spec->[1],
         qq{ID for "$spec->[0]" should be "$spec->[1]"};
