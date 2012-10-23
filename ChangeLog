@@ -9,6 +9,8 @@
 	XHTML IDs can no longer end with punctuation. Thanks to Smylers
 	for the patch.
 
+	Fixed test failure on Perl 5.6.2.
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
