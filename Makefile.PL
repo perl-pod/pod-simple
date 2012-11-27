@@ -29,7 +29,7 @@ WriteMakefile(
    ]
   },
 
-  INSTALLDIRS => $] >= 5.009003 ? 'perl' : 'site',
+  INSTALLDIRS => $] >= 5.009003 && $] <= 5.011000 ? 'perl' : 'site',
 
   LICENSE => 'perl',
   AUTHOR  => 'Allison Randal <allison@perl.org>',

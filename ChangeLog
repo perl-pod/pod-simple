@@ -11,6 +11,11 @@
 
 	Fixed test failure on Perl 5.6.2.
 
+	Changed the default installation location from "perl" to "site" on
+	5.12 and higher, since as of that version of Perl, dual-life
+	modules no longer need to be installed in "perl" to replace
+	in-core versions. Patch from tzccinct.
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
