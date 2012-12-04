@@ -70,7 +70,7 @@ Smart::Quote - \x91FUT\xC9\x92
 
 } );
 
-my($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
+($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
   if( $guess eq 'ISO8859-1' ) {
     ok 1;
@@ -97,7 +97,7 @@ Smart::Apostrophe::Fail - L\xC9\x92STRANGE
 
 } );
 
-my($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
+($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
   if( $guess eq 'UTF-8' ) {
     ok 1;
@@ -126,7 +126,7 @@ Smart::Apostrophe::Fail - L\xE9\x92Strange
 
 } );
 
-my($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
+($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
   if( $guess eq 'UTF-8' ) {
     ok 1;
