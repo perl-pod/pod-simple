@@ -16,6 +16,9 @@
 	modules no longer need to be installed in "perl" to replace
 	in-core versions. Patch from tzccinct.
 
+	Fixed hash order dependency test failures on Perl 5.17. Thanks to
+	Yves Orton for the patch.
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
