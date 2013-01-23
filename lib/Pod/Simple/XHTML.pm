@@ -342,15 +342,19 @@ sub accept_targets_as_html {
 }
 
 sub handle_text {
-    if ($_[0]{'in_code'} && @{$_[0]{'in_code'}}) {
-	return $_[0]->handle_code( $_[1], $_[0]{'in_code'}[-1] );
-    }
     # escape special characters in HTML (<, >, &, etc)
     my $text = $_[0]->__in_literal_xhtml_region
         ? $_[1]
         : $_[0]->encode_entities( $_[1] );
 
-    $_[0]{'scratch'} .= $text;
+    if ($_[0]{'in_code'} && @{$_[0]{'in_code'}}) {
+        # Intentionally use the raw text in $_[1], even if we're not in a
+        # literal xhtml region, since handle_code calls encode_entities.
+        $_[0]->handle_code( $_[1], $_[0]{'in_code'}[-1] );
+    } else {
+        $_[0]{'scratch'} .= $text;
+    }
+
     $_[0]{htext} .= $text if $_[0]{'in_head'};
 }
 
