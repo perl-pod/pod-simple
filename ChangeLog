@@ -43,6 +43,10 @@
 	Pod::Simple::HTML. Thanks to Robert Boisvert for the bug report
 	(RT #79201).
 
+	Added two new Tagmap entries to Pod::Simple::HTML: "preformat"
+	maps to "pre", and "teletype" maps to "tt". Suggested by Robert
+	Boisvert (RT #79201).
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 

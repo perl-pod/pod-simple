@@ -145,6 +145,8 @@ my @_to_accept;
       small=small
       underline=u
       strikethrough=s
+      preformat=pre
+      teletype=tt
     ]  # no point in providing a way to get <q>...</q>, I think
   ),
   
