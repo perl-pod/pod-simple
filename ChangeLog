@@ -33,6 +33,12 @@
 	emitted by Pod::Simple::XHTML. Thanks to Randy Stauner for the
 	report and to Thomas Sibley for the fix!
 
+	Loosened up the matching of "L< >" tags for man pages so that they
+	allow names with dots, underscores, and any other chararacters
+	other than "/", just so long as they end in '[(][-a-zA-Z0-9]+[)]'.
+	Thanks to Dave Rolsky and Kevin Ryde for the reports (RT #82975 &
+	RT #82972).
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
