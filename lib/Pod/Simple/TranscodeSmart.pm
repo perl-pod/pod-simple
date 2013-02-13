@@ -27,12 +27,12 @@ sub encmodver {
 }
 
 sub make_transcoder {
-  my($e) = $_[1];
+  my $e = Encode::find_encoding($_[1]);
   die "WHAT ENCODING!?!?" unless $e;
   my $x;
   return sub {
     foreach $x (@_) {
-      $x = Encode::decode($e, $x) unless Encode::is_utf8($x);
+      $x = $e->decode($x) unless Encode::is_utf8($x);
     }
     return;
   };

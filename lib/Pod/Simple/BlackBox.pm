@@ -123,8 +123,20 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       }
     }
 
-    if(!$self->parse_characters && !$self->{'encoding'}) {
-      $self->_try_encoding_guess($line)
+    if(!$self->{'parse_characters'} && !$self->{'encoding'}
+      && ($self->{'in_pod'} || $line =~ /^=/s)
+      && $line =~ /[^\x00-\x7f]/
+    ) {
+      my $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
+      $self->_handle_encoding_line( "=encoding $encoding" );
+      $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
+
+      my ($word) = $line =~ /(\S*[^\x00-\x7f]\S*)/;
+
+      $self->whine(
+        $self->{'line_count'},
+        "Non-ASCII character seen before =encoding in '$word'. Assuming $encoding"
+      );
     }
 
     DEBUG > 5 and print "# Parsing line: [$line]\n";
@@ -399,28 +411,6 @@ sub _handle_encoding_second_level {
   }
   
   return;
-}
-
-sub _try_encoding_guess {
-  my ($self,$line) = @_;
-
-  if(!$self->{'in_pod'}  and  $line !~ /^=/m) {
-    return;  # don't whine about non-ASCII bytes in code/comments
-  }
-
-  return unless $line =~ /[^\x00-\x7f]/;  # Look for non-ASCII byte
-
-  my $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
-  $self->_handle_encoding_line( "=encoding $encoding" );
-  $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
-
-  my ($word) = $line =~ /(\S*[^\x00-\x7f]\S*)/;
-
-  $self->whine(
-    $self->{'line_count'},
-    "Non-ASCII character seen before =encoding in '$word'. Assuming $encoding"
-  );
-
 }
 
 #~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`
