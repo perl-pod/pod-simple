@@ -134,7 +134,7 @@ my @_to_accept;
     qw[
       sample=samp
       definition=dfn
-      kbd=keyboard
+      keyboard=kbd
       variable=var
       citation=cite
       abbreviation=abbr

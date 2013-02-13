@@ -39,6 +39,10 @@
 	Thanks to Dave Rolsky and Kevin Ryde for the reports (RT #82975 &
 	RT #82972).
 
+	Fixed inverted mapping of "keyboard" to "kbd" in
+	Pod::Simple::HTML. Thanks to Robert Boisvert for the bug report
+	(RT #79201).
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
