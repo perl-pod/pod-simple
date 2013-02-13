@@ -123,6 +123,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       }
     }
 
+    # Try to guess encoding. Inlined for performance reasons.
     if(!$self->{'parse_characters'} && !$self->{'encoding'}
       && ($self->{'in_pod'} || $line =~ /^=/s)
       && $line =~ /[^\x00-\x7f]/
