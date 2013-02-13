@@ -663,6 +663,10 @@ sub _ponder_paragraph_buffer {
           } elsif($item_type eq 'number' or $item_type eq 'bullet') {
             die "Unknown item type $item_type"
              unless $item_type eq 'number' or $item_type eq 'bullet';
+            $self->whine(
+              $para->[1]{'start_line'},
+              "Expected text matching /\\s+[^\\*\\d]/ after '=item'"
+            );
             # Undo our clobbering:
             push @$para, $para->[1]{'~orig_content'};
             delete $para->[1]{'number'};
@@ -1271,6 +1275,10 @@ sub _ponder_item {
     } elsif($item_type eq 'number' or $item_type eq 'bullet') {
       die "Unknown item type $item_type"
        unless $item_type eq 'number' or $item_type eq 'bullet';
+      $self->whine(
+          $para->[1]{'start_line'},
+          "Expected text matching /\\s+[^\\*\\d]/ after '=item'"
+      );
       # Undo our clobbering:
       push @$para, $para->[1]{'~orig_content'};
       delete $para->[1]{'number'};
