@@ -28,6 +28,10 @@
 	"=over"/"=back" block. Marc Green/Google Summer of Code, with
 	assist from RJBS.
 
+	Fixed regression introduced in 3.22 in which "C< >" tags were
+	incorrectly treated as verbatim text in table of contents items
+	emitted by Pod::Simple::XHTML. Thanks to Randy Stauner for the
+	report and to Thomas Sibley for the fix!
 
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
