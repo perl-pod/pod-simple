@@ -24,6 +24,11 @@
 	documentation by 15-20%. Thanks to Dagfinn Ilmari Mannsåker for
 	the patch!
 
+	Added a warning when "=item" types mismatch within one
+	"=over"/"=back" block. Marc Green/Google Summer of Code, with
+	assist from RJBS.
+
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
