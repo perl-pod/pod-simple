@@ -2,7 +2,7 @@
 require 5;
 package Pod::Simple::Transcode;
 use vars qw($VERSION );
-$VERSION = '3.24';
+$VERSION = '3.25';
 
 BEGIN {
   if(defined &DEBUG) {;} # Okay
