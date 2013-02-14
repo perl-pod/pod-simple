@@ -47,6 +47,10 @@
 	maps to "pre", and "teletype" maps to "tt". Suggested by Robert
 	Boisvert (RT #79201).
 
+	"X< >" tags are now ignored by the pull parser when it searches
+	for titles, as is any trailing whitespace. Thanks to Patrice Dumas
+	for the report (RT #74389).
+
 2012-08-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.23
 
