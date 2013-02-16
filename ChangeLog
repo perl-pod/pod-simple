@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2013-02-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.25
 
 	Improved the warning when "=item" types mismatch within one
