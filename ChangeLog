@@ -3,6 +3,9 @@
 
 	* Release 3.25
 
+	Improved the warning when "=item" types mismatch within one
+	"=over"/"=back" block.
+
 2013-02-14   David E. Wheeler <david@justatheory.org>
 	* Release 3.24
 
