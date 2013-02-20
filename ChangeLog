@@ -3,6 +3,9 @@
 
 	* Release 3.26
 
+	Fixed another test script to skip all tests when Encode not
+	installed.
+
 2013-02-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.25
 
