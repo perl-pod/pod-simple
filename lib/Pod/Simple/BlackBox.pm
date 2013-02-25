@@ -91,6 +91,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       if( ($line = $source_line) =~ s/^\xEF\xBB\xBF//s ) {
         DEBUG and print "UTF-8 BOM seen.  Faking a '=encoding utf8'.\n";
         $self->_handle_encoding_line( "=encoding utf8" );
+        delete $self->{'_processed_encoding'};
         $line =~ tr/\n\r//d;
         
       } elsif( $line =~ s/^\xFE\xFF//s ) {
@@ -343,6 +344,7 @@ sub _handle_encoding_line {
     $@ && die( $enc_error =
       "Really unexpected error setting up encoding $e: $@\nAborting"
     );
+    $self->{'detected_encoding'} = $e;
 
   } else {
     my @supported = Pod::Simple::Transcode::->all_encodings;
@@ -373,8 +375,13 @@ sub _handle_encoding_line {
     $self->scream( $self->{'line_count'}, $enc_error );
   }
   push @{ $self->{'encoding_command_statuses'} }, $enc_error;
+  if (defined($self->{'_processed_encoding'})) {
+    # Should never happen
+    die "Nested processed encoding.";
+  }
+  $self->{'_processed_encoding'} = $orig;
 
-  return '=encoding ALREADYDONE';
+  return $line;
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -390,7 +397,11 @@ sub _handle_encoding_second_level {
 
   DEBUG > 2 and print "Ogling encoding directive: =encoding $content\n";
   
-  if($content eq 'ALREADYDONE') {
+  if (defined($self->{'_processed_encoding'})) {
+    #if($content ne $self->{'_processed_encoding'}) {
+    #  Could it happen?
+    #}
+    delete $self->{'_processed_encoding'};
     # It's already been handled.  Check for errors.
     if(! $self->{'encoding_command_statuses'} ) {
       DEBUG > 2 and print " CRAZY ERROR: It wasn't really handled?!\n";
@@ -793,8 +804,7 @@ sub _ponder_paragraph_buffer {
       } elsif($para_type eq '=encoding') {
         # Not actually acted on here, but we catch errors here.
         $self->_handle_encoding_second_level($para);
-
-        next;  # and skip
+        $para_type = 'Plain';
       } elsif($para_type eq '~Verbatim') {
         $para->[0] = 'Verbatim';
         $para_type = '?Verbatim';

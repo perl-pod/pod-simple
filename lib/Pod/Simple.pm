@@ -113,6 +113,35 @@ sub any_errata_seen {  # good for using as an exit() value...
   return shift->{'errors_seen'} || 0;
 }
 
+# Returns the encoding only if it was recognized as being handled and set
+sub detected_encoding {
+  return shift->{'detected_encoding'};
+}
+
+sub encoding {
+  my $this = shift;
+  return $this->{'encoding'} unless @_;  # GET.
+
+  $this->_handle_encoding_line("=encoding $_[0]");
+  if ($this->{'_processed_encoding'}) {
+    delete $this->{'_processed_encoding'};
+    if(! $this->{'encoding_command_statuses'} ) {
+      DEBUG > 2 and print " CRAZY ERROR: encoding wasn't really handled?!\n";
+    } elsif( $this->{'encoding_command_statuses'}[-1] ) {
+      $this->whine( "=encoding $_[0]",
+         sprintf "Couldn't do %s: %s",
+         $this->{'encoding_command_reqs'  }[-1],
+         $this->{'encoding_command_statuses'}[-1],
+      );
+    } else {
+      DEBUG > 2 and print " (encoding successfully handled.)\n";
+    }
+    return $this->{'encoding'};
+  } else {
+    return undef;
+  }
+}
+
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Pull in some functions that, for some reason, I expect to see here too:
 BEGIN {

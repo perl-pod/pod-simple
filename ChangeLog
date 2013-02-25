@@ -6,6 +6,11 @@
 	Fixed another test script to skip all tests when Encode not
 	installed.
 
+	Added 'encoding()' and 'detected_encoding()' to return the current
+	encoding and the encoding actually to decode the input file. The
+	value from "=encoding" is also now kept in the output tree. Patch
+	from Patrice Dumas (RT #74390).
+
 2013-02-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.25
 
