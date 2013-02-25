@@ -128,7 +128,7 @@ sub encoding {
     if(! $this->{'encoding_command_statuses'} ) {
       DEBUG > 2 and print " CRAZY ERROR: encoding wasn't really handled?!\n";
     } elsif( $this->{'encoding_command_statuses'}[-1] ) {
-      $this->whine( "=encoding $_[0]",
+      $this->scream( "=encoding $_[0]",
          sprintf "Couldn't do %s: %s",
          $this->{'encoding_command_reqs'  }[-1],
          $this->{'encoding_command_statuses'}[-1],
