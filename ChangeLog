@@ -1,9 +1,10 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2013-02-27   David E. Wheeler <david@justatheory.org>
 	* Release 3.26
 
-	Fixed another test script to skip all tests when Encode not
+	Fixed another test script to skip all tests when Encode is not
 	installed.
 
 	Added 'encoding()' and 'detected_encoding()' to return the current
