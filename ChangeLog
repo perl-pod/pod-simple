@@ -20,6 +20,9 @@
 	with greater emphasis on the four different steps to subclassing.
 	Florent Angly.
 
+	Added the 'top_anchor' attribue to Pod::Simple::HTML, to allow
+	specification of a custom top anchor format. Gabor Szabo.
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
