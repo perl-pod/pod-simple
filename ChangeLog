@@ -3,6 +3,8 @@
 
 	* Release 3.27
 
+	Allow the user of Pod::Simple::HTML to reset the top_anchor.
+
 2013-02-27   David E. Wheeler <david@justatheory.org>
 	* Release 3.26
 
