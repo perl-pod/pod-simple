@@ -1064,6 +1064,12 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
         $treelet->[$i] = 'L<>';  # just make it a text node
         next;  # and move on
       }
+
+      if( (! ref $ell->[2]  && $ell->[2] =~ /\A\s/)
+        ||(! ref $ell->[-1] && $ell->[-1] =~ /\s\z/)
+      ) {
+        $self->whine( $start_line, "L<> starts or ends with whitespace" );
+      }
      
       # Catch URLs:
 
