@@ -1185,6 +1185,13 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
           DEBUG > 3 and
            print "     FOUND a '|' in it.  Splitting into [$1] + [$2]\n";
 
+          if ($link_text[0] =~ m{[|/]}) {
+            $self->whine(
+              $start_line,
+              "alternative text '$link_text[0]' contains non-escaped | or /"
+            );
+          }
+
           unshift @link_text, splice @ell_content, 0, $j;
             # leaving only things at J and after
           @ell_content =  grep ref($_)||length($_), @ell_content ;
