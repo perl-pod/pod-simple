@@ -1518,6 +1518,11 @@ sub _closers_for_all_curr_open {
     if($copy[0] eq '=for') {
       $copy[0] = '=end';
     } elsif($copy[0] eq '=over') {
+      $self->whine(
+        $still_open->[1]{start_line} ,
+        "=over without closing =back"
+      );
+
       $copy[0] = '=back';
     } else {
       die "I don't know how to auto-close an open $copy[0] region";
