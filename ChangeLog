@@ -3,6 +3,11 @@
 
 	* Release 3.27
 
+	Added new warnings as defined by Pod::Checker, thanks to RJBS:
+	+ "=over" without "=back"
+	+ "L<>" starts or ends with whitespace
+	+ raw "|" or "/" in "L<text|link>" text
+
 2013-02-27   David E. Wheeler <david@justatheory.org>
 	* Release 3.26
 
