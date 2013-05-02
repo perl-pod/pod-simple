@@ -8,8 +8,8 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-#use Test::More tests => 56;
-use Test::More 'no_plan';
+use Test::More tests => 61;
+#use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -695,6 +695,14 @@ EOPOD
 my $T = $use_html_entities ? 84 : 'x54';
 is($results, <<"EOHTML", 'HTML Entities should be only for specified characters');
 <p>&#$T;his is Anna's &quot;Answer&quot; to the &lt;q&gt;Question&lt;/q&gt;.</p>
+
+EOHTML
+
+  # Keep =encoding out of content.
+  initialize($parser, $results);
+  $parser->parse_string_document("=encoding utf-8\n\n=head1 NAME\n");
+  is($results, <<"EOHTML", 'Encoding should not be in content')
+<h1 id="NAME">NAME</h1>
 
 EOHTML
 
