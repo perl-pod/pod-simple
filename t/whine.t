@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 4;
 
 {
   package Pod::Simple::ErrorFinder;
@@ -67,5 +67,3 @@ sub errors { Pod::Simple::ErrorFinder->errors_for_input(@_) }
     "warning for / in text part of L<>",
   );
 }
-
-done_testing;

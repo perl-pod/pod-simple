@@ -3,6 +3,9 @@
 
 	* Release 3.28
 
+	Removed use of 'done_testing' in t/white.t, which was added in
+	v3.27. Thanks to Paul Howarth for the catch.
+
 2013-05-03   David E. Wheeler <david@justatheory.org>
 	* Release 3.27
 
