@@ -80,6 +80,7 @@ __PACKAGE__->_accessorize(
   'bare_output',       # For some subclasses: whether to prepend
                        #  header-code and postpend footer-code
 
+  'keep_encoding_directive',  # whether to emit =encoding
   'nix_X_codes',       # whether to ignore X<...> codes
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events

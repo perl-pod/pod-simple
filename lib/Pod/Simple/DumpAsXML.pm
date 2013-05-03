@@ -17,6 +17,7 @@ sub new {
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
   $new->accept_codes('VerbatimFormatted');
+  $new->keep_encoding_directive(1);
   return $new;
 }
 

@@ -8,6 +8,12 @@
 	+ "L<>" starts or ends with whitespace
 	+ raw "|" or "/" in "L<text|link>" text
 
+	Added ->keep_encoding_directive, which is false by default, to
+	prevent formatters from emitting a document's '=encoding'
+	directive in most cases. That they emitted the encoding was a bug
+	introduced in v3.26 (RT #84093). Now, only the DumpAsText and
+	DumpAsXML formats set it to true. Patch from Patrice Dumas.
+
 2013-02-27   David E. Wheeler <david@justatheory.org>
 	* Release 3.26
 

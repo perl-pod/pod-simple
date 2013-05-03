@@ -20,6 +20,7 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
+  $new->keep_encoding_directive(1);
   #$new->accept_codes('VerbatimFormatted');
   return $new;
 }

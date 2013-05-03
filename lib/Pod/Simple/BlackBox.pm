@@ -804,6 +804,7 @@ sub _ponder_paragraph_buffer {
       } elsif($para_type eq '=encoding') {
         # Not actually acted on here, but we catch errors here.
         $self->_handle_encoding_second_level($para);
+        next unless $self->keep_encoding_directive;
         $para_type = 'Plain';
       } elsif($para_type eq '~Verbatim') {
         $para->[0] = 'Verbatim';
