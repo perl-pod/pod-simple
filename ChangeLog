@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
 	Removed use of 'done_testing' in t/white.t, which was added in
