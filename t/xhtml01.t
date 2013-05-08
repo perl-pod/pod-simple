@@ -700,7 +700,7 @@ EOHTML
 
   # Keep =encoding out of content.
   initialize($parser, $results);
-  $parser->parse_string_document("=encoding utf-8\n\n=head1 NAME\n");
+  $parser->parse_string_document("=encoding ascii\n\n=head1 NAME\n");
   is($results, <<"EOHTML", 'Encoding should not be in content')
 <h1 id="NAME">NAME</h1>
 
