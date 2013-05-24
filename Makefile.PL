@@ -25,7 +25,7 @@ WriteMakefile(
    # And finally, things I don't have any particular version in mind for:
    map {; $_ => 0 } qw[
     File::Spec File::Basename Cwd Config Carp overload Symbol strict
-    constant integer File::Find Test::More
+    integer File::Find Test::More
    ]
   },
 

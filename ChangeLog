@@ -4,6 +4,9 @@
 	* Release 3.29
 	Fixed test failure for unsupported encoding on Perl 5.6.
 
+	Removed unnecessary dependency on constant. Reporged by Petr Pisar
+	(RT #85578).
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
