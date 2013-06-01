@@ -1,4 +1,3 @@
-
 require 5;
 package Pod::Simple::HTML;
 use strict;
@@ -969,7 +968,7 @@ Set the content-type in the HTML head: (defaults to ISO-8859-1)
 
   $Pod::Simple::HTML::Content_decl =  q{<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >};
 
-Set the value that will be ebedded in the opening tags of F, C tags and verbatim text.
+Set the value that will be embedded in the opening tags of F, C tags and verbatim text.
 F maps to <em>, C maps to <code>, Verbatim text maps to <pre> (Computerese defaults to "")
 
   $Pod::Simple::HTML::Computerese =  ' class="some_class_name';
