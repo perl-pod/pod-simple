@@ -1,4 +1,3 @@
-
 package Pod::Simple::BlackBox;
 #
 # "What's in the box?"  "Pain."
@@ -1980,7 +1979,7 @@ sub pretty { # adopted from Class::Classless
       $_ eq '0' # very common case
       or(
          m/^-?(?:[123456789]\d*|0)(?:\.\d+)?$/s
-         and $_ ne '-0' # the strange case that that RE lets thru
+         and $_ ne '-0' # the strange case that RE lets thru
       )
     ) { $_;
     } else {
