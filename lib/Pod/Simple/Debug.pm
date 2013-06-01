@@ -1,4 +1,3 @@
-
 require 5;
 package Pod::Simple::Debug;
 use strict;
@@ -97,7 +96,7 @@ Note that you should load this module I<before> loading Pod::Simple (or
 any Pod::Simple-based class).  If you try loading Pod::Simple::Debug
 after &Pod::Simple::DEBUG is already defined, Pod::Simple::Debug will
 throw a fatal error to the effect that
-"it's s too late to call Pod::Simple::Debug".
+"It's too late to call Pod::Simple::Debug".
 
 Note that the C<use Pod::Simple::Debug (\$x, I<somenum>)> mode will make
 Pod::Simple (et al) run rather slower, since &Pod::Simple::DEBUG won't

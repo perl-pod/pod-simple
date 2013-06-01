@@ -1,4 +1,3 @@
-
 =head1 NAME
 
 Pod::Simple::Subclassing -- write a formatter as a Pod::Simple subclass
@@ -545,7 +544,7 @@ an "<UL><LI>...</LI>...</UL>" structure), but which any processor may use.
 Note that the values for the I<number> attributes of "item-number"
 elements in a given "over-number" area I<will> start at 1 and go up by
 one each time.  If the Pod source doesn't follow that order (even though
-it really should should!), whatever numbers it has will be ignored (with
+it really should!), whatever numbers it has will be ignored (with
 the correct values being put in the I<number> attributes), and an error
 message might be issued to the user.
 

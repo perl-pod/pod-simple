@@ -132,7 +132,7 @@ A document type tag for the file. This option is not set by default.
 
 =head2 html_charset
 
-The charater set to declare in the Content-Type meta tag created by default
+The character set to declare in the Content-Type meta tag created by default
 for C<html_header_tags>. Note that this option will be ignored if the value of
 C<html_header_tags> is changed. Defaults to "ISO-8859-1".
 
@@ -313,9 +313,9 @@ The base implementation just escapes the text.
 
 The callback methods C<start_code> and C<end_code> emits the C<code> tags
 before and after C<handle_code> is invoked, so you might want to override these
-together with C<handle_code> if this wrapping isn't suiteable.
+together with C<handle_code> if this wrapping isn't suitable.
 
-Note that the code might be broken into mulitple segments if there are
+Note that the code might be broken into multiple segments if there are
 nested formatting codes inside a C<< CE<lt>...> >> sequence.  In between the
 calls to C<handle_code> other markup tags might have been emitted in that
 case.  The same is true for verbatim sections if the C<codes_in_verbatim>
