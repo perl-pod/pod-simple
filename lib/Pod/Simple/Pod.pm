@@ -20,7 +20,19 @@ sub new {
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-sub handle_text       { $_[0]{buffer} .= $_[1] unless $_[0]{linkbuffer} }
+sub handle_text       {
+  ### FIXME need to figure out how to count number of characters that need to
+  ### be escaped
+
+  #### EXAMPLE: C<<< $? >> 8 >>> needs three escapes because of '>>'
+
+  if ( $_[0]{escape} and $_[1] =~ m|([<>]+)|) {
+    my $l = '<' x length $1;
+    my $r = '>' x length $1;
+    $_[1] = "$l $_[1] $r";
+  }
+  $_[0]{buffer} .= $_[1] unless $_[0]{linkbuffer} ;
+}
 
 sub start_Document    { $_[0]{buffer} = "=pod\n\n" }
 
@@ -69,18 +81,18 @@ sub end_encoding    { $_[0]->emit }
 sub end_Para        { $_[0]->emit }
 sub end_Verbatim    { $_[0]->emit }
 
-sub start_B { $_[0]{buffer} .= 'B<' }
-sub end_B   { $_[0]{buffer} .= '>'  }
-sub start_C { $_[0]{buffer} .= 'C<' }
-sub end_C   { $_[0]{buffer} .= '>'  }
+sub start_B { $_[0]{buffer} .= 'B<' ; $_[0]{escape} = 1 }
+sub end_B   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
+sub start_C { $_[0]{buffer} .= 'C<' ; $_[0]{escape} = 1 }
+sub end_C   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
 sub start_F { $_[0]{buffer} .= 'F<' }
 sub end_F   { $_[0]{buffer} .= '>'  }
-sub start_I { $_[0]{buffer} .= 'I<' }
-sub end_I   { $_[0]{buffer} .= '>'  }
-sub start_S { $_[0]{buffer} .= 'S<' }
-sub end_S   { $_[0]{buffer} .= '>'  }
-sub start_X { $_[0]{buffer} .= 'X<' }
-sub end_X   { $_[0]{buffer} .= '>'  }
+sub start_I { $_[0]{buffer} .= 'I<' ; $_[0]{escape} = 1 }
+sub end_I   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
+sub start_S { $_[0]{buffer} .= 'S<' ; $_[0]{escape} = 1 }
+sub end_S   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
+sub start_X { $_[0]{buffer} .= 'X<' ; $_[0]{escape} = 1 }
+sub end_X   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
 
 sub start_L { $_[0]{buffer} .= 'L<' . $_[1]->{raw} . '>' ; $_[0]->{linkbuffer} = 1 }
 sub end_L   { $_[0]{linkbuffer} = 0 }
