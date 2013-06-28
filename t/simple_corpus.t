@@ -68,10 +68,12 @@ foreach my $file (@test_files) {
 
   my $output;
   $parser->output_string( \$output );
-  $parser->parse_string_document( $input );
 
   $input =~ s/^[^=]*(.*)$/$1/mgs;
   $input =~ s/\s*$/\n/s;
+  $input =~ s/\t/        /mgs;
+
+  $parser->parse_string_document( $input );
 
   $input = "=pod\n\n$input"
     unless $input =~ /^\s*=pod/mgs;
@@ -87,7 +89,7 @@ foreach my $file (@test_files) {
 
     print "# $file\n";
      ok 0;
-#o     exit;
+     exit;
 
   }
 }
