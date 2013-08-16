@@ -130,6 +130,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     ) {
       my $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
       $self->_handle_encoding_line( "=encoding $encoding" );
+      delete $self->{'_processed_encoding'};
       $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
 
       my ($word) = $line =~ /(\S*[^\x00-\x7f]\S*)/;
