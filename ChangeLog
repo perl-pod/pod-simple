@@ -9,6 +9,10 @@
 
 	Many documentation and comment typos fixed by David Steinbrunner.
 
+	Fixed issue when an encoding is declared via an '=encoding' directive
+	*after* Pod::Simple has already detected an encoding. Thanks to
+	Graham Knop for the patch and Patrice Dumas for the tests.
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
