@@ -84,25 +84,25 @@ __PACKAGE__->_accessorize(
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events
 
-  'preserve_whitespace', # whether to try to keep whitespace as-is
+  'preserve_whitespace',   # whether to try to keep whitespace as-is
   'strip_verbatim_indent', # What indent to strip from verbatim
 
- 'content_seen',      # whether we've seen any real Pod content
- 'errors_seen',       # TODO: document.  whether we've seen any errors (fatal or not)
+  'content_seen',      # whether we've seen any real Pod content
+  'errors_seen',       # TODO: document.  whether we've seen any errors (fatal or not)
 
- 'codes_in_verbatim', # for PseudoPod extensions
+  'codes_in_verbatim', # for PseudoPod extensions
 
- 'code_handler',      # coderef to call when a code (non-pod) line is seen
- 'cut_handler',       # ... when a =cut line is seen
- 'pod_handler',       # ... when a =pod line is seen
- 'whiteline_handler', # ... when a line with only whitespace is seen
- #Called like:
- # $code_handler->($line, $self->{'line_count'}, $self) if $code_handler;
- #  $cut_handler->($line, $self->{'line_count'}, $self) if $cut_handler;
- #  $pod_handler->($line, $self->{'line_count'}, $self) if $pod_handler;
- #   $wl_handler->($line, $self->{'line_count'}, $self) if $wl_handler;
- 'parse_empty_lists', # whether to acknowledge empty =over/=back blocks
-
+  'code_handler',      # coderef to call when a code (non-pod) line is seen
+  'cut_handler',       # ... when a =cut line is seen
+  'pod_handler',       # ... when a =pod line is seen
+  'whiteline_handler', # ... when a line with only whitespace is seen
+  #Called like:
+  # $code_handler->($line, $self->{'line_count'}, $self) if $code_handler;
+  #  $cut_handler->($line, $self->{'line_count'}, $self) if $cut_handler;
+  #  $pod_handler->($line, $self->{'line_count'}, $self) if $pod_handler;
+  #   $wl_handler->($line, $self->{'line_count'}, $self) if $wl_handler;
+  'parse_empty_lists', # whether to acknowledge empty =over/=back blocks
+  'raw_mode',          # to report entire raw lines instead of Pod elements
 );
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

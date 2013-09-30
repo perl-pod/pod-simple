@@ -188,6 +188,11 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     # . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     # Else we're in pod mode:
 
+    if ($self->{raw_mode}) {
+       $self->_handle_text($line);
+       next; # process next line
+    }
+
     # Apply any necessary transcoding:
     $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
 
