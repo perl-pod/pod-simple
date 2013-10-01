@@ -15,7 +15,7 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
-  $new->{'raw_mode'} = 1;
+  $new->{'raw_mode'}    = 1;
   return $new;
 }
 
@@ -37,7 +37,7 @@ __END__
 
 =head1 NAME
 
-Pod::Simple::Select -- Select Pod sections
+Pod::Simple::Select -- Extract selected sections of Pod
 
 =head1 SYNOPSIS
 
@@ -47,6 +47,7 @@ Pod::Simple::Select -- Select Pod sections
 
 =head1 DESCRIPTION
 
+TODO
 
 =head1 SEE ALSO
 
