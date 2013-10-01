@@ -9,7 +9,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 7 };
+BEGIN { plan tests => 10 };
 use Pod::Simple::Select;
 
 BEGIN {
@@ -33,6 +33,12 @@ sub source_path {
         return $file;
     }
 }
+
+
+ok my $p = Pod::Simple::Select->new;
+ok defined $p->can('select');
+ok defined $p->can('podselect');
+
 
 my $outfile = '10000';
 
@@ -58,7 +64,7 @@ foreach my $file (
   }
   
   print "#\n#\n#\n###################\n# $file\n";
-  my $p = Pod::Simple::Select->new;
+  $p = Pod::Simple::Select->new;
   push @out, '';
   $p->output_string(\$out[-1]);
   my $t = mytime();
