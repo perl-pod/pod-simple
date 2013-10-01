@@ -37,7 +37,7 @@ generally a Pod formatter. If you just want to know about using an
 existing Pod formatter, instead see its documentation and see also the
 docs in L<Pod::Simple>.
 
-The zeroeth step in writing a Pod formatter is to make sure that there
+B<The zeroeth step> in writing a Pod formatter is to make sure that there
 isn't already a decent one in CPAN. See L<http://search.cpan.org/>, and
 run a search on the name of the format you want to render to. Also
 consider joining the Pod People list
@@ -45,16 +45,16 @@ L<http://lists.perl.org/showlist.cgi?name=pod-people> and asking whether
 anyone has a formatter for that format -- maybe someone cobbled one
 together but just hasn't released it.
 
-The first step in writing a Pod processor is to read L<perlpodspec>,
+B<The first step> in writing a Pod processor is to read L<perlpodspec>,
 which contains notes information on writing a Pod parser (which has been
 largely taken care of by Pod::Simple), but also a lot of requirements
 and recommendations for writing a formatter.
 
-The second step is to actually learn the format you're planning to
+B<The second step> is to actually learn the format you're planning to
 format to -- or at least as much as you need to know to represent Pod,
 which probably isn't much.
 
-The third step is to pick which of Pod::Simple's interfaces you want to
+B<The third step> is to pick which of Pod::Simple's interfaces you want to
 use:
 
 =over
@@ -78,14 +78,14 @@ like L<HTML::TokeParser>'s interface.
 
 L<Pod::Simple::SimpleTree> provides a simple tree interface, rather like
 L<XML::Parser>'s "Tree" interface. Users familiar with XML handling will
-be comfortable with this interface. Users interested in  outputting XML, 
+be comfortable with this interface. Users interested in outputting XML, 
 should look into the modules that produce an XML representation of the
 Pod stream, notably L<Pod::Simple::XMLOutStream>; you can feed the output
 of such a class to whatever XML parsing system you are most at home with.
 
 =back
 
-The last step is to write your code based on how the events (or tokens,
+B<The last step> is to write your code based on how the events (or tokens,
 or tree-nodes, or the XML, or however you're parsing) will map to
 constructs in the output format. Also sure to consider how to escape
 text nodes containing arbitrary text, and also what to do with text
