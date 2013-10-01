@@ -47,7 +47,10 @@ Pod::Simple::Select -- Extract selected sections of Pod
 
 =head1 DESCRIPTION
 
-TODO
+This module is for extracting Pod from Perl files and displaying only the
+desired sections. It aims at replacing the module L<Pod::Select>.
+
+This is a subclass of L<Pod::Simple> and inherits all of its methods.
 
 =head1 SEE ALSO
 
