@@ -1310,18 +1310,6 @@ TODO
     that classname
 
 
-
-=head1 ASK ME!
-
-If you want to do some kind of big pod-to-HTML version with some
-particular kind of option that you don't see how to achieve using this
-module, email me (C<sburke@cpan.org>) and I'll probably have a good idea
-how to do it. For reasons of concision and energetic laziness, some
-methods and options in this module (and the dozen modules it depends on)
-are undocumented; but one of those undocumented bits might be just what
-you're looking for.
-
-
 =head1 SEE ALSO
 
 L<Pod::Simple>, L<Pod::Simple::HTMLBatch>, L<perlpod>, L<perlpodspec>

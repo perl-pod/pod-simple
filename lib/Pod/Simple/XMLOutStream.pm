@@ -125,19 +125,6 @@ The older (and possibly obsolete) libraries L<Pod::PXML>, L<Pod::XML>
 
 TODO: An example or two of =extend, then point to Pod::Simple::Subclassing
 
-
-=head1 ASK ME!
-
-If you actually want to use Pod as a format that you want to render to
-XML (particularly if to an XML instance with more elements than normal
-Pod has), please email me (C<sburke@cpan.org>) and I'll probably have
-some recommendations.
-
-For reasons of concision and energetic laziness, some methods and
-options in this module (and the dozen modules it depends on) are
-undocumented; but one of those undocumented bits might be just what
-you're looking for.
-
 =head1 SEE ALSO
 
 L<Pod::Simple>, L<Pod::Simple::Text>, L<Pod::Spell>
