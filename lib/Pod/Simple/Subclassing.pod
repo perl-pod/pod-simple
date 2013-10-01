@@ -55,17 +55,35 @@ format to -- or at least as much as you need to know to represent Pod,
 which probably isn't much.
 
 The third step is to pick which of Pod::Simple's interfaces you want to
-use -- the basic interface via Pod::Simple or L<Pod::Simple::Methody> is
-event-based, sort of like L<HTML::Parser>'s interface, or sort of like
-L<XML::Parser>'s "Handlers" interface), but L<Pod::Simple::PullParser>
-provides a token-stream interface, sort of like L<HTML::TokeParser>'s
-interface; L<Pod::Simple::SimpleTree> provides a simple tree interface,
-rather like XML::Parser's "Tree" interface. Users familiar with
-XML-handling will find one of these styles relatively familiar; but if
-you would be even more at home with XML, there are classes that produce
-an XML representation of the Pod stream, notably
-L<Pod::Simple::XMLOutStream>; you can feed the output of such a class to
-whatever XML parsing system you are most at home with.
+use:
+
+=over
+
+=item Pod::Simple
+
+The basic L<Pod::Simple> interface that uses C<_handle_element_start()>,
+C<_handle_element_end()> and C<_handle_text()>.
+
+=item Pod::Simple::Methody
+
+The L<Pod::Simple::Methody> interface is event-based, similar to that of
+L<HTML::Parser> or L<XML::Parser>'s "Handlers".
+
+=item Pod::Simple::PullParser
+
+L<Pod::Simple::PullParser> provides a token-stream interface, sort of
+like L<HTML::TokeParser>'s interface.
+
+=item Pod::Simple::SimpleTree
+
+L<Pod::Simple::SimpleTree> provides a simple tree interface, rather like
+L<XML::Parser>'s "Tree" interface. Users familiar with XML handling will
+be comfortable with this interface. Users interested in  outputting XML, 
+should look into the modules that produce an XML representation of the
+Pod stream, notably L<Pod::Simple::XMLOutStream>; you can feed the output
+of such a class to whatever XML parsing system you are most at home with.
+
+=back
 
 The last step is to write your code based on how the events (or tokens,
 or tree-nodes, or the XML, or however you're parsing) will map to
