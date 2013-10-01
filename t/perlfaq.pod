@@ -1,3 +1,5 @@
+=pod
+
 =head1 NAME
 
 perlfaq3 - Programming Tools ($Revision: 1.38 $, $Date: 1999/05/23 16:08:30 $)
@@ -38,6 +40,8 @@ Now just type in any legal Perl code, and it will be immediately
 evaluated.  You can also examine the symbol table, get stack
 backtraces, check variable values, set breakpoints, and other
 operations typically found in symbolic debuggers.
+
+=cut
 
 =head2 Is there a Perl shell?
 
@@ -812,3 +816,6 @@ domain.  You are permitted and encouraged to use this code and any
 derivatives thereof in your own programs for fun or for profit as you
 see fit.  A simple comment in the code giving credit to the FAQ would
 be courteous but is not required.
+
+=cut
+

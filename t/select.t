@@ -9,7 +9,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 5 };
+BEGIN { plan tests => 7 };
 use Pod::Simple::Select;
 
 BEGIN {
@@ -38,7 +38,7 @@ my $outfile = '10000';
 
 foreach my $file (
   'perlcyg.pl',
-  ###'perlfaq.pm',
+  'perlfaq.pm',
   'perlvar.pm',
 ) {
 
@@ -117,13 +117,6 @@ sub compare2 {
   if($out[0] eq $out[1]) {
     ok 1;
     return 0;
-  #} elsif( do{
-  #  for ($out[0], $out[1]) { tr/ //d; };
-  #  $out[0] eq $out[1];
-  #}){
-  #  print "# Differ only in whitespace.\n";
-  #  ok 1;
-  #  return 0;
   } else {
     #ok $out[0], $out[1];
     
