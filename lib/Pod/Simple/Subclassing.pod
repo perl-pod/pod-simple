@@ -998,6 +998,8 @@ of the TODO and TODO attributes of LE<lt>...E<gt> elements
 L<Pod::Escapes> -- the module the Pod::Simple uses for evaluating
 EE<lt>...E<gt> content
 
+L<Pod::Simple::Select> -- extract selected sections of Pod
+
 L<Pod::Simple::Text> -- a simple plaintext formatter for Pod
 
 L<Pod::Simple::TextContent> -- like Pod::Simple::Text, but
