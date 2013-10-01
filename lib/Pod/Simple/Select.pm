@@ -90,13 +90,11 @@ sub podselect {  # for compatibility with Pod::Select
     $parser->select( @{$opts{'-sections'}} );
   }
   my $out_fh;
-  my $output = exists $opts{'-output'} ? $opts{'-output'} : '>&STDOUT';
-  if ( $output eq '>&STDOUT' ) {
-    $out_fh = \*STDOUT;
-  } elsif ( $output eq '>&STDERR' ) {
-    $out_fh = \*STDERR;
+  my $output = $opts{'-output'};
+  if ( ($output eq '>&STDOUT') || ($output eq '>&STDERR') ) {
+    $out_fh = $output;
   } else {
-    open $out_fh, '>', $output or Carp::croak "Could not write file '$output': $!\n";
+    open $out_fh, '>', $output or Carp::croak "Could not write to file '$output': $!\n";
   }
   $parser->output_fh( $out_fh );
 
