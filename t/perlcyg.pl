@@ -1,3 +1,12 @@
+#! /usr/bin/env perl
+
+use strict;
+use warnings;
+
+my $name = 'World';
+print "Hello $name\n";
+exit();
+
 =head1 NAME
 
 README.cygwin - Perl for Cygwin
