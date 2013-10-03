@@ -128,7 +128,6 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
     if(!$self->{'in_pod'}) {
 
-      ####
       # Check for start and end of multi-line strings
       if ($self->{'in_mlstr'}) {
         if ($self->is_ending_mlstr($line, $self->{'in_mlstr'})) {
@@ -144,12 +143,8 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
           $self->{'in_mlstr'} = $mlstr_ending;
         }
       }
-      ####
 
-      ####
-      #if($line =~ m/^=([a-zA-Z]+)/s) {
       if( ($line =~ m/^=([a-zA-Z]+)/s) && (not $self->{'in_mlstr'}) ) {
-      ####
         if($1 eq 'cut') {
           $self->scream(
             $self->{'line_count'},
@@ -296,16 +291,19 @@ sub is_starting_mlstr {
   my ($self, $line) = @_;
   my $ending_re = undef;
 
-  # Remove everything before an equal sign
-  $line =~ s/^.*?=//;
+  if ($line =~ m/\S+\s*=/) {
 
-  if ( $line =~ m/^\s*<<\s*["']?(\s*[a-z0-9]+)["']?/i ) {
-    # Catch heredocs
-    $ending_re = '^'.$1;
-  } else {
-    # Catch quoted strings
-    $line = $self->remove_escaped_quotelike($line);
-    $ending_re = $self->find_odd_quotelike($line);
+    # Remove everything before an equal sign
+    $line =~ s/^.*?=//;
+
+    if ( $line =~ m/^\s*<<\s*["']?(\s*[a-z0-9]+)["']?/i ) {
+      # Catch heredocs
+      $ending_re = '^'.$1;
+    } else {
+      # Catch quoted strings
+      $line = $self->remove_escaped_quotelike($line);
+      $ending_re = $self->find_odd_quotelike($line);
+    }
   }
 
   return $ending_re;
@@ -317,24 +315,12 @@ sub is_ending_mlstr {
   # Check if this line is the last line of a multi-line string (heredoc or
   # quoted string)
   my ($self, $line, $ending_re) = @_;
-
   my $ret = undef;
-
-  ####
-  #print "Line: '$line'\n";
-  #print "regexp: '$ending_re'\n";
-  #print "defined(regexp)? ".defined($ending_re)."\n";;
-  ####
 
   if (defined $ending_re) {
     # Match regular expression
     $line = $self->remove_escaped_quotelike($line);
     $ret = ($line =~ m/$ending_re/) ? 1 : 0;
-
-    ####
-    #print "Line: '$line'\n";
-    #print "Matched regexp? $ret\n";
-    ####
 
     # Verify that another string was not opened again  
     if ( ($ret == 1) && ($ending_re !~ /^\^/) ) {
