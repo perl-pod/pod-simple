@@ -32,14 +32,14 @@ sub _handle_text {
   DEBUG and print "== \"$line\"\n";
   $line .= "\n";
   print {$self->{'output_fh'}}
-        (defined $self->select ? $self->_filter($line) : $line);
+        ( (defined $self->select) ? $self->_filter($line) : $line);
   return 1;
 }
 
 
 sub _filter {
   my ($self, $line) = @_;
-  ### filter line based on sections stored in $self->select()
+  ### TODO: filter line based on sections stored in $self->select()
   return $line;
 }
 
@@ -59,6 +59,7 @@ sub select {  # for compatibility with Pod::Select
         Carp::croak "Section should be specified as a scalar but got a ".
           ref($section)." reference\n";
       }
+      Carp::carp "Selecting -sections is not implemented!\n"; #### TODO
     }
     $self->{sections} = \@sections;
   }
@@ -91,34 +92,28 @@ sub podselect {  # for compatibility with Pod::Select
   }
   my $out_fh;
   my $output = $opts{'-output'};
-  if ( ($output eq '>&STDOUT') || ($output eq '>&STDERR') ) {
-    $out_fh = $output;
-  } else {
-    open $out_fh, '>', $output or Carp::croak "Could not write to file '$output': $!\n";
+  if (defined $output) {
+    if ( ($output eq '>&STDOUT') || ($output eq '>&STDERR') ) {
+      $out_fh = *STDOUT;
+    } else {
+      open $out_fh, '>', $output or Carp::croak "Could not write to file '$output': $!\n";
+    }
+    $parser->output_fh( $out_fh );
   }
-  $parser->output_fh( $out_fh );
 
   # Parse files
   if (not @files) {
     @files = ('-'); # use STDIN by default
   }
   for my $file (@files) {
-
-    # Handle '', '-' or '<&STDIN' 
-
-    #my $ref = ref($file);
-    #if ($ref) {
-    #  Carp::croak "Expected a file name but got a $ref reference\n";
-    #}
-    #### sanity check needed? Pod::Simple::parse_file will check that file is ok?
-
-    # Select the desired sections
-    #$parser->parse_from_file($file, $output);
-
+    if ( ($file eq '') || ($file eq '-') || ($file eq '<&STDIN') ) {
+      $file = *STDIN;
+    }
+    $parser->parse_file($file);
   }
 
   # Close filehandle
-  if ( (not $output eq '>&STDOUT') && (not $output eq '>&STDERR') ) {
+  if ( (defined $output) && (not $output eq '>&STDOUT') && (not $output eq '>&STDERR') ) {
     close $out_fh;
   }
 
@@ -166,7 +161,7 @@ Each of the C<$section_spec> arguments should be specified as described
 in L<"SECTION SPECIFICATIONS">. If no C<$section_spec> arguments are
 given, B<all> sections are processed.
 
-=head1 FUNCTION
+=head1 FUNCTIONS
 
 The following function is exported by this module. Please note that this
 is a function (not a method) and therefore does not take an implicit
@@ -191,8 +186,8 @@ processed as follows:
 
 =item -output
 
-A string corresponding to the desired output file (or ">&STDOUT"
-or ">&STDERR"). The default is to use standard output.
+A string corresponding to the desired output file (or '>&STDOUT'
+or '>&STDERR'). The default is to use standard output.
 
 =item -sections
 
