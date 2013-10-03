@@ -1,7 +1,7 @@
 
 require 5;
 package Pod::Simple::Select;
-$VERSION = '3.20';
+$VERSION = '3.29';
 
 BEGIN {@ISA = qw(Pod::Simple Exporter)}
 
