@@ -64,39 +64,20 @@ sub podselect {  # for compatibility with Pod::Select
       ($key => $val);
     } (keys %opts);
   }
-  my @files = @_;
+  my @inputs = @_ ? @_ : ();
 
   # Setup Pod parser
   my $parser = Pod::Simple::Select->new;
-  if (exists $opts{'-sections'}) {
+  if (defined $opts{'-sections'}) {
     $parser->select( @{$opts{'-sections'}} );
-  }
-  my $out_fh;
-  my $output = $opts{'-output'};
-  if (defined $output) {
-    if ( ($output eq '>&STDOUT') || ($output eq '>&STDERR') ) {
-      $out_fh = *STDOUT;
-    } else {
-      open $out_fh, '>', $output or Carp::croak "Could not write to file '$output': $!\n";
-    }
-    $parser->output_fh( $out_fh );
   }
 
   # Parse files
-  if (not @files) {
-    @files = ('-'); # use STDIN by default
+  my $output = $opts{'-output'};
+  for my $input (@inputs) {
+    $parser->parse_from_file($input, $output);
   }
-  for my $file (@files) {
-    if ( ($file eq '') || ($file eq '-') || ($file eq '<&STDIN') ) {
-      $file = *STDIN;
-    }
-    $parser->parse_file($file);
-  }
-
-  # Close filehandle
-  if ( (defined $output) && (not $output eq '>&STDOUT') && (not $output eq '>&STDERR') ) {
-    close $out_fh;
-  }
+  # parse_from_file() should take care of closing created filehandles
 
   return 1;
 }
@@ -132,19 +113,16 @@ __END__
 
 Pod::Simple::Select -- Extract selected sections of Pod
 
-
 =head1 SYNOPSIS
 
    perl -MPod::Simple::Select -e \
     "exit Pod::Simple::Select->filter(shift)->any_errata_seen" \
     thingy.pod
 
-
 =head1 DESCRIPTION
 
 This module is for extracting Pod from Perl files and displaying only the
 desired sections. It aims at replacing the module L<Pod::Select>.
-
 
 =head1 OBJECT METHODS
 
@@ -188,7 +166,8 @@ processed as follows:
 =item -output
 
 A string corresponding to the desired output file (or '>&STDOUT'
-or '>&STDERR'). The default is to use standard output.
+or '>&STDERR'), or filehandle to write on. The default is to use
+standard output.
 
 =item -sections
 
@@ -200,10 +179,9 @@ specifications are given, then all sections of the PODs are used.
 =back
 
 All other arguments are optional and should correspond to the names
-of input files containing POD sections. A file name of '', '-' or
-'<&STDIN' will be interpreted to mean standard input (which is the
+of input files (or filehandles) containing POD sections. A file name of
+'', '-' or '<&STDIN' means to read from standard input (which is the
 default if no filenames are given).
-
 
 =head1 SECTION SPECIFICATIONS
 
@@ -275,13 +253,11 @@ C</!.+>
 
 =back 
 
-
 =head1 SEE ALSO
 
 L<Pod::Simple>
 
 The older library, L<Pod::Select>, upon which this one is based.
-
 
 =head1 SUPPORT
 
@@ -296,7 +272,6 @@ to clone L<git://github.com/theory/pod-simple.git> and send patches!
 Patches against Pod::Simple are welcome. Please send bug reports to
 <bug-pod-simple@rt.cpan.org>.
 
-
 =head1 COPYRIGHT AND DISCLAIMERS
 
 Copyright (c) 2002 Sean M. Burke.
@@ -307,7 +282,6 @@ under the same terms as Perl itself.
 This program is distributed in the hope that it will be useful, but
 without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.
-
 
 =head1 AUTHOR
 
