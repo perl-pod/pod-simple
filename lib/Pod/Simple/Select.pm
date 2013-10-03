@@ -54,7 +54,7 @@ sub select {  # for compatibility with Pod::Select
 sub podselect {  # for compatibility with Pod::Select
   # Process arguments
   my %opts;
-  if (ref $_[0]) {
+  if (ref $_[0] eq 'HASH') {
     %opts = %{shift()};
     # For backward compatibility (all uppercase words)
     %opts = map {
