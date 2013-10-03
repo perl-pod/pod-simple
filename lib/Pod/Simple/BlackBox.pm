@@ -127,24 +127,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     DEBUG > 5 and print "# Parsing line: [$line]\n";
 
     if(!$self->{'in_pod'}) {
-
-      # Check for start and end of multi-line strings
-      if ($self->{'in_mlstr'}) {
-        if ($self->is_ending_mlstr($line, $self->{'in_mlstr'})) {
-          DEBUG > 5 and print "# Finishing a multi-line string.\n";
-          $self->{'in_mlstr'} = 0;
-        } else {
-          DEBUG > 5 and print "# Continuing a multi-line string.\n";
-        }
-      } else {
-        my $mlstr_ending = $self->is_starting_mlstr($line);
-        if (defined $mlstr_ending) {
-          DEBUG > 5 and print "# Starting a multi-line string.\n";
-          $self->{'in_mlstr'} = $mlstr_ending;
-        }
-      }
-
-      if( ($line =~ m/^=([a-zA-Z]+)/s) && (not $self->{'in_mlstr'}) ) {
+      if($line =~ m/^=([a-zA-Z]+)/s) { 
         if($1 eq 'cut') {
           $self->scream(
             $self->{'line_count'},
@@ -279,93 +262,6 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
   DEBUG > 1 and print(pretty(@$paras), "\n");
   return $self;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-sub is_starting_mlstr {
-  # Check if this line is the first line of a multi-line string (heredoc or
-  # quoted string). If it is, return the string that should close that
-  # multiline string, e.g. a single-quote, double-quote or heredoc identifier.
-  # Otherwise, return undef
-  my ($self, $line) = @_;
-  my $ending_re = undef;
-
-  if ($line =~ m/\S+\s*=/) {
-
-    # Remove everything before an equal sign
-    $line =~ s/^.*?=//;
-
-    if ( $line =~ m/^\s*<<\s*["']?(\s*[a-z0-9]+)["']?/i ) {
-      # Catch heredocs
-      $ending_re = '^'.$1;
-    } else {
-      # Catch quoted strings
-      $line = $self->remove_escaped_quotelike($line);
-      $ending_re = $self->find_odd_quotelike($line);
-    }
-  }
-
-  return $ending_re;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-sub is_ending_mlstr {
-  # Check if this line is the last line of a multi-line string (heredoc or
-  # quoted string)
-  my ($self, $line, $ending_re) = @_;
-  my $ret = undef;
-
-  if (defined $ending_re) {
-    # Match regular expression
-    $line = $self->remove_escaped_quotelike($line);
-    $ret = ($line =~ m/$ending_re/) ? 1 : 0;
-
-    # Verify that another string was not opened again  
-    if ( ($ret == 1) && ($ending_re !~ /^\^/) ) {
-      $ret = $self->find_odd_quotelike($line) ? 1 : 0;
-    }
-  }
-
-  return $ret;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-sub remove_escaped_quotelike {
-  my ($self, $line) = @_;
-  # Remove escaped quotelike symbols such as \"
-  $line =~ s/(\\"|\\'|\\`|\\\)|\\]|\\})//g;
-  return $line;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-sub find_odd_quotelike {
-  my ($self, $line) = @_;
-
-  # Change q[] and co. to ]]
-  $line =~ s/q+\(/)/g;
-  $line =~ s/q+\[/]/g;
-  $line =~ s/q+{/}/g;
-
-  for my $var ( qw( " ' ` \) ] } ) ) {
-    my $char = $var;
-    my $count = 0;
-    if ($char eq ')') {
-      $char = '\)';
-    }
-    while ($line =~ m/$char/g) {
-      $count++;
-    } 
-    if ($count % 2) {
-      # Count was odd, i.e. a multi-line string was started or stopped
-      return $char;
-    }
-  }
-
-  return undef;
 }
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
