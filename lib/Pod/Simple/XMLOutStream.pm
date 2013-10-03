@@ -5,7 +5,7 @@ use strict;
 use Carp ();
 use Pod::Simple ();
 use vars qw( $ATTR_PAD @ISA $VERSION $SORT_ATTRS);
-$VERSION = '3.20';
+$VERSION = '3.29';
 BEGIN {
   @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;
@@ -20,6 +20,7 @@ sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
+  $new->keep_encoding_directive(1);
   #$new->accept_codes('VerbatimFormatted');
   return $new;
 }
@@ -124,19 +125,6 @@ The older (and possibly obsolete) libraries L<Pod::PXML>, L<Pod::XML>
 
 TODO: An example or two of =extend, then point to Pod::Simple::Subclassing
 
-
-=head1 ASK ME!
-
-If you actually want to use Pod as a format that you want to render to
-XML (particularly if to an XML instance with more elements than normal
-Pod has), please email me (C<sburke@cpan.org>) and I'll probably have
-some recommendations.
-
-For reasons of concision and energetic laziness, some methods and
-options in this module (and the dozen modules it depends on) are
-undocumented; but one of those undocumented bits might be just what
-you're looking for.
-
 =head1 SEE ALSO
 
 L<Pod::Simple>, L<Pod::Simple::Text>, L<Pod::Spell>
@@ -148,7 +136,7 @@ pod-people@perl.org mail list. Send an empty email to
 pod-people-subscribe@perl.org to subscribe.
 
 This module is managed in an open GitHub repository,
-L<http://github.com/theory/pod-simple/>. Feel free to fork and contribute, or
+L<https://github.com/theory/pod-simple/>. Feel free to fork and contribute, or
 to clone L<git://github.com/theory/pod-simple.git> and send patches!
 
 Patches against Pod::Simple are welcome. Please send bug reports to

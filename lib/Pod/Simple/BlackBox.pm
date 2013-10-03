@@ -1,4 +1,3 @@
-
 package Pod::Simple::BlackBox;
 #
 # "What's in the box?"  "Pain."
@@ -23,7 +22,7 @@ use integer; # vroom!
 use strict;
 use Carp ();
 use vars qw($VERSION );
-$VERSION = '3.20';
+$VERSION = '3.29';
 #use constant DEBUG => 7;
 BEGIN {
   require Pod::Simple;
@@ -91,6 +90,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       if( ($line = $source_line) =~ s/^\xEF\xBB\xBF//s ) {
         DEBUG and print "UTF-8 BOM seen.  Faking a '=encoding utf8'.\n";
         $self->_handle_encoding_line( "=encoding utf8" );
+        delete $self->{'_processed_encoding'};
         $line =~ tr/\n\r//d;
         
       } elsif( $line =~ s/^\xFE\xFF//s ) {
@@ -123,28 +123,28 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       }
     }
 
+    # Try to guess encoding. Inlined for performance reasons.
+    if(!$self->{'parse_characters'} && !$self->{'encoding'}
+      && ($self->{'in_pod'} || $line =~ /^=/s)
+      && $line =~ /[^\x00-\x7f]/
+    ) {
+      my $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
+      $self->_handle_encoding_line( "=encoding $encoding" );
+      delete $self->{'_processed_encoding'};
+      $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
+
+      my ($word) = $line =~ /(\S*[^\x00-\x7f]\S*)/;
+
+      $self->whine(
+        $self->{'line_count'},
+        "Non-ASCII character seen before =encoding in '$word'. Assuming $encoding"
+      );
+    }
 
     DEBUG > 5 and print "# Parsing line: [$line]\n";
 
     if(!$self->{'in_pod'}) {
-
-      # Check for start and end of multi-line strings
-      if ($self->{'in_mlstr'}) {
-        if ($self->is_ending_mlstr($line, $self->{'in_mlstr'})) {
-          DEBUG > 5 and print "# Finishing a multi-line string.\n";
-          $self->{'in_mlstr'} = 0;
-        } else {
-          DEBUG > 5 and print "# Continuing a multi-line string.\n";
-        }
-      } else {
-        my $mlstr_ending = $self->is_starting_mlstr($line);
-        if (defined $mlstr_ending) {
-          DEBUG > 5 and print "# Starting a multi-line string.\n";
-          $self->{'in_mlstr'} = $mlstr_ending;
-        }
-      }
-
-      if( ($line =~ m/^=([a-zA-Z]+)/s) && (not $self->{'in_mlstr'}) ) {
+      if($line =~ m/^=([a-zA-Z]+)/s) { 
         if($1 eq 'cut') {
           $self->scream(
             $self->{'line_count'},
@@ -194,6 +194,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     # HERE WE CATCH =encoding EARLY!
     if( $line =~ m/^=encoding\s+\S+\s*$/s ) {
       if ($self->{raw_mode}) { $self->_handle_text($line); next; }; ###
+      next if $self->parse_characters;   # Ignore this line
       $line = $self->_handle_encoding_line( $line );
     }
 
@@ -283,96 +284,11 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-sub is_starting_mlstr {
-  # Check if this line is the first line of a multi-line string (heredoc or
-  # quoted string). If it is, return the string that should close that
-  # multiline string, e.g. a single-quote, double-quote or heredoc identifier.
-  # Otherwise, return undef
-  my ($self, $line) = @_;
-  my $ending_re = undef;
-
-  if ($line =~ m/\S+\s*=/) {
-
-    # Remove everything before an equal sign
-    $line =~ s/^.*?=//;
-
-    if ( $line =~ m/^\s*<<\s*["']?(\s*[a-z0-9]+)["']?/i ) {
-      # Catch heredocs
-      $ending_re = '^'.$1;
-    } else {
-      # Catch quoted strings
-      $line = $self->remove_escaped_quotelike($line);
-      $ending_re = $self->find_odd_quotelike($line);
-    }
-  }
-
-  return $ending_re;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-sub is_ending_mlstr {
-  # Check if this line is the last line of a multi-line string (heredoc or
-  # quoted string)
-  my ($self, $line, $ending_re) = @_;
-  my $ret = undef;
-
-  if (defined $ending_re) {
-    # Match regular expression
-    $line = $self->remove_escaped_quotelike($line);
-    $ret = ($line =~ m/$ending_re/) ? 1 : 0;
-
-    # Verify that another string was not opened again  
-    if ( ($ret == 1) && ($ending_re !~ /^\^/) ) {
-      $ret = $self->find_odd_quotelike($line) ? 1 : 0;
-    }
-  }
-
-  return $ret;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-sub remove_escaped_quotelike {
-  my ($self, $line) = @_;
-  # Remove escaped quotelike symbols such as \"
-  $line =~ s/(\\"|\\'|\\`|\\\)|\\]|\\})//g;
-  return $line;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-sub find_odd_quotelike {
-  my ($self, $line) = @_;
-
-  # Change q[] and co. to ]]
-  $line =~ s/q+\(/)/g;
-  $line =~ s/q+\[/]/g;
-  $line =~ s/q+{/}/g;
-
-  for my $var ( qw( " ' ` \) ] } ) ) {
-    my $char = $var;
-    my $count = 0;
-    if ($char eq ')') {
-      $char = '\)';
-    }
-    while ($line =~ m/$char/g) {
-      $count++;
-    } 
-    if ($count % 2) {
-      # Count was odd, i.e. a multi-line string was started or stopped
-      return $char;
-    }
-  }
-
-  return undef;
-}
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 sub _handle_encoding_line {
   my($self, $line) = @_;
   
+  return if $self->parse_characters;
+
   # The point of this routine is to set $self->{'_transcoder'} as indicated.
 
   return $line unless $line =~ m/^=encoding\s+(\S+)\s*$/s;
@@ -428,6 +344,7 @@ sub _handle_encoding_line {
     $@ && die( $enc_error =
       "Really unexpected error setting up encoding $e: $@\nAborting"
     );
+    $self->{'detected_encoding'} = $e;
 
   } else {
     my @supported = Pod::Simple::Transcode::->all_encodings;
@@ -458,8 +375,13 @@ sub _handle_encoding_line {
     $self->scream( $self->{'line_count'}, $enc_error );
   }
   push @{ $self->{'encoding_command_statuses'} }, $enc_error;
+  if (defined($self->{'_processed_encoding'})) {
+    # Should never happen
+    die "Nested processed encoding.";
+  }
+  $self->{'_processed_encoding'} = $orig;
 
-  return '=encoding ALREADYDONE';
+  return $line;
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -475,7 +397,11 @@ sub _handle_encoding_second_level {
 
   DEBUG > 2 and print "Ogling encoding directive: =encoding $content\n";
   
-  if($content eq 'ALREADYDONE') {
+  if (defined($self->{'_processed_encoding'})) {
+    #if($content ne $self->{'_processed_encoding'}) {
+    #  Could it happen?
+    #}
+    delete $self->{'_processed_encoding'};
     # It's already been handled.  Check for errors.
     if(! $self->{'encoding_command_statuses'} ) {
       DEBUG > 2 and print " CRAZY ERROR: It wasn't really handled?!\n";
@@ -746,8 +672,10 @@ sub _ponder_paragraph_buffer {
           if($item_type eq 'text') {
             # Nothing special needs doing for 'text'
           } elsif($item_type eq 'number' or $item_type eq 'bullet') {
-            die "Unknown item type $item_type"
-             unless $item_type eq 'number' or $item_type eq 'bullet';
+            $self->whine(
+              $para->[1]{'start_line'},
+              "Expected text after =item, not a $item_type"
+            );
             # Undo our clobbering:
             push @$para, $para->[1]{'~orig_content'};
             delete $para->[1]{'number'};
@@ -876,8 +804,8 @@ sub _ponder_paragraph_buffer {
       } elsif($para_type eq '=encoding') {
         # Not actually acted on here, but we catch errors here.
         $self->_handle_encoding_second_level($para);
-
-        next;  # and skip
+        next unless $self->keep_encoding_directive;
+        $para_type = 'Plain';
       } elsif($para_type eq '~Verbatim') {
         $para->[0] = 'Verbatim';
         $para_type = '?Verbatim';
@@ -1354,8 +1282,10 @@ sub _ponder_item {
     if($item_type eq 'text') {
       # Nothing special needs doing for 'text'
     } elsif($item_type eq 'number' or $item_type eq 'bullet') {
-      die "Unknown item type $item_type"
-       unless $item_type eq 'number' or $item_type eq 'bullet';
+      $self->whine(
+          $para->[1]{'start_line'},
+          "Expected text after =item, not a $item_type"
+      );
       # Undo our clobbering:
       push @$para, $para->[1]{'~orig_content'};
       delete $para->[1]{'number'};
@@ -1563,10 +1493,12 @@ sub _traverse_treelet_bit {  # for use only by the routine above
   my $scratch;
   $self->_handle_element_start(($scratch=$name), shift @_);
   
-  foreach my $x (@_) {
-    if(ref($x)) {
+  while (@_) {
+    my $x = shift;
+    if (ref($x)) {
       &_traverse_treelet_bit($self, @$x);
     } else {
+      $x .= shift while @_ && !ref($_[0]);
       $self->_handle_text($x);
     }
   }
@@ -1587,6 +1519,11 @@ sub _closers_for_all_curr_open {
     if($copy[0] eq '=for') {
       $copy[0] = '=end';
     } elsif($copy[0] eq '=over') {
+      $self->whine(
+        $still_open->[1]{start_line} ,
+        "=over without closing =back"
+      );
+
       $copy[0] = '=back';
     } else {
       die "I don't know how to auto-close an open $copy[0] region";
@@ -2043,7 +1980,7 @@ sub pretty { # adopted from Class::Classless
       $_ eq '0' # very common case
       or(
          m/^-?(?:[123456789]\d*|0)(?:\.\d+)?$/s
-         and $_ ne '-0' # the strange case that that RE lets thru
+         and $_ ne '-0' # the strange case that RE lets thru
       )
     ) { $_;
     } else {

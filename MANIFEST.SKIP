@@ -41,6 +41,7 @@
 \.tmp$
 \.#
 \.rej$
+\.travis.yml
 
 # Avoid OS-specific files/dirs
 # Mac OSX metadata

@@ -1,12 +1,11 @@
 
-
 require 5;
 package Pod::Simple::SimpleTree;
 use strict;
 use Carp ();
 use Pod::Simple ();
 use vars qw( $ATTR_PAD @ISA $VERSION $SORT_ATTRS);
-$VERSION = '3.20';
+$VERSION = '3.29';
 BEGIN {
   @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;
@@ -121,7 +120,7 @@ the form: C<[ I<elementname>, \%attributes, I<...subnodes...> ]>.
 See the example tree dump in the Synopsis, above.
 
 Every text node in the tree is represented by a simple (non-ref)
-string scalar.  So you can test C<ref($node)> to see whather you have
+string scalar.  So you can test C<ref($node)> to see whether you have
 an element node or just a text node.
 
 The top node in the tree is C<[ 'Document', \%attributes,
@@ -143,7 +142,7 @@ pod-people@perl.org mail list. Send an empty email to
 pod-people-subscribe@perl.org to subscribe.
 
 This module is managed in an open GitHub repository,
-L<http://github.com/theory/pod-simple/>. Feel free to fork and contribute, or
+L<https://github.com/theory/pod-simple/>. Feel free to fork and contribute, or
 to clone L<git://github.com/theory/pod-simple.git> and send patches!
 
 Patches against Pod::Simple are welcome. Please send bug reports to

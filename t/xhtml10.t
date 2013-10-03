@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 56;
+use Test::More tests => 60;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -23,7 +23,7 @@ for my $spec (
     [ 'fo$bar' => 'fo-bar', 'fo-bar' ],
     [ 'f12'    => 'f12',    'f12'    ],
     [ '13'     => 'pod13',  'pod13'  ],
-    [ '**.:'   => 'pod-.:', 'pod-.:' ],
+    [ '**.:'   => 'pod', 'pod' ],
 ) {
     is $parser->idify( $spec->[0] ), $spec->[1],
         qq{ID for "$spec->[0]" should be "$spec->[1]"};
@@ -74,8 +74,8 @@ ok $parser->parse_string_document( "=head1 Foo B<Bar>\n\n=head1 Foo B<Baz>" ),
     'Parse two multiword headers';
 is $results, <<'EOF', 'Should have the index';
 <ul id="index">
-  <li><a href="#Foo-Bar">Foo <b>Bar</b></a></li>
-  <li><a href="#Foo-Baz">Foo <b>Baz</b></a></li>
+  <li><a href="#Foo-Bar">Foo Bar</a></li>
+  <li><a href="#Foo-Baz">Foo Baz</a></li>
 </ul>
 
 <h1 id="Foo-Bar">Foo <b>Bar</b></h1>
@@ -97,6 +97,22 @@ is $results, <<'EOF', 'Should have both and the index';
 <h1 id="Bar">Bar</h1>
 
 EOF
+
+initialize($parser, $results);
+ok $parser->parse_string_document( "=head1 Foo C<Bar>\n\n=head1 C<Baz>" ),
+    'Parse two headers with C<> formatting';
+is $results, <<'EOF', 'Should have the index';
+<ul id="index">
+  <li><a href="#Foo-Bar">Foo Bar</a></li>
+  <li><a href="#Baz">Baz</a></li>
+</ul>
+
+<h1 id="Foo-Bar">Foo <code>Bar</code></h1>
+
+<h1 id="Baz"><code>Baz</code></h1>
+
+EOF
+
 initialize($parser, $results);
 ok $parser->parse_string_document( "=head1 Foo\n\n=head1 Bar\n\n=head1 Baz" ),
     'Parse three headers';
@@ -653,6 +669,38 @@ is $results, <<'EOF', 'Do not anchor =item directives';
 </ol>
 
 EOF
+
+$ENV{FOO}= 1;
+
+initialize($parser, $results);
+ok $parser->parse_string_document( <<'EOPOD' ), 'Parse POD';
+=head1 Foo
+
+Test links from perlpodspec: L</"About LE<lt>...E<gt> Codes">
+
+=head1 About LE<lt>...E<gt> Codes
+
+Here it is
+EOPOD
+
+my $id = 'About-L...-Codes'; # what should this be?
+
+is $results, <<EOF, 'anchor and h1 use same section id for complex sections';
+<ul id="index">
+  <li><a href="#Foo">Foo</a></li>
+  <li><a href="#$id">About L&lt;...&gt; Codes</a></li>
+</ul>
+
+<h1 id="Foo">Foo</h1>
+
+<p>Test links from perlpodspec: <a href="#$id">&quot;About L&lt;...&gt; Codes&quot;</a></p>
+
+<h1 id="$id">About L&lt;...&gt; Codes</h1>
+
+<p>Here it is</p>
+
+EOF
+
 sub initialize {
 	$_[0] = Pod::Simple::XHTML->new;
         $_[0]->html_header('');
