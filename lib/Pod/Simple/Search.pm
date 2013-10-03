@@ -1,10 +1,9 @@
-
 require 5.005;
 package Pod::Simple::Search;
 use strict;
 
 use vars qw($VERSION $MAX_VERSION_WITHIN $SLEEPY);
-$VERSION = '3.20';   ## Current version of this package
+$VERSION = '3.29';   ## Current version of this package
 
 BEGIN { *DEBUG = sub () {0} unless defined &DEBUG; }   # set DEBUG level
 use Carp ();
@@ -834,7 +833,7 @@ C<limit_glob> attribute is used instead.
 
 Setting this attribute to a string value means that the searches should
 begin in the specified subdirectory name (like "Pod" or "File::Find",
-also expressable as "File/Find"). For example, the search option
+also expressible as "File/Find"). For example, the search option
 C<< $search->limit_glob("File::Find::R*") >>
 is the same as the combination of the search options
 C<< $search->limit_re("^File::Find::R") -> dir_prefix("File::Find") >>.
@@ -942,8 +941,7 @@ version than the system's general path dirs in general.)
 The options to this argument is a list of either directories that are
 searched recursively, or files.  (Usually you wouldn't specify files,
 but just dirs.)  Or you can just specify an empty-list, as in
-$name2path; with the
-C<inc> option on, as it is by default, teh
+$name2path; with the C<inc> option on, as it is by default.
 
 The POD names of files are the plain basenames with any Perl-like
 extension (.pm, .pl, .pod) stripped, and path separators replaced by
@@ -1011,7 +1009,7 @@ pod-people@perl.org mail list. Send an empty email to
 pod-people-subscribe@perl.org to subscribe.
 
 This module is managed in an open GitHub repository,
-L<http://github.com/theory/pod-simple/>. Feel free to fork and contribute, or
+L<https://github.com/theory/pod-simple/>. Feel free to fork and contribute, or
 to clone L<git://github.com/theory/pod-simple.git> and send patches!
 
 Patches against Pod::Simple are welcome. Please send bug reports to
