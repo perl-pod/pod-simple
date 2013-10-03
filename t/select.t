@@ -9,7 +9,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 10 };
+BEGIN { plan tests => 15 };
 use Pod::Simple::Select;
 
 BEGIN {
@@ -18,7 +18,6 @@ BEGIN {
     : sub () {time()}
 }
 
-use Pod::Simple::TiedOutFH ();
 
 chdir 't' unless $ENV{PERL_CORE};
 
@@ -42,85 +41,69 @@ ok defined $p->can('podselect');
 
 my $outfile = '10000';
 
-foreach my $file (
-  'perlcyg.pl',
-  'perlfaq.pm',
-  'perlvar.pm',
-) {
 
-  unless(-e source_path($file)) {
-    ok 0;
-    print "# But $file doesn't exist!!\n";
-    exit 1;
-  }
+# Extract entire Pod using object-oriented and functional interface
 
-  my @out;
-  my $precooked = source_path($file);
-  $precooked =~ s<\.p.$><.pod>s;
-  unless(-e $precooked) {
-    ok 0;
-    print "# But $precooked doesn't exist!!\n";
-    exit 1;
-  }
-  
-  print "#\n#\n#\n###################\n# $file\n";
-  $p = Pod::Simple::Select->new;
-  push @out, '';
-  $p->output_string(\$out[-1]);
-  my $t = mytime();
-  $p->parse_file(source_path($file));
-  printf "# %s %s %sb, %.03fs\n",
-   ref($p), source_path($file), length($out[-1]), mytime() - $t ;
-  ok 1;
+for my $style ( qw(method function) ) {
+  for my $file ( qw(perlcyg.pl perlfaq.pm perlvar.pm) ) {
 
-  print "# Reading $precooked...\n";
-  open(IN, $precooked) or die "Can't read-open $precooked: $!";
-  {
-    local $/;
-    push @out, <IN>;
-  }
-  close(IN);
-  print "#   ", length($out[-1]), " bytes pulled in.\n";
-
-  #for (@out) { s/\s+/ /g; s/^\s+//s; s/\s+$//s; }
-
-  my $faily = 0;
-  print "#\n# Now comparing 1 and 2...\n";
-  $faily += compare2($out[0], $out[1]);
-
-  if ($faily) {
-    ++$outfile;
-    
-    my @outnames = map $outfile . $_ , qw(0 1);
-    open(OUT2, ">$outnames[0].txt") || die "Can't write-open $outnames[0].txt: $!";
-
-    foreach my $out (@out) { push @outnames, $outnames[-1];  ++$outnames[-1] };
-    pop @outnames;
-    printf "# Writing to %s.txt .. %s.txt\n", $outnames[0], $outnames[-1];
-    shift @outnames;
-    
-    binmode(OUT2);
-    foreach my $out (@out) {
-      my $outname = shift @outnames;
-      open(OUT, ">$outname.txt") || die "Can't write-open $outname.txt: $!";
-      binmode(OUT);
-      print OUT  $out, "\n";
-      print OUT2 $out, "\n";
-      close(OUT);
+    unless(-e source_path($file)) {
+      ok 0;
+      print "# But $file doesn't exist!!\n";
+      exit 1;
     }
-    close(OUT2);
+
+    my @out;
+    my $precooked = source_path($file);
+    $precooked =~ s<\.p.$><.pod>s;
+    unless(-e $precooked) {
+      ok 0;
+      print "# But $precooked doesn't exist!!\n";
+      exit 1;
+    }
+  
+    print "#\n#\n#\n###################\n# $file\n";
+    push @out, '';
+    my $t = mytime();
+
+    if ($style eq 'method') {
+      $p = Pod::Simple::Select->new;
+      $p->output_string(\$out[-1]);
+      $p->parse_file(source_path($file));
+    } elsif ($style eq 'function') {
+      ++$outfile;
+      my $out = $outfile.'tmp';
+      podselect({-output => $out}, $file);
+      $out[-1] = slurp_file($out);
+      unlink $out;
+    }
+
+    printf "# %s %s %s %sb, %.03fs\n",
+     ref($p), $style, source_path($file), length($out[-1]), mytime() - $t ;
+    ok 1;
+
+    print "# Reading $precooked...\n";
+    push @out, slurp_file($precooked);
+    print "#   ", length($out[-1]), " bytes pulled in.\n";
+
+    #for (@out) { s/\s+/ /g; s/^\s+//s; s/\s+$//s; }
+
+    print "#\n# Now comparing 1 and 2...\n";
+    if (not is_identical($out[0], $out[1])) {
+      ++$outfile;
+      write_files(@out);
+    }
   }
 }
 
-print "# Wrapping up... one for the road...\n";
-ok 1;
+
 print "# --- Done with ", __FILE__, " --- \n";
 exit;
 
 
-sub compare2 {
+sub is_identical {
   my @out = @_;
-  if($out[0] eq $out[1]) {
+  if ($out[0] eq $out[1]) {
     ok 1;
     return 0;
   } else {
@@ -139,14 +122,51 @@ sub compare2 {
       print "#      ^...";
     }
     
-    
-    
     ok 0;
     printf "# Unequal lengths %s and %s\n", length($out[0]), length($out[1]);
     return 1;
   }
 }
 
+
+sub write_files {
+  my ($txt1, $txt2) = @_;
+  my @outnames = map $outfile . $_ , qw(0 1);
+  open my $out_fh2, '>', "$outnames[0].txt" || die "Could not read file $outnames[0].txt: $!";
+
+  for my $txt ($txt1, $txt2) {
+    push @outnames, $outnames[-1];
+    ++$outnames[-1];
+  };
+
+  pop @outnames;
+  printf "# Writing to %s.txt .. %s.txt\n", $outnames[0], $outnames[-1];
+  shift @outnames;
+    
+  binmode $out_fh2;
+  for my $txt ($txt1, $txt2) {
+    my $outname = shift @outnames;
+    open my $out_fh, '>', "$outname.txt" || die "Could not read file $outname.txt: $!";
+    binmode $out_fh;
+    print $out_fh $txt, "\n";
+    print $out_fh2 $txt, "\n";
+    close $out_fh;
+   }
+  close $out_fh2;
+}
+
+
+sub slurp_file {
+  my ($file) = @_;
+  my $content;
+  open my $in, $file or die "Could not read file '$file': $!\n";
+  {
+    local $/;
+    $content = <$in>;
+  }
+  close $in;
+  return $content;
+}
 
 __END__
 

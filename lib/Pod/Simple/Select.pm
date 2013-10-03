@@ -15,6 +15,10 @@ use Carp ();
 
 BEGIN { *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG }
 
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Methods
+
 sub new {
   my $self = shift;
   my $new = $self->SUPER::new(@_);
@@ -23,29 +27,6 @@ sub new {
   return $new;
 }
 
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Pod::Simple parsing interface
-
-sub _handle_text {
-  my ($self, $line) = @_;
-  DEBUG and print "== \"$line\"\n";
-  $line .= "\n";
-  print {$self->{'output_fh'}}
-        ( (defined $self->select) ? $self->_filter($line) : $line);
-  return 1;
-}
-
-
-sub _filter {
-  my ($self, $line) = @_;
-  ### TODO: filter line based on sections stored in $self->select()
-  return $line;
-}
-
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-# Methods
 
 sub select {  # for compatibility with Pod::Select
   # Get or set the Pod sections to use
@@ -118,6 +99,26 @@ sub podselect {  # for compatibility with Pod::Select
   }
 
   return 1;
+}
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Pod::Simple parsing interface
+
+sub _handle_text {
+  my ($self, $line) = @_;
+  DEBUG and print "== \"$line\"\n";
+  $line .= "\n";
+  print {$self->{'output_fh'}}
+        ( (defined $self->select) ? $self->_filter($line) : $line);
+  return 1;
+}
+
+
+sub _filter {
+  my ($self, $line) = @_;
+  ### TODO: filter line based on sections stored in $self->select()
+  return $line;
 }
 
 
