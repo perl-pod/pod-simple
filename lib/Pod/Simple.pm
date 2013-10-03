@@ -105,7 +105,7 @@ __PACKAGE__->_accessorize(
  #  $pod_handler->($line, $self->{'line_count'}, $self) if $pod_handler;
  #   $wl_handler->($line, $self->{'line_count'}, $self) if $wl_handler;
  'parse_empty_lists', # whether to acknowledge empty =over/=back blocks
-
+ 'raw_mode',          # to report entire raw lines instead of Pod elements
 );
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -487,7 +487,7 @@ sub parse_from_file {
   } elsif(ref(\$source) eq 'GLOB') { # stet
   } elsif(ref($source)           ) { # stet
   } elsif(!length $source
-     or $source eq '-' or $source =~ m/^<&(STDIN|0)$/i
+     or $source eq '-' or $source =~ m/^<&(?:STDIN|0)$/i
   ) { 
     $source = *STDIN{IO};
   }
@@ -499,6 +499,8 @@ sub parse_from_file {
      or $to eq '-' or $to =~ m/^>&?(?:STDOUT|1)$/i
   ) {
     $self->output_fh( *STDOUT{IO} );
+  } elsif($to =~ m/^>&(?:STDERR|2)$/i) {
+    $self->output_fh( *STDERR{IO} );
   } else {
     require Symbol;
     my $out_fh = Symbol::gensym();
