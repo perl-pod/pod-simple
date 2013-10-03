@@ -175,14 +175,14 @@ sub _make_search_callback {
     # Make sure it's a file even worth even considering
     if($laborious) {
       unless(
-        m/\.(pod|pm|plx?)\z/i || -x _ and -T _
+        m/\.(t|pod|pm|plx?)\z/i || -x _ and -T _
          # Note that the cheapest operation (the RE) is run first.
       ) {
         $verbose > 1 and print " Brushing off uninteresting $file\n";
         return;
       }
     } else {
-      unless( m/^[-_a-zA-Z0-9]+\.(?:pod|pm|plx?)\z/is ) {
+      unless( m/^[-_a-zA-Z0-9]+\.(?:t|pod|pm|plx?)\z/is ) {
         $verbose > 1 and print " Brushing off oddly-named $file\n";
         return;
       }
