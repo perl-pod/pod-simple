@@ -133,8 +133,7 @@ sub _keep {
         # match and apply 'and' on it with the results of matching the specs.
         my $match = 1;
         for my $i (0 .. MAX_HEAD_LVL-1) {
-          my $name = $self->{section_headings}->[$i];
-          last if not defined $name;
+          my $name = $self->{section_headings}->[$i] || '';
           my $re = $re_specs->[$i];
           my $negated = ($re =~ s/^\!//);
           $match  &= ( $negated ? ($name !~ /${re}/) : ($name =~ /${re}/) );
@@ -188,7 +187,6 @@ sub _compile_section_spec {
       $_ = $_ . '$'  if not /\$$/;
       $_ = '!' . $_  if $negated;
     }
-    $_ = qr/$_/;
   }
   return \@regexs;
 }
