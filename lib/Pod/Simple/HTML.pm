@@ -74,6 +74,7 @@ __PACKAGE__->_accessorize(
  'html_header_before_title',
  'html_header_after_title',
  'html_footer',
+ 'top_anchor',
 
  'index', # whether to add an index at the top of each page
     # (actually it's a table-of-contents, but we'll call it an index,
@@ -208,6 +209,7 @@ sub new {
     "<!-- start doc -->\n",
   );
   $new->html_footer( qq[\n<!-- end doc -->\n\n</body></html>\n] );
+  $new->top_anchor( "<a name='___top' class='dummyTopAnchor' ></a>\n" );
 
   $new->{'Tagmap'} = {%Tagmap};
 
@@ -311,7 +313,7 @@ sub do_beginning {
 sub _add_top_anchor {
   my($self, $text_r) = @_;
   unless($$text_r and $$text_r =~ m/name=['"]___top['"]/) { # a hack
-    $$text_r .= "<a name='___top' class='dummyTopAnchor' ></a>\n";
+    $$text_r .= $self->top_anchor || '';
   }
   return;
 }
@@ -988,6 +990,13 @@ and including the opening <title> tag. The following call will set it to be a si
 file:
 
   $p->html_header_before_title('<html><head><title>');
+
+=head2 top_anchor
+
+By default Pod::Simple::HTML adds a dummy anchor at the top of the HTML.
+You can change it by calling
+
+  $p->top_anchor('<a name="zz" >');
 
 =head2 html_h_level
 

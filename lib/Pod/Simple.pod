@@ -42,8 +42,8 @@ of Pod::Simple.
 =item C<< $parser->output_fh( *OUT ); >>
 
 This sets the filehandle that C<$parser>'s output will be written to.
-You can pass C<*STDOUT>, otherwise you should probably do something
-like this:
+You can pass C<*STDOUT> or C<*STDERR>, otherwise you should probably do
+something like this:
 
     my $outfile = "output.txt";
     open TXTOUT, ">$outfile" or die "Can't write to $outfile: $!";
