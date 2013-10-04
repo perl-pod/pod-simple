@@ -12,6 +12,7 @@ use strict;
 use warnings;
 use Pod::Simple ();
 use Carp ();
+use constant MAX_HEAD_LVL => 4;
 
 BEGIN { *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG }
 
@@ -28,21 +29,23 @@ sub new {
 }
 
 
-sub select {  # for compatibility with Pod::Select
+sub select {
   # Get or set the Pod sections to use
   my ($self, @sections) = @_;
   if (@sections) {
-    for my $section (@sections) {
-      if (not defined $section) {
+    my @regexs;
+    for my $spec (@sections) {
+      if (not defined $spec) {
         Carp::croak "Section should be specified as a scalar but got undef\n";
       }
-      if (ref $section) {
+      if (ref $spec) {
         Carp::croak "Section should be specified as a scalar but got a ".
-          ref($section)." reference\n";
+          ref($spec)." reference\n";
       }
-      Carp::carp "Selecting -sections is not implemented!\n"; #### TODO
+      push @regexs, $self->_compile_section_spec($spec);
     }
     $self->{sections} = \@sections;
+    $self->{regexs}   = \@regexs;
   }
   return (exists $self->{sections}) ? @{$self->{sections}} : undef;
 }
@@ -51,7 +54,7 @@ sub select {  # for compatibility with Pod::Select
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Functions
 
-sub podselect {  # for compatibility with Pod::Select
+sub podselect {  # 100% compatible with Pod::Select
   # Process arguments
   my %opts;
   if (ref $_[0] eq 'HASH') {
@@ -90,19 +93,28 @@ sub _handle_text {
   my ($self, $line) = @_;
   DEBUG and print "== \"$line\"\n";
   $line .= "\n";
-  print {$self->{'output_fh'}}
-        ( $self->{sections} ? $self->_filter($line) : $line );
+  if ( (not defined $self->{sections}) || $self->_keep($line) ) {
+    print {$self->{'output_fh'}} $line;
+  }
   return 1;
 }
 
 
-sub _filter {
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# Helper methods
+
+my $prev_keep;
+
+sub _keep {
+  # Method to decide whether to keep a line or not based on -section specs
   my ($self, $line) = @_;
-  
+
   # Set headings
-  if ($line =~ m/^=head([1-4])\s+(.*)$/) {
+  my $para_has_changed = 0;
+  if ($line =~ m/^=head([1-MAX_HEAD_LVL])\s+(.*)$/) {
+    $para_has_changed = 1;
     my ($new_level, $new_heading) = ($1, $2);
-    my $level = $self->_curr_headings || 0;
+    my $level = $self->{section_headings} || 0;
     $self->{section_headings}->[$new_level-1] = $new_heading;
     if ($new_level < $level) {
       for ($new_level .. scalar @{$self->{section_headings}} - 1) {
@@ -111,29 +123,77 @@ sub _filter {
     }
   }
 
-  ### TODO: filter line based on sections stored in $self->select()
-  return $line;
+  my $keep = 0;
+  if (not $para_has_changed) {
+    # Re-use previous match results if we are still in same paragraph
+    $keep = $prev_keep;
+  } else {
+    # Do match to see if we keep this line
+    if ($self->{section_headings}) {
+      for my $re_specs (@{$self->{regexs}}) {
+        # To keep this Pod, each portion of this spec must match. Assume a
+        # match and apply 'and' on it with the results of matching the specs.
+        my $match = 1;
+        for my $i (0 .. MAX_HEAD_LVL-1) {
+          my $name = $self->{section_headings}->[$i];
+          last if not defined $name;
+          my $re = $re_specs->[$i];
+          my $negated = ($re =~ s/^\!//);
+          $match  &= ( $negated ? ($name !~ /${re}/) : ($name =~ /${re}/) );
+          last if not $match;
+        }
+        if ($match) {
+          $keep = 1;
+          last;
+        }
+      }
+    }
+    $prev_keep = $keep;
+  }
+
+  return $keep;
 }
 
 
-sub _curr_headings {
-  # Return a list of the current headings (or undef):
-  #    my ($head1, $head2, $head3, $head4) = $parser->curr_headings();
-  #    my $head1 = $parser->curr_headings(1);
-  my ($self, $level) = @_;
-  if (defined $self->{section_headings}) {
-    my @headings = @{ $self->{section_headings} };
-    if (defined $level) {
-      if ($level !~ /^\d+$/) {
-        Carp::carp "'$level' is not a valid heading level\n"
-      }
-      return $headings[$level - 1];
-    } else {
-      return @headings;
-    }
-  } else {
-    return undef;
+sub _compile_section_spec {
+  # Method that takes a section specification and compiles it into a
+  # list of regular, and returns the list. An error message is issued when
+  # an invalid regex is encountered. This code was pretty much entirely
+  # taken from Pod::Select.
+  my ($self, $section_spec) = @_;
+  my (@regexs, $negated);
+
+  # Compile the spec into a list of regexs
+  local $_ = $section_spec;
+  s{\\\\}{\001}g;  # handle escaped backward slashes
+  s{\\/}{\002}g;   # handle escaped forward slashes
+
+  # Parse the regexs for the heading titles
+  @regexs = split(/\//, $_, MAX_HEAD_LVL);
+
+  # Set default regex for omitted levels
+  for my $i (0 .. MAX_HEAD_LVL-1) {
+    $regexs[$i] = '.*' if not (   (defined $regexs[$i])
+                               && (length  $regexs[$i]) );
   }
+  # Modify the regexs as needed and validate their syntax
+  for (@regexs) {
+    $_ .= '.+'  if ($_ eq '!');
+    s{\001}{\\\\}g;       # restore escaped backward slashes
+    s{\002}{\\/}g;        # restore escaped forward slashes
+    $negated = s/^\!//;   # check for negation
+    eval "m{$_}";         # check regex syntax
+    if ($@) {
+      Carp::croak "Bad regular expression /$_/ in '$section_spec': $@\n";
+    } else {
+      # Add the forward and rear anchors (and put the negator back)
+      $_ = '^' . $_  if not /^\^/;
+      $_ = $_ . '$'  if not /\$$/;
+      $_ = '!' . $_  if $negated;
+    }
+    $_ = qr/$_/;
+  }
+  return \@regexs;
 }
 
 
@@ -221,7 +281,7 @@ default if no filenames are given).
 
 C<podselect()> and C<Pod::Select::select()> may be given one or more
 "section specifications" to restrict the text processed to only the
-desired set of sections and their corresponding subsections.  A section
+desired set of sections and their corresponding subsections. Each section
 specification is a string containing one or more Perl-style regular
 expressions separated by forward slashes ('/').  If you need to use a
 forward slash literally within a section title you can escape it with a
