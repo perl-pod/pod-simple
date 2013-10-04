@@ -200,18 +200,34 @@ __END__
 
 =head1 NAME
 
-Pod::Simple::Select -- Extract selected sections of Pod
+Pod::Simple::Select -- Extract selected sections of Pod from Perl files
 
 =head1 SYNOPSIS
 
+   # Extract all Pod lines
    perl -MPod::Simple::Select -e \
-    "exit Pod::Simple::Select->filter(shift)->any_errata_seen" \
-    thingy.pod
+    'exit Pod::Simple::Select->filter(shift)->any_errata_seen' \
+    thingy.pl
+
+   # Extract NAME and DESCRIPTION/How.* sections
+   perl -MPod::Simple::Select -e \
+    'my $parser = Pod::Simple::Select->new; \
+     $parser->select("NAME", "DESCRIPTION/How.*"); \
+     $parser->parse_file("thingy.pl");'
+
+   # Extract everything but the DESCRIPTION section (functional interface)
+   perl -MPod::Simple::Select -e \
+    'podselect({-sections => ['!DESCRIPTION']}, "thingy.pl");'
 
 =head1 DESCRIPTION
 
 This module is for extracting Pod from Perl files and displaying only the
-desired sections. It aims at replacing the module L<Pod::Select>.
+desired sections. Further, specific sections of the Pod can be selected for
+keeping.
+
+It aims at replacing the module L<Pod::Select>. Note that while the
+functional interface (C<podselect()>) is identical, the object-oriented
+methods are not.
 
 =head1 OBJECT METHODS
 
