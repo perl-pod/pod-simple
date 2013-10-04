@@ -44,7 +44,7 @@ sub select {  # for compatibility with Pod::Select
     }
     $self->{sections} = \@sections;
   }
-  return $self->{sections};
+  return (exists $self->{sections}) ? @{$self->{sections}} : undef;
 }
 
 
@@ -91,15 +91,49 @@ sub _handle_text {
   DEBUG and print "== \"$line\"\n";
   $line .= "\n";
   print {$self->{'output_fh'}}
-        ( (defined $self->select) ? $self->_filter($line) : $line);
+        ( $self->{sections} ? $self->_filter($line) : $line );
   return 1;
 }
 
 
 sub _filter {
   my ($self, $line) = @_;
+  
+  # Set headings
+  if ($line =~ m/^=head([1-4])\s+(.*)$/) {
+    my ($new_level, $new_heading) = ($1, $2);
+    my $level = $self->_curr_headings || 0;
+    $self->{section_headings}->[$new_level-1] = $new_heading;
+    if ($new_level < $level) {
+      for ($new_level .. scalar @{$self->{section_headings}} - 1) {
+        pop @{$self->{section_headings}};
+      }
+    }
+  }
+
   ### TODO: filter line based on sections stored in $self->select()
   return $line;
+}
+
+
+sub _curr_headings {
+  # Return a list of the current headings (or undef):
+  #    my ($head1, $head2, $head3, $head4) = $parser->curr_headings();
+  #    my $head1 = $parser->curr_headings(1);
+  my ($self, $level) = @_;
+  if (defined $self->{section_headings}) {
+    my @headings = @{ $self->{section_headings} };
+    if (defined $level) {
+      if ($level !~ /^\d+$/) {
+        Carp::carp "'$level' is not a valid heading level\n"
+      }
+      return $headings[$level - 1];
+    } else {
+      return @headings;
+    }
+  } else {
+    return undef;
+  }
 }
 
 
@@ -189,9 +223,9 @@ C<podselect()> and C<Pod::Select::select()> may be given one or more
 "section specifications" to restrict the text processed to only the
 desired set of sections and their corresponding subsections.  A section
 specification is a string containing one or more Perl-style regular
-expressions separated by forward slashes ("/").  If you need to use a
+expressions separated by forward slashes ('/').  If you need to use a
 forward slash literally within a section title you can escape it with a
-backslash ("\/").
+backslash ('\/').
 
 The formal syntax of a section specification is:
 
@@ -203,10 +237,10 @@ I<head1-title-regex>/I<head2-title-regex>/...
 
 =back
 
-Any omitted or empty regular expressions will default to ".*".
+Any omitted or empty regular expressions will default to '.*'.
 Please note that each regular expression given is implicitly
-anchored by adding "^" and "$" to the beginning and end.  Also, if a
-given regular expression starts with a "!" character, then the
+anchored by adding '^' and '$' to the beginning and end.  Also, if a
+given regular expression starts with a '!' character, then the
 expression is I<negated> (so C<!foo> would match anything I<except>
 C<foo>).
 
