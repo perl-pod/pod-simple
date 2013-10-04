@@ -9,7 +9,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 47 };
+BEGIN { plan tests => 56 };
 use Pod::Simple::Select;
 
 
@@ -77,22 +77,22 @@ EOP
 
 my ($parser, $out);
 
-### Select everything
-##ok $parser = Pod::Simple::Select->new;
-##$out = '';
-##ok $parser->output_string( \$out );
-##ok $parser->parse_string_document($pod);
-##ok $out, $pod;
-
-### Select everything
-##ok $parser = Pod::Simple::Select->new;
-##$out = '';
-##ok $parser->output_string( \$out );
-##ok $parser->select(), undef;
-##ok $parser->parse_string_document($pod);
-##ok $out, $pod;
+# Select everything
+ok $parser = Pod::Simple::Select->new;
+$out = '';
+ok $parser->output_string( \$out );
+ok $parser->parse_string_document($pod);
+ok $out, $pod;
 
 # Select everything
+ok $parser = Pod::Simple::Select->new;
+$out = '';
+ok $parser->output_string( \$out );
+ok $parser->select(), undef;
+ok $parser->parse_string_document($pod);
+ok $out, $pod;
+
+# Select all sections
 ok $parser = Pod::Simple::Select->new;
 $out = '';
 ok $parser->output_string( \$out );
