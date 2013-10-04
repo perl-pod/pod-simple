@@ -103,8 +103,6 @@ sub _handle_text {
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # Helper methods
 
-my $prev_keep;
-
 sub _keep {
   # Method to decide whether to keep a line or not based on -section specs
   my ($self, $line) = @_;
@@ -126,9 +124,9 @@ sub _keep {
   my $keep = 0;
   if (not $para_has_changed) {
     # Re-use previous match results if we are still in same paragraph
-    $keep = $prev_keep;
+    $keep = $self->{prev_keep};
   } else {
-    # Do match to see if we keep this line
+    # Try match to see if we keep this line
     if ($self->{section_headings}) {
       for my $re_specs (@{$self->{regexs}}) {
         # To keep this Pod, each portion of this spec must match. Assume a
@@ -148,9 +146,8 @@ sub _keep {
         }
       }
     }
-    $prev_keep = $keep;
+    $self->{prev_keep} = $keep;
   }
-
   return $keep;
 }
 
