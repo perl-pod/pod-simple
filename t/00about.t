@@ -26,9 +26,9 @@ Pod::Simple::HTMLLegacy	Pod::Simple::LinkSection	Pod::Simple::Methody
 Pod::Simple::Progress	Pod::Simple::PullParser
 Pod::Simple::PullParserEndToken	Pod::Simple::PullParserStartToken
 Pod::Simple::PullParserTextToken	Pod::Simple::PullParserToken
-Pod::Simple::RTF	Pod::Simple::Search	Pod::Simple::SimpleTree
-Pod::Simple::Text	Pod::Simple::TextContent	Pod::Simple::TiedOutFH
-Pod::Simple::Transcode	Pod::Simple::XMLOutStream
+Pod::Simple::RTF	Pod::Simple::Select	Pod::Simple::Search
+Pod::Simple::SimpleTree	Pod::Simple::Text	Pod::Simple::TextContent
+Pod::Simple::TiedOutFH	Pod::Simple::Transcode	Pod::Simple::XMLOutStream
 
   );
   plan tests => 2 + @modules;

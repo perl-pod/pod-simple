@@ -1,3 +1,10 @@
+package MyModule;
+
+use warnings;
+
+1;
+
+
 =pod
 
 =head1 NAME
@@ -42,6 +49,10 @@ backtraces, check variable values, set breakpoints, and other
 operations typically found in symbolic debuggers.
 
 =cut
+
+sub sleepy {
+   sleep 1;
+}
 
 =head2 Is there a Perl shell?
 
@@ -818,4 +829,12 @@ see fit.  A simple comment in the code giving credit to the FAQ would
 be courteous but is not required.
 
 =cut
+
+
+__DATA__
+1
+2
+3
+4
+5
 

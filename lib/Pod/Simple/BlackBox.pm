@@ -144,7 +144,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     DEBUG > 5 and print "# Parsing line: [$line]\n";
 
     if(!$self->{'in_pod'}) {
-      if($line =~ m/^=([a-zA-Z]+)/s) {
+      if($line =~ m/^=([a-zA-Z]+)/s) { 
         if($1 eq 'cut') {
           $self->scream(
             $self->{'line_count'},
@@ -193,6 +193,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
     # HERE WE CATCH =encoding EARLY!
     if( $line =~ m/^=encoding\s+\S+\s*$/s ) {
+      if ($self->{raw_mode}) { $self->_handle_text($line); next; };
       next if $self->parse_characters;   # Ignore this line
       $line = $self->_handle_encoding_line( $line );
     }
@@ -201,6 +202,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # here ends the pod block, and therefore the previous pod para
       DEBUG > 1 and print "Noting =cut at line ${$self}{'line_count'}\n";
       $self->{'in_pod'} = 0;
+      if ($self->{raw_mode}) { $self->_handle_text("$line\n"); next; };
       # ++$self->{'pod_para_count'};
       $self->_ponder_paragraph_buffer();
        # by now it's safe to consider the previous paragraph as done.
@@ -211,24 +213,22 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       #  of order relative to pods, but in order relative to code.
       
     } elsif($line =~ m/^(\s*)$/s) {  # it's a blank line
+      if(!$self->{'start_of_pod_block'} and !$self->{'last_was_blank'}) {
+        DEBUG > 1 and print "Noting para ends with blank line at ${$self}{'line_count'}\n"; 
+      }
+      $self->{'last_was_blank'} = 1;
+      if ($self->{raw_mode}) { $self->_handle_text($line); next; };
+      if(!$self->{'start_of_pod_block'} and @$paras and $paras->[-1][0] eq '~Verbatim') {
+        DEBUG > 1 and print "Saving blank line at line ${$self}{'line_count'}\n";
+        push @{$paras->[-1]}, $line;
+      }  # otherwise it's not interesting      
       if (defined $1 and $1 =~ /[^\S\r\n]/) { # it's a white line
         $wl_handler->(map $_, $line, $self->{'line_count'}, $self)
           if $wl_handler;
       }
 
-      if(!$self->{'start_of_pod_block'} and @$paras and $paras->[-1][0] eq '~Verbatim') {
-        DEBUG > 1 and print "Saving blank line at line ${$self}{'line_count'}\n";
-        push @{$paras->[-1]}, $line;
-      }  # otherwise it's not interesting
-      
-      if(!$self->{'start_of_pod_block'} and !$self->{'last_was_blank'}) {
-        DEBUG > 1 and print "Noting para ends with blank line at ${$self}{'line_count'}\n"; 
-      }
-      
-      $self->{'last_was_blank'} = 1;
-      
     } elsif($self->{'last_was_blank'}) {  # A non-blank line starting a new para...
-      
+      if ($self->{raw_mode}) { $self->_handle_text($line); next; };
       if($line =~ m/^(=[a-zA-Z][a-zA-Z0-9]*)(?:\s+|$)(.*)/s) {
         # THIS IS THE ONE PLACE WHERE WE CONSTRUCT NEW DIRECTIVE OBJECTS
         my $new = [$1, {'start_line' => $self->{'line_count'}}, $2];
@@ -266,14 +266,14 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
     } else {
       # It's a non-blank line /continuing/ the current para
-      if(@$paras) {
-        DEBUG > 2 and print "Line ${$self}{'line_count'} continues current paragraph\n";
-        push @{$paras->[-1]}, $line;
-      } else {
+      if(not(@$paras)) {
         # Unexpected case!
         die "Continuing a paragraph but \@\$paras is empty?";
       }
+      DEBUG > 2 and print "Line ${$self}{'line_count'} continues current paragraph\n";
       $self->{'last_was_blank'} = $self->{'start_of_pod_block'} = 0;
+      if ($self->{raw_mode}) { $self->_handle_text($line); next; };
+      push @{$paras->[-1]}, $line;
     }
     
   } # ends the big while loop
