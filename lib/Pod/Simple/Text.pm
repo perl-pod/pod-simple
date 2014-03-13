@@ -14,7 +14,8 @@ BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
       }
 
 use Text::Wrap 98.112902 ();
-$Text::Wrap::wrap = 'overflow';
+$Text::Wrap::huge = 'overflow';
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub new {

@@ -23,6 +23,9 @@
 	Added the 'top_anchor' attribue to Pod::Simple::HTML, to allow
 	specification of a custom top anchor format. Gabor Szabo.
 
+	Fixed the text formatter to properly set the Text::Wrap overflow policy.
+	Thanks to Nigel Metheringham for the fix!
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
