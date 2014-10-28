@@ -535,7 +535,7 @@ sub start_Document {
     }
     if ($self->html_javascript) {
       $metatags .= qq{\n<script type="text/javascript" src="} .
-                    $self->html_javascript . "'></script>";
+                    $self->html_javascript . '"></script>';
     }
     $bodyid = $self->backlink ? ' id="_podtop_"' : '';
     $self->{'scratch'} .= <<"HTML";
