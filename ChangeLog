@@ -26,6 +26,9 @@
 	Fixed the text formatter to properly set the Text::Wrap overflow policy.
 	Thanks to Nigel Metheringham for the fix!
 
+	Fixed mis-matched quotation marks when adding JavaScript elements
+	to the XHTML output. Patch from jonathancast.
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
