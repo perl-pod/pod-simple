@@ -1984,16 +1984,10 @@ sub pretty { # adopted from Class::Classless
       )
     ) { $_;
     } else {
-      if( chr(65) eq 'A' ) {
-        s<([^\x20\x21\x23\x27-\x3F\x41-\x5B\x5D-\x7E])>
-         #<$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
+        #s<([^\x20\x21\x23\x27-\x3F\x41-\x5B\x5D-\x7E])>
+        s<([^ !#'()*+,\-./0123456789:;\<=\>?ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\]^_`abcdefghijklmnopqrstuvwxyz{|}~])>
          <$pretty_form{$1} || '\\x{'.sprintf("%x", ord($1)).'}'>eg;
-      } else {
-        # We're in some crazy non-ASCII world!
-        s<([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])>
          #<$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
-         <$pretty_form{$1} || '\\x{'.sprintf("%x", ord($1)).'}'>eg;
-      }
       qq{"$_"};
     }
   } @stuff;
