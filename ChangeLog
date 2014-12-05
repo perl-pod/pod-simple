@@ -29,6 +29,9 @@
 	Fixed mis-matched quotation marks when adding JavaScript elements
 	to the XHTML output. Patch from jonathancast.
 
+	Fixed issues on EBCDIC. Patch from Karl Williamson (GitHub Pull
+	Request #58).
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
