@@ -126,14 +126,25 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     # Try to guess encoding. Inlined for performance reasons.
     if(!$self->{'parse_characters'} && !$self->{'encoding'}
       && ($self->{'in_pod'} || $line =~ /^=/s)
-      && $line =~ /[^\x00-\x7f]/
+      && $line =~ /[[:^ascii:]]/
     ) {
-      my $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
+      my $encoding;
+      if (ord("A") != 65) {
+
+        # Hard to figure out on non-ASCII platform if UTF-8 or not.  This
+        # won't work if it isn't UTF-8, so just assume it is and hope for the
+        # best.  It's not clear that the other encodings work on non-ASCII
+        # platforms anyway.
+        $encoding = 'UTF-8';
+      }
+      else {
+        $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
+      }
       $self->_handle_encoding_line( "=encoding $encoding" );
       delete $self->{'_processed_encoding'};
       $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
 
-      my ($word) = $line =~ /(\S*[^\x00-\x7f]\S*)/;
+      my ($word) = $line =~ /(\S*[[:^ascii:]]\S*)/;
 
       $self->whine(
         $self->{'line_count'},
@@ -1984,16 +1995,16 @@ sub pretty { # adopted from Class::Classless
       )
     ) { $_;
     } else {
-      if( chr(65) eq 'A' ) {
-        s<([^\x20\x21\x23\x27-\x3F\x41-\x5B\x5D-\x7E])>
-         #<$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
+        # Yes, explicitly name every character desired. There are shorcuts one
+        # could make, but I (Karl Williamson) was afraid that some Perl
+        # releases would have bugs in some of them. For example [A-Z] works
+        # even on EBCDIC platforms to match exactly the 26 uppercase English
+        # letters, but I don't know if it has always worked without bugs. It
+        # seemed safest just to list the characters.
+        # s<([^\x20\x21\x23\x27-\x3F\x41-\x5B\x5D-\x7E])>
+        s<([^ !#'()*+,\-./0123456789:;\<=\>?ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\]^_`abcdefghijklmnopqrstuvwxyz{|}~])>
          <$pretty_form{$1} || '\\x{'.sprintf("%x", ord($1)).'}'>eg;
-      } else {
-        # We're in some crazy non-ASCII world!
-        s<([^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])>
          #<$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
-         <$pretty_form{$1} || '\\x{'.sprintf("%x", ord($1)).'}'>eg;
-      }
       qq{"$_"};
     }
   } @stuff;

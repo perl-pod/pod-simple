@@ -1441,6 +1441,14 @@ sub _treat_Ss {
   return;
 }
 
+# We can get NO BREAK SPACE accurately for any platform for recent Perls; for
+# earlier ones use the ASCII value for those platforms, and assume the typical
+# EBCDIC value for any others.
+my $nbsp = ($] >= 5.007003)
+            ? chr utf8::unicode_to_native(0xA0)
+            : (ASCII)
+            ? "\xA0"
+            : "\x41";
 
 sub _change_S_to_nbsp { #  a recursive function
   # Sanely assumes that the top node in the excursion won't be an S node.
@@ -1459,8 +1467,7 @@ sub _change_S_to_nbsp { #  a recursive function
         $i +=  @$to_pull_up - 1;   # Make $i skip the pulled-up stuff
       }
     } else {
-      $treelet->[$i] =~ s/\s/\xA0/g if ASCII and $in_s;
-       # (If not in ASCIIland, we can't assume that \xA0 == nbsp.)
+      $treelet->[$i] =~ s/\s/$nbsp/g if $in_s;
        
        # Note that if you apply nbsp_for_S to text, and so turn
        # "foo S<bar baz> quux" into "foo bar&#160;faz quux", you
