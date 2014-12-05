@@ -126,14 +126,25 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     # Try to guess encoding. Inlined for performance reasons.
     if(!$self->{'parse_characters'} && !$self->{'encoding'}
       && ($self->{'in_pod'} || $line =~ /^=/s)
-      && $line =~ /[^\x00-\x7f]/
+      && $line =~ /[[:^ascii:]]/
     ) {
-      my $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
+      my $encoding;
+      if (ord("A") != 65) {
+
+        # Hard to figure out on non-ASCII platform if UTF-8 or not.  This
+        # won't work if it isn't UTF-8, so just assume it is and hope for the
+        # best.  It's not clear that the other encodings work on non-ASCII
+        # platforms anyway.
+        $encoding = 'UTF-8';
+      }
+      else {
+        $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
+      }
       $self->_handle_encoding_line( "=encoding $encoding" );
       delete $self->{'_processed_encoding'};
       $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
 
-      my ($word) = $line =~ /(\S*[^\x00-\x7f]\S*)/;
+      my ($word) = $line =~ /(\S*[[:^ascii:]]\S*)/;
 
       $self->whine(
         $self->{'line_count'},
