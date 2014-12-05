@@ -1995,7 +1995,13 @@ sub pretty { # adopted from Class::Classless
       )
     ) { $_;
     } else {
-        #s<([^\x20\x21\x23\x27-\x3F\x41-\x5B\x5D-\x7E])>
+        # Yes, explicitly name every character desired. There are shorcuts one
+        # could make, but I (Karl Williamson) was afraid that some Perl
+        # releases would have bugs in some of them. For example [A-Z] works
+        # even on EBCDIC platforms to match exactly the 26 uppercase English
+        # letters, but I don't know if it has always worked without bugs. It
+        # seemed safest just to list the characters.
+        # s<([^\x20\x21\x23\x27-\x3F\x41-\x5B\x5D-\x7E])>
         s<([^ !#'()*+,\-./0123456789:;\<=\>?ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\]^_`abcdefghijklmnopqrstuvwxyz{|}~])>
          <$pretty_form{$1} || '\\x{'.sprintf("%x", ord($1)).'}'>eg;
          #<$pretty_form{$1} || '\\x'.(unpack("H2",$1))>eg;
