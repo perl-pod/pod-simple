@@ -123,10 +123,19 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       }
     }
 
-    # Try to guess encoding. Inlined for performance reasons.
+    # Try to guess encoding. Inlined for performance reasons.  If everything
+    # is ASCII-range, don't need to guess an encoding.
     if(!$self->{'parse_characters'} && !$self->{'encoding'}
       && ($self->{'in_pod'} || $line =~ /^=/s)
-      && $line =~ /[[:^ascii:]]/
+      && ((defined $^V && $^V ge v5.6)
+          ? $line =~ /[[:^ascii:]]/
+          : ((ord("A") == 65)
+             ? $line =~ /[^\x00-\x7f]/
+
+                # On early Perls on non-ASCII platforms, we don't know if some
+                # inputs are ASCII-range or not.  But only extremely-unlikely-
+                # to-be-used controls are missed by the this pattern:
+             : $line =~ m<[^\0\a\b\t\n\r\f\e !"\$\%#'()*+,\-./0123456789:;\<=\>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~]>))
     ) {
       my $encoding;
       if (ord("A") != 65) {
@@ -144,8 +153,11 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       delete $self->{'_processed_encoding'};
       $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
 
-      my ($word) = $line =~ /(\S*[[:^ascii:]]\S*)/;
-
+      my ($word) = ((defined $^V && $^V ge v5.6)
+                    ? $line =~ /(\S*[[:^ascii:]]\S*)/
+                    : ((ord("A") == 65)
+                       ? $line =~ /(\S*[^\x00-\x7f]\S*)/
+                       : $line =~ m<(\S*[^\0\a\b\t\n\r\f\e !"\$\%#'()*+,\-./0123456789:;\<=\>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~]\S*)>));
       $self->whine(
         $self->{'line_count'},
         "Non-ASCII character seen before =encoding in '$word'. Assuming $encoding"
