@@ -134,7 +134,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
                 # On early Perls on non-ASCII platforms, we don't know if some
                 # inputs are ASCII-range or not.  But only extremely-unlikely-
-                # to-be-used controls are missed by the this pattern:
+                # to-be-used controls are missed by this pattern:
              : $line =~ m<[^\0\a\b\t\n\r\f\e !"\$\%#'()*+,\-./0123456789:;\<=\>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~]>))
     ) {
       my $encoding;
