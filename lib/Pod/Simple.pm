@@ -1444,7 +1444,7 @@ sub _treat_Ss {
 # We can get NO BREAK SPACE accurately for any platform for recent Perls; for
 # earlier ones use the ASCII value for those platforms, and assume the typical
 # EBCDIC value for any others.
-my $nbsp = (defined $^V && $^V >= v5.7.3)
+my $nbsp = ($] >= 5.007003)
             ? chr utf8::unicode_to_native(0xA0)
             : (ASCII)
             ? "\xA0"
