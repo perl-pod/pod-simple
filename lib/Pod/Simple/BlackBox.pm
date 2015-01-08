@@ -48,6 +48,13 @@ else {
 
         $variant_re = qr/[^\x00-\x3F[:ascii:]$isolate_control]/;
     }
+
+my $utf8_bom;
+if (($] ge 5.007_003)) {
+  $utf8_bom = "\x{FEFF}";
+  utf8::encode($utf8_bom);
+} else {
+  $utf8_bom = "\xEF\xBB\xBF";   # No EBCDIC BOM detection for early Perls.
 }
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -108,7 +115,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     } else {
       DEBUG > 2 and print "First line: [$source_line]\n";
 
-      if( ($line = $source_line) =~ s/^\xEF\xBB\xBF//s ) {
+      if( ($line = $source_line) =~ s/^$utf8_bom//s ) {
         DEBUG and print "UTF-8 BOM seen.  Faking a '=encoding utf8'.\n";
         $self->_handle_encoding_line( "=encoding utf8" );
         delete $self->{'_processed_encoding'};
