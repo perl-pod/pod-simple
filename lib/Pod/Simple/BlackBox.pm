@@ -48,6 +48,7 @@ else {
 
         $variant_re = qr/[^\x00-\x3F[:ascii:]$isolate_control]/;
     }
+}
 
 my $utf8_bom;
 if (($] ge 5.007_003)) {
