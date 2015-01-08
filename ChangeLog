@@ -36,6 +36,9 @@
 	html_css() method would be output twice. Thanks to Andrew Johnson
 	for the report (RT #99303).
 
+	Documented the 'recurse' attribute of Pod::Simple::Search.
+	Thanks to Jim Keenan for the report (RT #91886).
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 

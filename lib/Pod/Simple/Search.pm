@@ -767,7 +767,6 @@ are produced.  (Setting verbose to 1 turns on some messages, and setting
 it to 2 turns on even more messages, i.e., makes the following search(es)
 even more verbose than 1 would make them.)
 
-
 =item $search->limit_glob( I<some-glob-string> );
 
 This option means that you want to limit the results just to items whose
@@ -805,6 +804,10 @@ seeing only files with Perl-like extensions, omitting subdirectories
 that are numeric but do I<not> match the current Perl interpreter's
 version ID, suppressing F<site_perl> as a module hierarchy name, etc.
 
+=item $search->recurse( I<true-or-false> );
+
+Unless you set this attribute to a false value, Pod::Search will
+recurse into subdirectories of the search directories.
 
 =item $search->shadows( I<true-or-false> );
 
