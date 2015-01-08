@@ -32,6 +32,10 @@
 	Fixed issues on EBCDIC. Patch from Karl Williamson (GitHub Pull
 	Request #58).
 
+	Fixed bug where the value passed to Pod::Simple::XHTML's
+	html_css() method would be output twice. Thanks to Andrew Johnson
+	for the report (RT #99303).
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 

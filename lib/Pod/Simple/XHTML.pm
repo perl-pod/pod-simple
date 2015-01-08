@@ -526,11 +526,12 @@ sub start_Document {
     $title = $self->force_title || $self->title || $self->default_title || '';
     $metatags = $self->html_header_tags || '';
     if (my $css = $self->html_css) {
-        $metatags .= $css;
         if ($css !~ /<link/) {
             # this is required to be compatible with Pod::Simple::BatchHTML
             $metatags .= '<link rel="stylesheet" href="'
                 . $self->encode_entities($css) . '" type="text/css" />';
+        } else {
+            $metatags .= $css;
         }
     }
     if ($self->html_javascript) {
