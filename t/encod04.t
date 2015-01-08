@@ -18,7 +18,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 5, todo => [4,5] };
+BEGIN { plan tests => 5, todo => [4] };
 
 ok 1;
 
@@ -112,9 +112,9 @@ if( $guess ) {
 
 
 # The previous example used a CP1252 byte sequence that also happened to be a
-# valid UTF8 byte sequence.  In this example the heuristic also currently
-# guesses 'wrong' despite the byte sequence not being valid UTF8 (it's too
-# short).  This could arguably be 'fixed' by using a less naive regex.
+# valid UTF8 byte sequence.  In this example, the 2 bytes are not valid UTF-8
+# because the E9 requires 2 continuation bytes after it, and this only has
+# one.
 
 @output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( qq{
 
