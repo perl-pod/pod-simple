@@ -18,7 +18,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 5 };
+BEGIN { plan tests => 5, todo => [4] };
 
 ok 1;
 
@@ -85,13 +85,13 @@ if( $guess ) {
 
 
 # Initial accented character followed by 'smart' apostrophe causes heuristic
-# to choose UTF8 (a rather contrived example)
+# to choose UTF8 (a somewhat contrived example)
 
 @output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( qq{
 
 =head1 NAME
 
-Smart::Apostrophe::Fail - L\xC9\x92STRANGE
+=head2 JOS\xC9\x92S PLACE
 
 =cut
 
@@ -99,11 +99,11 @@ Smart::Apostrophe::Fail - L\xC9\x92STRANGE
 
 ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
-  if( $guess eq 'UTF-8' ) {
+  if( $guess eq 'ISO8859-1' ) {
     ok 1;
   } else {
     ok 0;
-    print "# parser guessed wrong encoding expected 'UTF-8' got '$guess'\n";
+    print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
   }
 } else {
   ok 0;
@@ -112,9 +112,9 @@ if( $guess ) {
 
 
 # The previous example used a CP1252 byte sequence that also happened to be a
-# valid UTF8 byte sequence.  In this example the heuristic also guesses 'wrong'
-# despite the byte sequence not being valid UTF8 (it's too short).  This could
-# arguably be 'fixed' by using a less naive regex.
+# valid UTF8 byte sequence.  In this example the heuristic also currently
+# guesses 'wrong' despite the byte sequence not being valid UTF8 (it's too
+# short).  This could arguably be 'fixed' by using a less naive regex.
 
 @output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( qq{
 
@@ -128,11 +128,11 @@ Smart::Apostrophe::Fail - L\xE9\x92Strange
 
 ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
-  if( $guess eq 'UTF-8' ) {
+  if( $guess eq 'ISO8859-1' ) {
     ok 1;
   } else {
     ok 0;
-    print "# parser guessed wrong encoding expected 'UTF-8' got '$guess'\n";
+    print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
   }
 } else {
   ok 0;
