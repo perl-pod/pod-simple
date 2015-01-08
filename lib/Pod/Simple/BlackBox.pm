@@ -33,12 +33,13 @@ my $variant_re;
 # Matches a character iff the character has a different representation when
 # encoded in UTF-8 than when not.  It will be multiple bytes in UTF-8.
 if (ord("A") == 65) { # On ASCII platforms, it is the non-ASCII characters.
-    $variant_re = qr/[^[:ascii:]]/;
+    $variant_re = qr/[^\x00-\x7F]/; # Avoid [:ascii:] so works on very old
+                                    # Perls
 }
 else {
     # On EBCDIC platforms, it is the non-ASCIIs, minus the non-ASCII controls.
     $variant_re = eval "qr/[^[:ascii:][:cntrl:]]/u";
-    if (! $variant_re) {    # Too old a Perl for /u
+    if (! $variant_re) {    # Too old a Perl for that regex
 
         # Only to be used on early EBCDIC platforms where the 3 supported code
         # pages were POSIX-BC, 1047, and 037.  On these, all control
@@ -46,7 +47,7 @@ else {
         # control not in that block.
         my $isolate_control = (ord("^") == 106) ? "\x5F" : "\xFF";
 
-        $variant_re = qr/[^\x00-\x3F[:ascii:]$isolate_control]/;
+        $variant_re = qr/[^\x00-\x3F$isolate_control !"\$\%#'()*+,\-.\/0123456789:;<=>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~]/;
     }
 }
 
