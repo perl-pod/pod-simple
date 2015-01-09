@@ -8,7 +8,7 @@ BEGIN {
 
 use strict;
 use lib '../lib';
-use Test::More tests => 61;
+use Test::More tests => 62;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -659,6 +659,27 @@ is($results, <<"EOHTML", "Text with numeric entities");
 <p>A text paragraph using numeric POD entities: &lt;, &gt;.</p>
 
 EOHTML
+
+my $html = q{
+<tt>
+<pre>
+#include &lt;stdio.h&gt;
+
+int main(int argc,char *argv[]) {
+
+        printf("Hellow World\n");
+        return 0;
+
+}
+</pre>
+</tt>
+};
+initialize($parser, $results);
+$parser->parse_string_document("=begin html\n\n$html\n\n=end html\n");
+TODO: {
+    local $TODO = '=begin block text not properly parsed';
+    is($results, $html, "Text with =begin html");
+}
 
 SKIP: for my $use_html_entities (0, 1) {
   if ($use_html_entities and not $Pod::Simple::XHTML::HAS_HTML_ENTITIES) {
