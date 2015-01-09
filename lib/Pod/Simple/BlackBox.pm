@@ -387,8 +387,8 @@ sub _handle_encoding_line {
   }
   push @{ $self->{'encoding_command_statuses'} }, $enc_error;
   if (defined($self->{'_processed_encoding'})) {
-    # Should never happen
-    die "Nested processed encoding.";
+    # Double declaration.
+    $self->scream( $self->{'line_count'}, 'Cannot have multiple =encoding directives');
   }
   $self->{'_processed_encoding'} = $orig;
 

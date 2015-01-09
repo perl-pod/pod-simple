@@ -42,6 +42,10 @@
 	Documented the 'recurse' attribute of Pod::Simple::Search.
 	Thanks to Jim Keenan for the report (RT #91886).
 
+	An error is no longer thrown when '=encoding' directives are found
+	on subsequent lines. Instead, we now log a an error message,
+	"Cannot have multiple =encoding directives" (RT #91757).
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 
