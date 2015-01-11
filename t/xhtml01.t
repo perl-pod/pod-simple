@@ -660,8 +660,7 @@ is($results, <<"EOHTML", "Text with numeric entities");
 
 EOHTML
 
-my $html = q{
-<tt>
+my $html = q{<tt>
 <pre>
 #include &lt;stdio.h&gt;
 
@@ -672,14 +671,10 @@ int main(int argc,char *argv[]) {
 
 }
 </pre>
-</tt>
-};
+</tt>};
 initialize($parser, $results);
 $parser->parse_string_document("=begin html\n\n$html\n\n=end html\n");
-TODO: {
-    local $TODO = '=begin block text not properly parsed';
-    is($results, $html, "Text with =begin html");
-}
+is($results, "$html\n\n", "Text with =begin html");
 
 SKIP: for my $use_html_entities (0, 1) {
   if ($use_html_entities and not $Pod::Simple::XHTML::HAS_HTML_ENTITIES) {

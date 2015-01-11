@@ -9,7 +9,7 @@ BEGIN {
 
 use strict;
 use Test;
-BEGIN { plan tests => 13, todo => [11] };
+BEGIN { plan tests => 13 };
 
 #use Pod::Simple::Debug (10);
 
@@ -103,8 +103,7 @@ ok(
 }
 );
 
-my $html = q{
-<tt>
+my $html = q{<tt>
 <pre>
 #include &lt;stdio.h&gt;
 
@@ -115,11 +114,10 @@ int main(int argc,char *argv[]) {
 
 }
 </pre>
-</tt>
-};
+</tt>};
 ok(
     x("=begin html\n\n$html\n\n=end html\n"),
-    $html
+    "$html\n\n"
 );
 
 # Check subclass.

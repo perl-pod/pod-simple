@@ -46,6 +46,10 @@
 	on subsequent lines. Instead, we now log a an error message,
 	"Cannot have multiple =encoding directives" (RT #91757).
 
+	The HTML and XHTML formatters now do a better job of preserving
+	lines in 'begin html' blocks. Fixes a bug that dates from 2002
+	(Perl RT#9385, CPAN RT #91851).
+
 2013-05-04   David E. Wheeler <david@justatheory.org>
 	* Release 3.28
 

@@ -10,7 +10,6 @@ use vars qw(
 );
 @ISA = ('Pod::Simple::PullParser');
 $VERSION = '3.29';
-
 BEGIN {
   if(defined &DEBUG) { } # no-op
   elsif( defined &Pod::Simple::DEBUG ) { *DEBUG = \&Pod::Simple::DEBUG }
@@ -525,7 +524,9 @@ sub _do_middle_main_loop {
           next;
         }
         DEBUG and print "    raw text ", $next->text, "\n";
-        print $fh "\n" . $next->text . "\n";
+        # The parser sometimes preserves newlines and sometimes doesn't!
+        (my $text = $next->text) =~ s/\n\z//;
+        print $fh $text, "\n";
         next;
        
       } else {

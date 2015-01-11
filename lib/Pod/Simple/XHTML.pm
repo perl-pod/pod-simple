@@ -352,7 +352,23 @@ sub handle_text {
         # literal xhtml region, since handle_code calls encode_entities.
         $_[0]->handle_code( $_[1], $_[0]{'in_code'}[-1] );
     } else {
-        $_[0]{'scratch'} .= $text;
+        if ($_[0]->{in_for}) {
+            my $newlines = $_[0]->__in_literal_xhtml_region ? "\n\n" : '';
+            if ($_[0]->{started_for}) {
+                if ($text =~ /\S/) {
+                    delete $_[0]->{started_for};
+                    $_[0]{'scratch'} .= $text . $newlines;
+                }
+                # Otherwise, append nothing until we have something to append.
+            } else {
+                # The parser sometimes preserves newlines and sometimes doesn't!
+                $text =~ s/\n\z//;
+                $_[0]{'scratch'} .= $text . $newlines;
+            }
+        } else {
+            # Just plain text.
+            $_[0]{'scratch'} .= $text;
+        }
     }
 
     $_[0]{htext} .= $text if $_[0]{'in_head'};
@@ -371,7 +387,7 @@ sub handle_code {
 }
 
 sub start_Para {
-    $_[0]{'scratch'} = '<p>';
+    $_[0]{'scratch'} .= '<p>';
 }
 
 sub start_Verbatim {
@@ -496,20 +512,27 @@ sub start_for {
   my ($self, $flags) = @_;
 
   push @{ $self->{__region_targets} }, $flags->{target_matching};
+  $self->{started_for} = 1;
+  $self->{in_for} = 1;
 
   unless ($self->__in_literal_xhtml_region) {
     $self->{scratch} .= '<div';
     $self->{scratch} .= qq( class="$flags->{target}") if $flags->{target};
-    $self->{scratch} .= '>';
+    $self->{scratch} .= ">\n\n";
   }
-
-  $self->emit;
-
 }
+
 sub end_for {
   my ($self) = @_;
+  delete $self->{started_for};
+  delete $self->{in_for};
 
-  $self->{'scratch'} .= '</div>' unless $self->__in_literal_xhtml_region;
+  if ($self->__in_literal_xhtml_region) {
+    # Remove trailine newlines.
+    $self->{'scratch'} =~ s/\s+\z//s;
+  } else {
+    $self->{'scratch'} .= '</div>';
+  }
 
   pop @{ $self->{__region_targets} };
   $self->emit;
