@@ -1,13 +1,14 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2015-01-13   David E. Wheeler <david@justatheory.org>
 	* Release 3.29
 	NOTE: This will be the last release of Pod::Simple to support versions
 	of Perl earlier than 5.6.
 
 	Fixed test failure for unsupported encoding on Perl 5.6.
 
-	Removed unnecessary dependency on constant. Reporged by Petr Pisar
+	Removed unnecessary dependency on constant. Reported by Petr Pisar
 	(RT #85578).
 
 	Many documentation and comment typos fixed by David Steinbrunner.
