@@ -2,6 +2,9 @@
 #---------------------------------------------------------------------------
 
 	* Release 3.30
+	Tightened up the first pass at recognizing a Pod command so that
+	fewer invalid Pod lines will be recognized. Suggested by Randy
+	Stauner.
 
 2015-01-13   David E. Wheeler <david@justatheory.org>
 	* Release 3.29
