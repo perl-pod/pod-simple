@@ -10,6 +10,9 @@
 	utf8::unicode_to_native on Perl 5.6, where that function does not
 	exist.
 
+	Typos and minor wordsmithing changes in Pod::Simple::Subclassing,
+	thanks to Randy Stauner.
+
 2015-01-13   David E. Wheeler <david@justatheory.org>
 	* Release 3.29
 	NOTE: This will be the last release of Pod::Simple to support versions
