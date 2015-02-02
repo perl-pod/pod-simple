@@ -31,7 +31,7 @@ sub _handle_element_start {
   # ($self, $element_name, $attr_hash_r)
   my $fh = $_[0]{'output_fh'};
   my($key, $value);
-  DEBUG and print "++ $_[1]\n";
+  DEBUG and print STDERR "++ $_[1]\n";
   print $fh "<", $_[1];
   if($SORT_ATTRS) {
     foreach my $key (sort keys %{$_[2]}) {
@@ -55,7 +55,7 @@ sub _handle_element_start {
 }
 
 sub _handle_text {
-  DEBUG and print "== \"$_[1]\"\n";
+  DEBUG and print STDERR "== \"$_[1]\"\n";
   if(length $_[1]) {
     my $text = $_[1];
     _xml_escape($text);
@@ -65,7 +65,7 @@ sub _handle_text {
 }
 
 sub _handle_element_end {
-  DEBUG and print "-- $_[1]\n";
+  DEBUG and print STDERR "-- $_[1]\n";
   print {$_[0]{'output_fh'}} "</", $_[1], ">";
   return;
 }

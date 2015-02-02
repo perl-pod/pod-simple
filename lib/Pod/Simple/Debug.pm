@@ -47,10 +47,10 @@ sub import {
     # make a not-really-constant
     *Pod::Simple::DEBUG = sub () { $$variable } ;
     $$variable = $value;
-    print "# Starting Pod::Simple::DEBUG = non-constant $variable with val $value\n";
+    print STDERR "# Starting Pod::Simple::DEBUG = non-constant $variable with val $value\n";
   } else {
     *Pod::Simple::DEBUG = eval " sub () { $value } ";
-    print "# Starting Pod::Simple::DEBUG = $value\n";
+    print STDERR "# Starting Pod::Simple::DEBUG = $value\n";
   }
   
   require Pod::Simple;
