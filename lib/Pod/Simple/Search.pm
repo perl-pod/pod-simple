@@ -544,24 +544,9 @@ sub find {
 
   #@search_dirs = File::Spec->curdir unless @search_dirs;
   
-  if( $self->inc ) {
-    if( $^O eq 'MacOS' ) {
-      push @search_dirs, $self->_mac_whammy(@INC);
-    } else {
-      push @search_dirs,                    @INC;
-    }
-
-    # Add location of pod documentation for perl man pages (eg perlfunc)
-    # This is a pod directory in the private install tree
-    #my $perlpoddir = File::Spec->catdir($Config::Config{'installprivlib'},
-    #					'pod');
-    #push (@search_dirs, $perlpoddir)
-    #  if -d $perlpoddir;
-
-    # Add location of binaries such as pod2text:
-    push @search_dirs, $Config::Config{'scriptdir'};
-     # and if that's undef or q{} or nonexistent, we just ignore it later
-  }
+  $self->_expand_inc(\@search_dirs);
+  # Add location of binaries such as pod2text:
+  push @search_dirs, $Config::Config{'scriptdir'} if $self->inc;
 
   my %seen_dir;
  Dir:

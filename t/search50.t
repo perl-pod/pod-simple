@@ -39,9 +39,9 @@ ok $found;
 
 # print "# Found $found items in $t seconds!\n# See...\n";
 
-my $p = pretty( $where2name, $name2where )."\n";
-$p =~ s/, +/,\n/g;
-$p =~ s/^/#  /mg;
+# my $p = pretty( $where2name, $name2where )."\n";
+# $p =~ s/, +/,\n/g;
+# $p =~ s/^/#  /mg;
 # print $p;
 
 # print "# OK, making sure strict and strict.pm were in there...\n";
@@ -64,8 +64,7 @@ SKIP: {
 # print "# Test again on a module we know is present, in case the
 # strict.pm tests were skipped...\n";
 
-# Grab the first item in $name2where, since it doesn't matter which we
-# use.
+# Search for all files in $name2where.
 while (my ($testmod, $testpath) = each %{ $name2where }) {
   unless ( $testmod ) {
     fail;  # no 'thatpath/<name>.pm' means can't test find()
