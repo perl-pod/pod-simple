@@ -654,7 +654,7 @@ sub do_pod_link {
         $self->resolve_pod_page_link($to, $section);
          # (I pass it the section value, but I don't see a
          #  particular reason it'd use it.)
-      DEBUG > 1 and print "resolve_pod_page_link gives ", $to || "(nil)", "\n";
+      DEBUG > 1 and print "resolve_pod_page_link gives ", $there || "(nil)", "\n";
       unless( defined $there and length $there ) {
         DEBUG and print "Can't resolve $to\n";
         return undef;
