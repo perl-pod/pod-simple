@@ -29,6 +29,27 @@ BEGIN {
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG
 }
 
+my $variant_re;
+# Matches a character iff the character has a different representation when
+# encoded in UTF-8 than when not.  It will be multiple bytes in UTF-8.
+if (ord("A") == 65) { # On ASCII platforms, it is the non-ASCII characters.
+    $variant_re = qr/[^[:ascii:]]/;
+}
+else {
+    # On EBCDIC platforms, it is the non-ASCIIs, minus the non-ASCII controls.
+    $variant_re = eval "qr/[^[:ascii:][:cntrl:]]/u";
+    if (! $variant_re) {    # Too old a Perl for /u
+
+        # Only to be used on early EBCDIC platforms where the 3 supported code
+        # pages were POSIX-BC, 1047, and 037.  On these, all control
+        # characters but one are in a single block 00-3F.  This hard-codes the
+        # control not in that block.
+        my $isolate_control = (ord("^") == 106) ? "\x5F" : "\xFF";
+
+        $variant_re = qr/[^\x00-\x3F$isolate_control !"\$\%#'()*+,\-.\/0123456789:;<=>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~]/;
+    }
+}
+
 my $utf8_bom;
 if (($] ge 5.007_003)) {
   $utf8_bom = "\x{FEFF}";
@@ -131,29 +152,89 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       }
     }
 
-    # Try to guess encoding. Inlined for performance reasons.
     if(!$self->{'parse_characters'} && !$self->{'encoding'}
       && ($self->{'in_pod'} || $line =~ /^=/s)
-      && $line =~ /[[:^ascii:]]/
+      && $line =~ /$variant_re/
     ) {
-      my $encoding;
-      if (ord("A") != 65) {
 
-        # Hard to figure out on non-ASCII platform if UTF-8 or not.  This
-        # won't work if it isn't UTF-8, so just assume it is and hope for the
-        # best.  It's not clear that the other encodings work on non-ASCII
-        # platforms anyway.
-        $encoding = 'UTF-8';
-      }
-      else {
-        $encoding = $line =~ /^[\x00-\x7f]*[\xC0-\xFD][\x80-\xBF]/ ? 'UTF-8' : 'ISO8859-1';
-      }
+      my $encoding;
+
+      # No =encoding line, and we are at the first line in the input that
+      # contains a byte whose meaning varies depending on whether the file is
+      # encoded in UTF-8 or not.  In order to process this line, we need to
+      # figure out what encoding we will use for the file.
+      #
+      # Because we are guessing the encoding, we use all information available
+      # to improve our chances of getting it right.  This means we look at all
+      # the variant sequences on the line.  The pod spec says our guess must
+      # be either ISO 8859-1 (Latin1) or UTF-8.  The odds of something not
+      # being UTF-8, but still passing a UTF-8 validity test go down very
+      # rapidly with increasing length of the sequence.  Therefore we look at
+      # maximal sequences.  If any of the sequences can't be UTF-8, we quit
+      # there and choose 8859-1.  If all could be UTF-8, we guess UTF-8.
+      #
+      # A solitary variant means it can't be UTF-8.  And, two consecutive
+      # variant bytes on ASCII platforms, is enough to rule out UTF-8 for
+      # almost any text that isn't gibberish unless it (unlikely) contains NEL
+      # characters, or it's actually cp1252.  It's better to resolve cp1252 as
+      # 8859-1 instead of UTF-8, as it's closer to that.  Looking at maximal
+      # sequences and at every sequence on the line can help that.
+      #
+      # Our confidence level isn't as high for EBCDIC 2-byte sequences.  An
+      # example of ambiguous EBCDIC is in code page 1047, \x8A\x42 could be
+      # the UTF-8 for "LATIN CAPITAL LETTER A WITH ACUTE", or it could be
+      # native for the two characters "LEFT-POINTING DOUBLE ANGLE QUOTATION
+      # MARK" followed by "LATIN SMALL LETTER A WITH CIRCUMFLEX".  Again,
+      # maximal sequences and looking at all sequences can help.
+      while ($line =~ m/($variant_re+)/g) {
+        my $var_seq = $1;
+
+        if (length $var_seq == 1) {
+          $encoding = 'ISO8859-1';
+          goto guessed;
+        } elsif ($] ge 5.007_003) {
+
+          # On Perls that have this function, we can see if the sequence is
+          # valid UTF-8 or not.
+          if (! utf8::decode($var_seq)) {
+            $encoding = 'ISO8859-1';
+            goto guessed;
+          }
+        } elsif (ord("A") == 65) {  # An early Perl, ASCII platform
+
+          # Without utf8::decode, it's a lot harder to do a rigorous check
+          # (though some early releases had a different function that
+          # accomplished the same thing).  Since these are ancient Perls, not
+          # likely to be in use today, we take the easy way out, and look at
+          # just the first two bytes of the sequence to see if they are the
+          # start of a UTF-8 character.  In ASCII UTF-8, continuation bytes
+          # must be between 0x80 and 0xBF.  Start bytes can range from 0xC2
+          # through 0xFF, but anything above 0xF4 is not Unicode, and hence
+          # extremely unlikely to be in a pod.
+          if ($var_seq !~ /^[\xC2-\xF4][\x80-\xBF]/) {
+            $encoding = 'ISO8859-1';
+            goto guessed;
+          }
+
+          # We don't bother doing anything special for EBCDIC on early Perls.
+          # If there is a solitary variant, Latin1 will be chosen; otherwise
+          # UTF-8.
+        }
+      } # End of loop through all variant sequences on the line
+
+      # All sequences in the line could be UTF-8.  Guess that.
+      $encoding = 'UTF-8';
+
+    guessed:
       $self->_handle_encoding_line( "=encoding $encoding" );
       delete $self->{'_processed_encoding'};
       $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
 
-      my ($word) = $line =~ /(\S*[[:^ascii:]]\S*)/;
+      my ($word) = $line =~ /(\S*$variant_re\S*)/;
 
+      # Even though strictly it's not ASCII that we have here, use 'ASCII' in
+      # the message, as that term is more generally known than 'UTF-8
+      # variant'.
       $self->whine(
         $self->{'line_count'},
         "Non-ASCII character seen before =encoding in '$word'. Assuming $encoding"
