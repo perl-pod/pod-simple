@@ -714,12 +714,13 @@ sub general_url_escape {
   # A pretty conservative escaping, behoovey even for query components
   #  of a URL (see RFC 2396)
   
-  $string =~ s/([^-_\.!~*()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/sprintf('%%%02X',ord($1))/eg;
+  if ($] ge 5.007_003) {
+    $string =~ s/([^-_\.!~*()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/sprintf('%%%02X',utf8::native_to_unicode(ord($1)))/eg;
+  } else { # Is broken for non-ASCII platforms on early perls
+    $string =~ s/([^-_\.!~*()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/sprintf('%%%02X',ord($1))/eg;
+  }
    # Yes, stipulate the list without a range, so that this can work right on
    #  all charsets that this module happens to run under.
-   # Altho, hmm, what about that ord?  Presumably that won't work right
-   #  under non-ASCII charsets.  Something should be done
-   #  about that, I guess?
   
   return $string;
 }
@@ -851,21 +852,28 @@ sub esc { # a function.
       @_ = splice @_; # break aliasing
     } else {
       my $x = shift;
-      $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg;
+      if ($] ge 5.007_003) {
+        $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(utf8::native_to_unicode(ord($1))).';'/eg;
+      } else { # Is broken for non-ASCII platforms on early perls
+        $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg;
+      }
       return $x;
     }
   }
   foreach my $x (@_) {
     # Escape things very cautiously:
-    $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg
-     if defined $x;
+    if (defined $x) {
+      if ($] ge 5.007_003) {
+        $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(utf8::native_to_unicode(ord($1))).';'/eg
+      } else { # Is broken for non-ASCII platforms on early perls
+        $x =~ s/([^-\n\t !\#\$\%\(\)\*\+,\.\~\/\:\;=\?\@\[\\\]\^_\`\{\|\}abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789])/'&#'.(ord($1)).';'/eg
+      }
+    }
     # Leave out "- so that "--" won't make it thru in X-generated comments
     #  with text in them.
 
     # Yes, stipulate the list without a range, so that this can work right on
     #  all charsets that this module happens to run under.
-    # Altho, hmm, what about that ord?  Presumably that won't work right
-    #  under non-ASCII charsets.  Something should be done about that.
   }
   return @_;
 }
