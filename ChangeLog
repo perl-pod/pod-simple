@@ -13,6 +13,10 @@
 	Typos and minor wordsmithing changes in Pod::Simple::Subclassing,
 	thanks to Randy Stauner.
 
+	The Pod::Simple::Search survey() and find() methods now use the same
+	code for determining @INC directories to search. The only difference
+	is that find() also includes $Config::Config{'scriptdir'}.
+
 2015-01-13   David E. Wheeler <david@justatheory.org>
 	* Release 3.29
 	NOTE: This will be the last release of Pod::Simple to support versions
