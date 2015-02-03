@@ -360,8 +360,7 @@ make no attempt to decode the input.
 =head1 CAVEATS
 
 This is just a beta release -- there are a good number of things still
-left to do.  Notably, support for EBCDIC platforms is still half-done,
-an untested.
+left to do.
 
 
 =head1 SEE ALSO
