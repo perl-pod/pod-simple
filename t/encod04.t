@@ -77,18 +77,18 @@ if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
     ok (1);
 }
 else {
-($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
-if( $guess ) {
-  if( $guess eq 'ISO8859-1' ) {
-    ok 1;
-  } else {
-    ok 0;
-    print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
-  }
-} else {
-  ok 0;
-  print "# parser failed to detect non-ASCII bytes in input\n";
-}
+    ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
+    if( $guess ) {
+        if( $guess eq 'ISO8859-1' ) {
+            ok 1;
+        } else {
+            ok 0;
+            print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
+        }
+    } else {
+        ok 0;
+        print "# parser failed to detect non-ASCII bytes in input\n";
+    }
 }
 
 
@@ -109,18 +109,18 @@ if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
     ok (1);
 }
 else {
-($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
-if( $guess ) {
-  if( $guess eq 'ISO8859-1' ) {
-    ok 1;
-  } else {
-    ok 0;
-    print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
-  }
-} else {
-  ok 0;
-  print "# parser failed to detect non-ASCII bytes in input\n";
-}
+    ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
+    if( $guess ) {
+        if( $guess eq 'ISO8859-1' ) {
+            ok 1;
+        } else {
+            ok 0;
+            print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
+        }
+    } else {
+        ok 0;
+        print "# parser failed to detect non-ASCII bytes in input\n";
+    }
 }
 
 
@@ -143,18 +143,18 @@ if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
     ok (1);
 }
 else {
-($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
-if( $guess ) {
-  if( $guess eq 'ISO8859-1' ) {
-    ok 1;
-  } else {
-    ok 0;
-    print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
-  }
-} else {
-  ok 0;
-  print "# parser failed to detect non-ASCII bytes in input\n";
-}
+    ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
+    if( $guess ) {
+        if( $guess eq 'ISO8859-1' ) {
+            ok 1;
+        } else {
+            ok 0;
+            print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
+        }
+    } else {
+        ok 0;
+        print "# parser failed to detect non-ASCII bytes in input\n";
+    }
 }
 
 
