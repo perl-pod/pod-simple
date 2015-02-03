@@ -29,11 +29,14 @@ use Pod::Simple::XMLOutStream;
 # Initial, isolated, non-ASCII byte triggers Latin-1 guess and later
 # multi-byte sequence is not considered by heuristic.
 
-my @output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( qq{
+my $x97 = chr utf8::unicode_to_native(0x97);
+my $x91 = chr utf8::unicode_to_native(0x91);
+
+my @output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
 =head1 NAME
 
-Em::Dash \x97 \x91CAF\xC9\x92
+Em::Dash $x97 ${x91}CAF\xC9\x92
 
 =cut
 
@@ -60,16 +63,20 @@ if( $guess ) {
 
 # Initial smart-quote character triggers Latin-1 guess as expected
 
-@output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( qq{
+@output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
 =head1 NAME
 
-Smart::Quote - \x91FUT\xC9\x92
+Smart::Quote - ${x91}FUT\xC9\x92
 
 =cut
 
 } );
 
+if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
+    ok (1);
+}
+else {
 ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
   if( $guess eq 'ISO8859-1' ) {
@@ -82,12 +89,13 @@ if( $guess ) {
   ok 0;
   print "# parser failed to detect non-ASCII bytes in input\n";
 }
+}
 
 
 # Initial accented character followed by 'smart' apostrophe causes heuristic
 # to choose UTF8 (a somewhat contrived example)
 
-@output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( qq{
+@output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
 =head1 NAME
 
@@ -97,6 +105,10 @@ if( $guess ) {
 
 } );
 
+if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
+    ok (1);
+}
+else {
 ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
   if( $guess eq 'ISO8859-1' ) {
@@ -109,6 +121,7 @@ if( $guess ) {
   ok 0;
   print "# parser failed to detect non-ASCII bytes in input\n";
 }
+}
 
 
 # The previous example used a CP1252 byte sequence that also happened to be a
@@ -116,7 +129,7 @@ if( $guess ) {
 # guesses 'wrong' despite the byte sequence not being valid UTF8 (it's too
 # short).  This could arguably be 'fixed' by using a less naive regex.
 
-@output_lines = split m/[\cm\cj]+/, Pod::Simple::XMLOutStream->_out( qq{
+@output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
 =head1 NAME
 
@@ -126,6 +139,10 @@ Smart::Apostrophe::Fail - L\xE9\x92Strange
 
 } );
 
+if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
+    ok (1);
+}
+else {
 ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
   if( $guess eq 'ISO8859-1' ) {
@@ -137,6 +154,7 @@ if( $guess ) {
 } else {
   ok 0;
   print "# parser failed to detect non-ASCII bytes in input\n";
+}
 }
 
 
