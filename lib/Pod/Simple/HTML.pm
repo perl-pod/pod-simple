@@ -696,7 +696,7 @@ sub section_name_tidy {
   $section =~ s/\s+$//;
   $section =~ tr/ /_/;
   if ($] ge 5.006) {
-    $section =~ s/[[:cntrl:]][:^ascii:]//g; # drop crazy characters
+    $section =~ s/[[:cntrl:][:^ascii:]]//g; # drop crazy characters
   } elsif ('A' eq chr(65)) { # But not on early EBCDIC
     $section =~ tr/\x00-\x1F\x80-\x9F//d;
   }
