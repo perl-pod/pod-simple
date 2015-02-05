@@ -349,7 +349,7 @@ octets into Perl's internal character string representation using the value of
 the C<=encoding> declaration in the POD source.
 
 If the POD source does not include an C<=encoding> declaration, the parser will
-attempt to guess the encoding (selecting one of UTF-8 or Latin-1) by examining
+attempt to guess the encoding (selecting one of UTF-8 or CP 1252) by examining
 the first non-ASCII bytes and applying the heuristic described in
 L<perlpodspec>.  (It the POD source contains only ASCII bytes, the
 encoding is assumed to be ASCII.)

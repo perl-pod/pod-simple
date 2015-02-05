@@ -1,13 +1,6 @@
-# The encoding detection heuristic will choose UTF8 or Latin-1.  The current
-# implementation will usually treat CP1252 (aka "Win-Latin-1") as Latin-1 but
+# The encoding detection heuristic will choose UTF8 or CP1252.  The current
+# implementation will usually treat CP1252 (aka "Win-Latin-1") as CP1252 but
 # can be fooled into seeing it as UTF8.
-#
-# Note 1: Neither guess is 'correct' since even if we choose Latin-1, all the
-#         smart quote symbols will be rendered as control characters
-#
-# Note 2: the guess is only applied if the source POD omits =encoding, so
-#         CP1252 source will render correctly if properly declared
-#
 
 BEGIN {
     if($ENV{PERL_CORE}) {
@@ -26,7 +19,7 @@ use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
 
 
-# Initial, isolated, non-ASCII byte triggers Latin-1 guess and later
+# Initial, isolated, non-ASCII byte triggers CP1252 guess and later
 # multi-byte sequence is not considered by heuristic.
 
 my $x97 = chr utf8::unicode_to_native(0x97);
@@ -44,8 +37,8 @@ Em::Dash $x97 ${x91}CAF\xC9\x92
 
 my($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
-  if( $guess eq 'ISO8859-1' ) {
-    if( grep m{Dash (\x97|&#x97;|&#151;)}, @output_lines ) {
+  if( $guess eq 'CP1252' ) {
+    if( grep m{Dash &#8212}, @output_lines ) {
       ok 1;
     } else {
       ok 0;
@@ -53,7 +46,7 @@ if( $guess ) {
     }
   } else {
     ok 0;
-    print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
+    print "# parser guessed wrong encoding expected 'CP1252' got '$guess'\n";
   }
 } else {
   ok 0;
@@ -61,7 +54,7 @@ if( $guess ) {
 }
 
 
-# Initial smart-quote character triggers Latin-1 guess as expected
+# Initial smart-quote character triggers CP1252 guess as expected
 
 @output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
@@ -79,11 +72,11 @@ if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
 else {
     ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
     if( $guess ) {
-        if( $guess eq 'ISO8859-1' ) {
+        if( $guess eq 'CP1252' ) {
             ok 1;
         } else {
             ok 0;
-            print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
+            print "# parser guessed wrong encoding expected 'CP1252' got '$guess'\n";
         }
     } else {
         ok 0;
@@ -111,11 +104,11 @@ if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
 else {
     ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
     if( $guess ) {
-        if( $guess eq 'ISO8859-1' ) {
+        if( $guess eq 'CP1252' ) {
             ok 1;
         } else {
             ok 0;
-            print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
+            print "# parser guessed wrong encoding expected 'CP1252' got '$guess'\n";
         }
     } else {
         ok 0;
@@ -125,9 +118,8 @@ else {
 
 
 # The previous example used a CP1252 byte sequence that also happened to be a
-# valid UTF8 byte sequence.  In this example the heuristic also currently
-# guesses 'wrong' despite the byte sequence not being valid UTF8 (it's too
-# short).  This could arguably be 'fixed' by using a less naive regex.
+# valid UTF8 byte sequence.  In this example we use an illegal UTF-8 sequence
+# (it needs a third byte), so must be 1252
 
 @output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
@@ -145,11 +137,11 @@ if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
 else {
     ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
     if( $guess ) {
-        if( $guess eq 'ISO8859-1' ) {
+        if( $guess eq 'CP1252' ) {
             ok 1;
         } else {
             ok 0;
-            print "# parser guessed wrong encoding expected 'ISO8859-1' got '$guess'\n";
+            print "# parser guessed wrong encoding expected 'CP1252' got '$guess'\n";
         }
     } else {
         ok 0;
