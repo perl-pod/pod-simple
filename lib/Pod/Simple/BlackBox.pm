@@ -243,7 +243,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
     DEBUG > 5 and print "# Parsing line: [$line]\n";
 
     if(!$self->{'in_pod'}) {
-      if($line =~ m/^=([a-zA-Z]+)/s) {
+      if($line =~ m/^=([a-zA-Z][a-zA-Z0-9]*)(?:\s|$)/s) {
         if($1 eq 'cut') {
           $self->scream(
             $self->{'line_count'},
