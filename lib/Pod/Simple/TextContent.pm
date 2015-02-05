@@ -25,10 +25,8 @@ sub _handle_element_start {
 }
 
 sub _handle_text {
-  if( chr(65) eq 'A' ) {     # in ASCIIworld
-    $_[1] =~ tr/\xAD//d;
-    $_[1] =~ tr/\xA0/ /;
-  }
+  $_[1] =~ s/$Pod::Simple::shy//g;
+  $_[1] =~ s/$Pod::Simple::nbsp/ /g;
   print {$_[0]{'output_fh'}} $_[1];
   return;
 }

@@ -48,6 +48,22 @@ if(DEBUG > 2) {
   print "# We are under a Unicode-safe Perl.\n";
 }
 
+# The NO BREAK SPACE and SOFT HYHPEN are used in several submodules.
+if ($] ge 5.007_003) {  # On sufficiently modern Perls we can handle any
+                        # character set
+  $Pod::Simple::nbsp = chr utf8::unicode_to_native(0xA0);
+  $Pod::Simple::shy  = chr utf8::unicode_to_native(0xAD);
+}
+elsif (Pod::Simple::ASCII) {  # Hard code ASCII early Perl
+  $Pod::Simple::nbsp = "\xA0";
+  $Pod::Simple::shy  = "\xAD";
+}
+else { # EBCDIC on early Perl.  We know what the values are for the code
+        # pages supported then.
+  $Pod::Simple::nbsp = "\x41";
+  $Pod::Simple::shy  = "\xCA";
+}
+
 # Design note:
 # This is a parser for Pod.  It is not a parser for the set of Pod-like
 #  languages which happens to contain Pod -- it is just for Pod, plus possibly
@@ -1441,17 +1457,6 @@ sub _treat_Ss {
   return;
 }
 
-# We can get NO BREAK SPACE accurately for any platform for recent Perls; for
-# earlier ones use the ASCII value for those platforms, and assume the typical
-# EBCDIC value for any others.
-# Yes, we have to use ge instead of >= or else we could get failures due to
-# floating-point precision issues on 32-bit Perls.
-my $nbsp = ($] ge 5.007003)
-            ? chr utf8::unicode_to_native(0xA0)
-            : (ASCII)
-            ? "\xA0"
-            : "\x41";
-
 sub _change_S_to_nbsp { #  a recursive function
   # Sanely assumes that the top node in the excursion won't be an S node.
   my($treelet, $in_s) = @_;
@@ -1469,7 +1474,7 @@ sub _change_S_to_nbsp { #  a recursive function
         $i +=  @$to_pull_up - 1;   # Make $i skip the pulled-up stuff
       }
     } else {
-      $treelet->[$i] =~ s/\s/$nbsp/g if $in_s;
+      $treelet->[$i] =~ s/\s/$Pod::Simple::nbsp/g if $in_s;
        
        # Note that if you apply nbsp_for_S to text, and so turn
        # "foo S<bar baz> quux" into "foo bar&#160;faz quux", you

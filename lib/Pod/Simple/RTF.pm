@@ -549,8 +549,8 @@ sub rtf_esc_codely {
   "\t"   => "\\tab ",     # Tabs (altho theoretically raw \t's are okay)
   "\f"   => "\n\\page\n", # Formfeed
   "-"    => "\\_",        # Turn plaintext '-' into a non-breaking hyphen
-  "\xA0" => "\\~",        # Latin-1 non-breaking space
-  "\xAD" => "\\-",        # Latin-1 soft (optional) hyphen
+  $Pod::Simple::nbsp => "\\~",        # Latin-1 non-breaking space
+  $Pod::Simple::shy => "\\-",        # Latin-1 soft (optional) hyphen
 
   # CRAZY HACKS:
   "\n" => "\\line\n",
