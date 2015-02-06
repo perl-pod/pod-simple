@@ -22,8 +22,16 @@ use Pod::Simple::XMLOutStream;
 # Initial, isolated, non-ASCII byte triggers CP1252 guess and later
 # multi-byte sequence is not considered by heuristic.
 
-my $x97 = chr utf8::unicode_to_native(0x97);
-my $x91 = chr utf8::unicode_to_native(0x91);
+my $x97;
+my $x91;
+if ($] ge 5.007_003) {
+    $x97 = chr utf8::unicode_to_native(0x97);
+    $x91 = chr utf8::unicode_to_native(0x91);
+}
+else {  # Tests will fail for early EBCDICs
+    $x97 = chr 0x97;
+    $x91 = chr 0x91;
+}
 
 my @output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
