@@ -33,13 +33,16 @@ use Pod::Simple::XMLOutStream;
 
 my $x97;
 my $x91;
+my $dash;
 if ($] ge 5.007_003) {
     $x97 = chr utf8::unicode_to_native(0x97);
     $x91 = chr utf8::unicode_to_native(0x91);
+    $dash = '&#8212';
 }
 else {  # Tests will fail for early EBCDICs
     $x97 = chr 0x97;
     $x91 = chr 0x91;
+    $dash = '--';
 }
 
 my @output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
@@ -55,7 +58,7 @@ Em::Dash $x97 ${x91}CAF\xC9\x92
 my($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
 if( $guess ) {
   if( $guess eq 'CP1252' ) {
-    if( grep m{Dash &#8212}, @output_lines ) {
+    if( grep m{Dash $dash}, @output_lines ) {
       ok 1;
     } else {
       ok 0;
