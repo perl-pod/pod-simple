@@ -358,12 +358,6 @@ If you set the C<parse_characters> option to a true value the parser will
 expect characters rather than octets; will ignore any C<=encoding>; and will
 make no attempt to decode the input.
 
-=head1 CAVEATS
-
-This is just a beta release -- there are a good number of things still
-left to do.
-
-
 =head1 SEE ALSO
 
 L<Pod::Simple::Subclassing>

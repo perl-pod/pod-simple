@@ -2,7 +2,8 @@
 #---------------------------------------------------------------------------
 
 	* Release 3.29_4
-
+	Removed "Caveats" from the docs. Pod::Simple has been out of beta
+	for years.
 
 2015-02-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_3
