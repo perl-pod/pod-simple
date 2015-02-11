@@ -1,7 +1,8 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
-	* Release 3.30
+2015-02-11   David E. Wheeler <david@justatheory.org>
+	* Release 3.29_3
 	Tightened up the first pass at recognizing a Pod command so that
 	fewer invalid Pod lines will be recognized. Suggested by Randy
 	Stauner.
