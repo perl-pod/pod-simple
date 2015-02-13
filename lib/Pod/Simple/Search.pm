@@ -205,12 +205,8 @@ sub _make_search_callback {
         
     # Put off until as late as possible the expense of
     #  actually reading the file:
-    if( m/\.pod\z/is ) {
-      # just assume it has pod, okay?
-    } else {
-      $progress and $progress->reach($self->{'_scan_count'}, "Scanning $file");
-      return unless $self->contains_pod( $file );
-    }
+    $progress and $progress->reach($self->{'_scan_count'}, "Scanning $file");
+    return unless $self->contains_pod( $file );
     ++ $self->{'_scan_count'};
 
     # Or finally take note of it:
@@ -564,7 +560,7 @@ sub find {
 
     foreach my $ext ('', '.pod', '.pm', '.pl') {   # possible extensions
       my $fullext = $fullname . $ext;
-      if( -f $fullext and ($ext eq '.pod' || $self->contains_pod( $fullext ) ) ) {
+      if( -f $fullext and  $self->contains_pod( $fullext ) ) {
         print "FOUND: $fullext\n" if $verbose;
         return $fullext;
       }

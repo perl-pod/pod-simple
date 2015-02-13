@@ -5,8 +5,11 @@
 	Removed "Caveats" from the docs. Pod::Simple has been out of beta
 	for years.
 
-	The find() method in Pod::Simple::Search now always assumes that a
-	file ending in '.pod' is actually Pod, just like survey() does.
+	The survey() method in Pod::Simple::Search no longer assumes that
+	files ending in '.pod' are actually Pod. Like .pm and .pl files,
+	.pod files must contains at least one valid POD command, as
+	documented. This brings the behavior in line with find(), which
+	already required that .pod files contain Pod.
 
 2015-02-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_3
