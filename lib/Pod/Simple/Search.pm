@@ -51,7 +51,6 @@ sub survey {
 
   $self->_expand_inc( \@search_dirs );
 
-
   $self->{'_scan_count'} = 0;
   $self->{'_dirs_visited'} = {};
   $self->path2name( {} );
@@ -565,7 +564,7 @@ sub find {
 
     foreach my $ext ('', '.pod', '.pm', '.pl') {   # possible extensions
       my $fullext = $fullname . $ext;
-      if( -f $fullext  and  $self->contains_pod( $fullext ) ){
+      if( -f $fullext and ($ext eq '.pod' || $self->contains_pod( $fullext ) ) ) {
         print "FOUND: $fullext\n" if $verbose;
         return $fullext;
       }
