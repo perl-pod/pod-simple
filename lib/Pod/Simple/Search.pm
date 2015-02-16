@@ -210,11 +210,19 @@ sub _make_search_callback {
     ++ $self->{'_scan_count'};
 
     # Or finally take note of it:
-    if( $name2path->{$name} ) {
+    if( my $seen = $name2path->{$name} ) {
       $verbose and print
        "Duplicate POD found (shadowing?): $name ($file)\n",
        "    Already seen in ",
        join(' ', grep($path2name->{$_} eq $name, keys %$path2name)), "\n";
+      # Prefer .pod over .pm, and .pm over .pl.
+      if ($seen !~ /[.]pod$/) {
+          if ($file =~ /[.]pod$/) {
+              $name2path->{$name} = $file;
+          } else {
+              $name2path->{$name} = $file if $seen !~ /[.]pm$/ && $file =~ /[.]pm$/;
+          }
+      }
     } else {
       $name2path->{$name} = $file; # Noting just the first occurrence
     }

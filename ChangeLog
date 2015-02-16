@@ -11,6 +11,10 @@
 	documented. This brings the behavior in line with find(), which
 	already required that .pod files contain Pod.
 
+	The survey() method in Pod::Simple::Search now prefers files
+	ending in .pod over those ending in .pm, and .pm over those ending
+	in .pl, when it finds duplicate pod files for a given name.
+
 2015-02-11   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_3
 	Tightened up the first pass at recognizing a Pod command so that
