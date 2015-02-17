@@ -1,7 +1,9 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2015-02-17   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_5
+	No changes except that the release tarball should no longer be empty.
 
 2015-02-16   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_4
