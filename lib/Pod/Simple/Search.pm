@@ -216,11 +216,11 @@ sub _make_search_callback {
        "    Already seen in ",
        join(' ', grep($path2name->{$_} eq $name, keys %$path2name)), "\n";
       # Prefer .pod over .pm, and .pm over .pl.
-      if ($seen !~ /[.]pod$/) {
-          if ($file =~ /[.]pod$/) {
+      if ($seen !~ /[.]pod$/i) {
+          if ($file =~ /[.]pod$/i) {
               $name2path->{$name} = $file;
           } else {
-              $name2path->{$name} = $file if $seen !~ /[.]pm$/ && $file =~ /[.]pm$/;
+              $name2path->{$name} = $file if $seen !~ /[.]pm$/i && $file =~ /[.]pm$/i;
           }
       }
     } else {
