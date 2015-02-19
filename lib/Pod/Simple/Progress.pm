@@ -1,7 +1,7 @@
 
 require 5;
 package Pod::Simple::Progress;
-$VERSION = '3.29_5';
+$VERSION = '3.29_6';
 use strict;
 
 # Objects of this class are used for noting progress of an
