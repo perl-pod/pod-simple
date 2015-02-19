@@ -10,6 +10,11 @@
 	subdirectory of each directory it considers in such a way as to
 	preserve its case on the file system.
 
+	The survey() method in Pod::Simple::Search now prefers files
+	ending in '.pod' over those ending in '.pm', and those ending in
+	'.pm' over those ending in '.pl' when pondering files in a given
+	directory.
+
 2015-02-17   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_5
 	No changes except that the release tarball should no longer be empty.

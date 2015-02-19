@@ -345,7 +345,15 @@ sub _recurse_dir {
       closedir(INDIR);
       return
     }
-    my @items = sort readdir(INDIR);
+
+    # Load all items; put .pod before .pm.
+    my @items = map { $_->[0] }
+      sort { $a->[1] cmp $b->[1] || $a->[2] <=> $b->[2] }
+      map {
+        (my $t = $_) =~ s/[.]p(m|l|od)\z//;
+        my $e = lc $1;
+        [$_, $t, $e eq 'm' ? 1 : $e eq 'l' ? 2 : 0 ]
+      } readdir(INDIR);
     closedir(INDIR);
 
     push @$modname_bits, $dir_bare unless $dir_bare eq '';
