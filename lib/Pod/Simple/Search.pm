@@ -345,13 +345,12 @@ sub _recurse_dir {
       return
     }
 
-    # Load all items; put .pod before .pm.
+    # Load all items; put no extension before .pod before .pm before .plx?.
     my @items = map { $_->[0] }
-      sort { $a->[1] cmp $b->[1] || $a->[2] <=> $b->[2] }
+      sort { $a->[1] cmp $b->[1] || $b->[2] cmp $a->[2] }
       map {
-        (my $t = $_) =~ s/[.]p(m|l|od)\z//;
-        my $e = lc $1;
-        [$_, $t, $e eq 'm' ? 1 : $e eq 'l' ? 2 : 0 ]
+        (my $t = $_) =~ s/[.]p(m|lx?|od)\z//;
+        [$_, $t, lc $1 || 'z' ]
       } readdir(INDIR);
     closedir(INDIR);
 

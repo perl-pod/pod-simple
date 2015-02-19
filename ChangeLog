@@ -6,10 +6,9 @@
 	files with varying lettercasing on case-insensitive file systems.
 	This allows
 
-	The survey() method in Pod::Simple::Search now prefers files
-	ending in '.pod' over those ending in '.pm', and those ending in
-	'.pm' over those ending in '.pl' when pondering files in a given
-	directory.
+	When pondering files in a given directory, the survey() method in
+	Pod::Simple::Search now prefers files with extensions in the
+	following order: no extension, .pod, .pm, .plx, .pl.
 
 	The find() method in Pod::Simple::Search now records the './pod'
 	subdirectory of each directory it considers in such a way as to
