@@ -25,6 +25,7 @@ use Cwd qw( cwd );
 __PACKAGE__->_accessorize(  # Make my dumb accessor methods
  'callback', 'progress', 'dir_prefix', 'inc', 'laborious', 'limit_glob',
  'limit_re', 'shadows', 'verbose', 'name2path', 'path2name', 'recurse',
+ 'ciseen'
 );
 #==========================================================================
 
@@ -55,6 +56,7 @@ sub survey {
   $self->{'_dirs_visited'} = {};
   $self->path2name( {} );
   $self->name2path( {} );
+  $self->ciseen( {} );
   $self->limit_re( $self->_limit_glob_to_limit_re ) if $self->{'limit_glob'};
   my $cwd = cwd();
   my $verbose  = $self->verbose;
@@ -114,12 +116,25 @@ sub survey {
   }
   $self->progress and $self->progress->done(
    "Noted $$self{'_scan_count'} Pod files total");
+  $self->ciseen( {} );
 
   return unless defined wantarray; # void
   return $self->name2path unless wantarray; # scalar
   return $self->name2path, $self->path2name; # list
 }
 
+my $IS_CASE_INSENSITIVE;
+sub _is_case_insensitive {
+    unless (defined $IS_CASE_INSENSITIVE) {
+        $IS_CASE_INSENSITIVE = 0;
+        my ($uc) = glob uc __FILE__;
+        if ($uc) {
+            my ($lc) = glob lc __FILE__;
+            $IS_CASE_INSENSITIVE = 1 if $lc;
+        }
+    }
+    return $IS_CASE_INSENSITIVE;
+}
 
 #==========================================================================
 sub _make_search_callback {
@@ -127,10 +142,20 @@ sub _make_search_callback {
 
   # Put the options in variables, for easy access
   my( $laborious, $verbose, $shadows, $limit_re, $callback, $progress,
-      $path2name, $name2path, $recurse) =
+      $path2name, $name2path, $recurse, $ciseen) =
     map scalar($self->$_()),
      qw(laborious verbose shadows limit_re callback progress
-        path2name name2path recurse);
+        path2name name2path recurse ciseen);
+  my ($seen, $remember, $files_for);
+  if (_is_case_insensitive) {
+      $seen      = sub { $ciseen->{ lc $_[0] } };
+      $remember  = sub { $name2path->{ $_[0] } = $ciseen->{ lc $_[0] } = $_[1]; };
+      $files_for = sub { my $n = lc $_[0]; grep { lc $path2name->{$_} eq $n } %{ $path2name } };
+  } else {
+      $seen      = sub { $name2path->{ $_[0] } };
+      $remember  = sub { $name2path->{ $_[0] } = $_[1] };
+      $files_for = sub { my $n = $_[0]; grep { $path2name->{$_} eq $n } %{ $path2name } };
+  }
 
   my($file, $shortname, $isdir, $modname_bits);
   return sub {
@@ -196,13 +221,13 @@ sub _make_search_callback {
       return;
     }
 
-    if( !$shadows and $name2path->{$name} ) {
+    if( !$shadows and $seen->($name) ) {
       $verbose and print "Not worth considering $file ",
         "-- already saw $name as ",
-        join(' ', grep($path2name->{$_} eq $name, keys %$path2name)), "\n";
+        join(' ', $files_for->($name)), "\n";
       return;
     }
-        
+
     # Put off until as late as possible the expense of
     #  actually reading the file:
     $progress and $progress->reach($self->{'_scan_count'}, "Scanning $file");
@@ -210,21 +235,12 @@ sub _make_search_callback {
     ++ $self->{'_scan_count'};
 
     # Or finally take note of it:
-    if( my $seen = $name2path->{$name} ) {
+    if ( my $prev = $seen->($name)  ) {
       $verbose and print
        "Duplicate POD found (shadowing?): $name ($file)\n",
-       "    Already seen in ",
-       join(' ', grep($path2name->{$_} eq $name, keys %$path2name)), "\n";
-      # Prefer .pod over .pm, and .pm over .pl.
-      if ($seen !~ /[.]pod$/i) {
-          if ($file =~ /[.]pod$/i) {
-              $name2path->{$name} = $file;
-          } else {
-              $name2path->{$name} = $file if $seen !~ /[.]pm$/i && $file =~ /[.]pm$/i;
-          }
-      }
+       "    Already seen in ", join(' ', $files_for->($name)), "\n";
     } else {
-      $name2path->{$name} = $file; # Noting just the first occurrence
+      $remember->($name, $file); # Noting just the first occurrence
     }
     $verbose and print "  Noting $name = $file\n";
     if( $callback ) {
@@ -552,14 +568,12 @@ sub find {
   push @search_dirs, $Config::Config{'scriptdir'} if $self->inc;
 
   my %seen_dir;
- Dir:
-  foreach my $dir ( @search_dirs ) {
+  while (my $dir = shift @search_dirs ) {
     next unless defined $dir and length $dir;
     next if $seen_dir{$dir};
     $seen_dir{$dir} = 1;
     unless(-d $dir) {
       print "Directory $dir does not exist\n" if $verbose;
-      next Dir;
     }
 
     print "Looking in directory $dir\n" if $verbose;
@@ -573,11 +587,18 @@ sub find {
         return $fullext;
       }
     }
-    my $subdir = File::Spec->catdir($dir,'pod');
-    if(-d $subdir) {  # slip in the ./pod dir too
-      $verbose and print "Noticing $subdir and stopping there...\n";
-      $dir = $subdir;
-      redo Dir;
+
+    # Case-insensitively Look for ./pod directories and slip them in.
+    if ( opendir my $dh, $dir ) {
+      for my $subdir (
+        map { File::Spec->catdir($dir, $_) }
+        grep { lc $_  eq 'pod' } readdir $dh
+      ) {
+        if(-d $subdir) {
+          $verbose and print "Noticing $subdir and looking there...\n";
+          unshift @search_dirs, $subdir;
+        }
+      }
     }
   }
 

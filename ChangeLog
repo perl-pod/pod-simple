@@ -2,6 +2,13 @@
 #---------------------------------------------------------------------------
 
 	* Release 3.29_6
+	The survey() method in Pod::Simple::Search now ignores duplicat
+	files with varying lettercasing on case-insensitive file systems.
+	This allows
+
+	The find() method in Pod::Simple::Search now records the './pod'
+	subdirectory of each directory it considers in such a way as to
+	preserve its case on the file system.
 
 2015-02-17   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_5

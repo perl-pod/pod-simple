@@ -73,13 +73,10 @@ while (my ($testmod, $testpath) = each %{ $name2where }) {
   my @x = ($x->find($testmod)||'(nil)', $testpath);
   # print "# Comparing \"$x[0]\" to \"$x[1]\"\n";
   for(@x) { s{[/\\]}{/}g; }
-  # If it finds a .pod, it's probably correct, as that's where the docs are.
-  # Change it to .pm so that it matches.
-  $x[0] =~ s{[.]pod$}{.pm} if $x[1] =~ m{[.]pm$};
   # print "#        => \"$x[0]\" to \"$x[1]\"\n";
   is
-       lc $x[0],
-       lc $x[1],
+       $x[0],
+       $x[1],
        " find('$testmod') should match survey's name2where{$testmod}"
            ;
 }
