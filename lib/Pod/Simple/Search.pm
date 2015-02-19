@@ -17,7 +17,7 @@ $MAX_VERSION_WITHIN ||= 60;
 
 #use diagnostics;
 use File::Spec ();
-use File::Basename qw( basename );
+use File::Basename qw( basename dirname );
 use Config ();
 use Cwd qw( cwd );
 
@@ -195,7 +195,6 @@ sub _make_search_callback {
       return; # (not pruning);
     }
 
-      
     # Make sure it's a file even worth even considering
     if($laborious) {
       unless(
@@ -555,6 +554,14 @@ sub _limit_glob_to_limit_re {
 
 # contribution mostly from Tim Jenness <t.jenness@jach.hawaii.edu>
 
+sub _actual_filenames {
+    my $dir = shift;
+    my $fn = lc shift;
+    opendir my $dh, $dir or return;
+    return map { File::Spec->catdir($dir, $_) }
+        grep { lc $_  eq $fn } readdir $dh;
+}
+
 sub find {
   my($self, $pod, @search_dirs) = @_;
   $self = $self->new unless ref $self; # tolerate being a class method
@@ -590,22 +597,35 @@ sub find {
 
     foreach my $ext ('', '.pod', '.pm', '.pl') {   # possible extensions
       my $fullext = $fullname . $ext;
-      if( -f $fullext and  $self->contains_pod( $fullext ) ) {
+      if ( -f $fullext and $self->contains_pod($fullext) ) {
         print "FOUND: $fullext\n" if $verbose;
+        if (@parts > 1 && lc $parts[0] eq 'pod' && _is_case_insensitive && $ext eq '.pod') {
+          # Well, this file could be for a program (perldoc) but we actually
+          # want a module (Pod::Perldoc). So see if there is a .pm with the
+          # proper casing.
+          my $subdir = dirname $fullext;
+          unless (grep { $fullext eq $_  } _actual_filenames $subdir, "$parts[-1].pod") {
+            print "# Looking for alternate spelling in $subdir\n" if $verbose;
+            # Try the .pm file.
+            my $pm = $fullname . '.pm';
+            if ( -f $pm and $self->contains_pod($pm) ) {
+              # Prefer the .pm if its case matches.
+              if (grep { $pm eq $_  } _actual_filenames $subdir, "$parts[-1].pm") {
+                print "FOUND: $fullext\n" if $verbose;
+                return $pm;
+              }
+            }
+          }
+        }
         return $fullext;
       }
     }
 
     # Case-insensitively Look for ./pod directories and slip them in.
-    if ( opendir my $dh, $dir ) {
-      for my $subdir (
-        map { File::Spec->catdir($dir, $_) }
-        grep { lc $_  eq 'pod' } readdir $dh
-      ) {
-        if(-d $subdir) {
-          $verbose and print "Noticing $subdir and looking there...\n";
-          unshift @search_dirs, $subdir;
-        }
+    for my $subdir ( _actual_filenames($dir, 'pod') ) {
+      if (-d $subdir) {
+        $verbose and print "Noticing $subdir and looking there...\n";
+        unshift @search_dirs, $subdir;
       }
     }
   }

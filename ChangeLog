@@ -6,14 +6,21 @@
 	files with varying lettercasing on case-insensitive file systems.
 	This allows
 
-	The find() method in Pod::Simple::Search now records the './pod'
-	subdirectory of each directory it considers in such a way as to
-	preserve its case on the file system.
-
 	The survey() method in Pod::Simple::Search now prefers files
 	ending in '.pod' over those ending in '.pm', and those ending in
 	'.pm' over those ending in '.pl' when pondering files in a given
 	directory.
+
+	The find() method in Pod::Simple::Search now records the './pod'
+	subdirectory of each directory it considers in such a way as to
+	preserve its case on the file system.
+
+	The find() method in Pod::Simple::Search now tries harder to find
+	the proper file on case-insensitive file systems when searching
+	for modules starting with "Pod". For example, when searching for
+	'Pod::Perldoc' it now returns a file ending in 'Pod/Perldoc.pm'
+	instead of 'Pod/perldoc.pod', as the latter is actually the
+	documention for the 'perldoc' program.
 
 2015-02-17   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_5
