@@ -1,7 +1,9 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2015-02-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.30
+	No changes since 3.29_6.
 
 2015-02-19   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_6
