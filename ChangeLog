@@ -2,6 +2,7 @@
 #---------------------------------------------------------------------------
 
 	* Release 3.30_1
+	Simplified the detection of case-insensitivity in Pod::Simple::Search.
 
 2015-02-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.30

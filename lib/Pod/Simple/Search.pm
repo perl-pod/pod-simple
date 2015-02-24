@@ -12,6 +12,7 @@ $SLEEPY = 1 if !defined $SLEEPY and $^O =~ /mswin|mac/i;
   # flag to occasionally sleep for $SLEEPY - 1 seconds.
 
 $MAX_VERSION_WITHIN ||= 60;
+my $IS_CASE_INSENSITIVE = -e uc __FILE__ && -e lc __FILE__;
 
 #############################################################################
 
@@ -123,19 +124,6 @@ sub survey {
   return $self->name2path, $self->path2name; # list
 }
 
-my $IS_CASE_INSENSITIVE;
-sub _is_case_insensitive {
-    unless (defined $IS_CASE_INSENSITIVE) {
-        $IS_CASE_INSENSITIVE = 0;
-        my ($uc) = glob uc __FILE__;
-        if ($uc) {
-            my ($lc) = glob lc __FILE__;
-            $IS_CASE_INSENSITIVE = 1 if $lc;
-        }
-    }
-    return $IS_CASE_INSENSITIVE;
-}
-
 #==========================================================================
 sub _make_search_callback {
   my $self = $_[0];
@@ -147,7 +135,7 @@ sub _make_search_callback {
      qw(laborious verbose shadows limit_re callback progress
         path2name name2path recurse ciseen);
   my ($seen, $remember, $files_for);
-  if (_is_case_insensitive) {
+  if ($IS_CASE_INSENSITIVE) {
       $seen      = sub { $ciseen->{ lc $_[0] } };
       $remember  = sub { $name2path->{ $_[0] } = $ciseen->{ lc $_[0] } = $_[1]; };
       $files_for = sub { my $n = lc $_[0]; grep { lc $path2name->{$_} eq $n } %{ $path2name } };
@@ -598,7 +586,7 @@ sub find {
       my $fullext = $fullname . $ext;
       if ( -f $fullext and $self->contains_pod($fullext) ) {
         print "FOUND: $fullext\n" if $verbose;
-        if (@parts > 1 && lc $parts[0] eq 'pod' && _is_case_insensitive && $ext eq '.pod') {
+        if (@parts > 1 && lc $parts[0] eq 'pod' && $IS_CASE_INSENSITIVE && $ext eq '.pod') {
           # Well, this file could be for a program (perldoc) but we actually
           # want a module (Pod::Perldoc). So see if there is a .pm with the
           # proper casing.
