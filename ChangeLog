@@ -7,6 +7,11 @@
 	Fixed "Use of uninitialized value $1 in lc" warning in
 	Pod::Simple::Search.
 
+	If @INC includes the current directory symbol, '.', the survey()
+	method of Pod::Simple::Search no longer excludes it from its list
+	of directories to search. Instead, The survey() and find() methods
+	now both exclude duplicate directories from @INC (RT #102344).
+
 2015-02-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.30
 	No changes since 3.29_6.

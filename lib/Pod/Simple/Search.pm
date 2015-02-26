@@ -482,13 +482,15 @@ sub _expand_inc {
   my($self, $search_dirs) = @_;
   
   return unless $self->{'inc'};
+  my %seen = map { File::Spec->rel2abs($_) => 1 } @{ $search_dirs };
 
   if ($^O eq 'MacOS') {
     push @$search_dirs,
-      grep $_ ne File::Spec->curdir, $self->_mac_whammy(@INC);
+      grep { !$seen{ File::Spec->rel2abs($_) }++ } $self->_mac_whammy(@INC);
   # Any other OSs need custom handling here?
   } else {
-    push @$search_dirs, grep $_ ne File::Spec->curdir,  @INC;
+    push @$search_dirs,
+      grep { !$seen{ File::Spec->rel2abs($_) }++ } @INC;
   }
 
   $self->{'laborious'} = 0;   # Since inc said to use INC
