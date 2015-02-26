@@ -338,7 +338,7 @@ sub _recurse_dir {
       sort { $a->[1] cmp $b->[1] || $b->[2] cmp $a->[2] }
       map {
         (my $t = $_) =~ s/[.]p(m|lx?|od)\z//;
-        [$_, $t, lc $1 || 'z' ]
+        [$_, $t, lc($1 || 'z') ]
       } readdir(INDIR);
     closedir(INDIR);
 
