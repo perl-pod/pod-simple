@@ -32,14 +32,21 @@ WriteMakefile(
   INSTALLDIRS => $] >= 5.009003 && $] <= 5.011000 ? 'perl' : 'site',
 
   LICENSE => 'perl',
-  AUTHOR  => 'Allison Randal <allison@perl.org>',
-  META_MERGE => {
+  AUTHOR  => 'Allison Randal <allison@perl.org>', 
+ META_MERGE => {
+      "meta-spec" => { version => 2 },
       resources => {
-          repository => 'git://github.com/theory/pod-simple.git',
           homepage   => 'http://search.cpan.org/dist/Pod-Simple/',
-#         bugtracker => 'bug-pod-simple@rt.cpan.org',
           license    => 'http://dev.perl.org/licenses/',
-
+          repository => {
+              url  => 'git://github.com/perl-pod/pod-simple.git',
+              web  => 'https://github.com/perl-pod/pod-simple',
+              type => 'git',
+          },
+          bugtracker => {
+              web    => 'https://github.com/perl-pod/pod-simple/issues',
+              mailto => 'bug-pod-simple@rt.cpan.org',
+          },
       },
   },
 
