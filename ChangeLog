@@ -12,6 +12,12 @@
 	of directories to search. Instead, The survey() and find() methods
 	now both exclude duplicate directories from @INC (RT #102344).
 
+	Moved source repository and updated links to new perl-pod GitHub
+	organization: https://github.com/perl-pod/pod-simple.
+
+	Improved repostitory links and added GitHub issue tracking link
+	to the distribution metadata.
+
 2015-02-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.30
 	No changes since 3.29_6.
