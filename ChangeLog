@@ -15,8 +15,8 @@
 	Moved source repository and updated links to new perl-pod GitHub
 	organization: https://github.com/perl-pod/pod-simple.
 
-	Improved repostitory links and added GitHub issue tracking link
-	to the distribution metadata.
+	Improved repository links and added GitHub issue tracking link to
+	the distribution metadata.
 
 2015-02-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.30
