@@ -1,6 +1,7 @@
 
 require 5;
 package Pod::Simple::Transcode;
+use strict;
 use vars qw($VERSION );
 $VERSION = '3.30_1';
 
