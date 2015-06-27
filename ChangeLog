@@ -18,6 +18,11 @@
 	Improved repository links and added GitHub issue tracking link to
 	the distribution metadata.
 
+	Switched from File::Spec's catdir to catfile for path names, to
+	fix failures on VMS. Also now use Unix path semantics where
+	they're not required to be platform-specific. Thanks to Craig A.
+	Berry for the patch (RT #105511).
+
 2015-02-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.30
 	No changes since 3.29_6.
