@@ -23,6 +23,9 @@
 	they're not required to be platform-specific. Thanks to Craig A.
 	Berry for the patch (RT #105511).
 
+	Improved the example use of the 'html_encode_chars()' method in
+	the Pod::Simple::XHTML documentation. Patch from Randy Stauner.
+
 2015-02-23   David E. Wheeler <david@justatheory.org>
 	* Release 3.30
 	No changes since 3.29_6.
