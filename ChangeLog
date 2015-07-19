@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 
+2015-07-19   Marc Green <marcgreen@cpan.org>
 	* Release 3.30_1
 	Simplified the detection of case-insensitivity in Pod::Simple::Search.
 
