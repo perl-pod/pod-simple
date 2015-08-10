@@ -1,6 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
-	* Release 3.30_2
+2015-08-23   Marc Green <marcgreen@cpan.org>
+	* Release 3.31
 	No changes since 3.30_1.
 
 2015-07-19   Marc Green <marcgreen@cpan.org>
