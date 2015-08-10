@@ -10,6 +10,9 @@
 	change how they handle it. Patch from Karl Williamson (GitHub Pull
 	Request #76).
 
+	Added errata_seen() to make POD errors easily accessible. Thanks to
+	Sean Zellmer for the pull request!
+
 2015-08-23   Marc Green <marcgreen@cpan.org>
 	* Release 3.31
 	No changes since 3.30_1.
