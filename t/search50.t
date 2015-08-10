@@ -72,7 +72,6 @@ while (my ($testmod, $testpath) = each %{ $name2where }) {
   }
   my @x = ($x->find($testmod)||'(nil)', $testpath);
   # print "# Comparing \"$x[0]\" to \"$x[1]\"\n";
-  for(@x) { s{[/\\]}{/}g; }
   # print "#        => \"$x[0]\" to \"$x[1]\"\n";
   is(
       File::Spec->rel2abs($x[0]),

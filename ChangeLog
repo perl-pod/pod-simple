@@ -1,7 +1,14 @@
-# ChangeLog for Pod::Simple dist
+ # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+
 	* Release 3.32
-	No changes since 3.31.
+	Fixed failing tests on Windows. Thanks to A. Sinan Unur for the
+	patch!
+
+	Switched debugging output from STDOUT to STDERR. Should rarely be
+	used, but modules that do depend on debugging output might need to
+	change how they handle it. Patch from Karl Williamson (GitHub Pull
+	Request #76).
 
 2015-08-23   Marc Green <marcgreen@cpan.org>
 	* Release 3.31
@@ -39,7 +46,7 @@
 
 2015-02-19   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_6
-	The survey() method in Pod::Simple::Search now ignores duplicat
+	The survey() method in Pod::Simple::Search now ignores duplicate
 	files with varying lettercasing on case-insensitive file systems.
 	This allows
 

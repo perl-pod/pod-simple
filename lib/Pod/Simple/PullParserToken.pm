@@ -50,7 +50,7 @@ Given a $parser that's an object of class Pod::Simple::PullParser
 (or a subclass)...
 
   while(my $token = $parser->get_token) {
-    $DEBUG and print "Token: ", $token->dump, "\n";
+    $DEBUG and print STDERR "Token: ", $token->dump, "\n";
     if($token->is_start) {
       ...access $token->tagname, $token->attr, etc...
 
@@ -104,7 +104,7 @@ This returns a handy stringified value of this object.  This
 is useful for debugging, as in:
 
   while(my $token = $parser->get_token) {
-    $DEBUG and print "Token: ", $token->dump, "\n";
+    $DEBUG and print STDERR "Token: ", $token->dump, "\n";
     ...
   }
 
