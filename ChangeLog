@@ -1,6 +1,6 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
-
+2015-11-02   Marc Green <marcgreen@cpan.org>
 	* Release 3.32
 	Fixed failing tests on Windows. Thanks to A. Sinan Unur for the
 	patch!
