@@ -36,7 +36,7 @@
 
 2015-02-19   David E. Wheeler <david@justatheory.org>
 	* Release 3.29_6
-	The survey() method in Pod::Simple::Search now ignores duplicat
+	The survey() method in Pod::Simple::Search now ignores duplicate
 	files with varying lettercasing on case-insensitive file systems.
 	This allows
 
