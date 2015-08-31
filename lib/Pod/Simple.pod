@@ -289,6 +289,16 @@ I<Example:>
 
   die "too many errors\n" if $parser->any_errata_seen();
 
+=item C<< $parser->errata_seen() >>X<errata_seen>
+
+Returns a hash reference of all errata seen, both whines and screams. The hash reference's keys are the line number and the value is an array reference of the errors for that line.
+
+I<Example:>
+
+  if ( $parser->any_errata_seen() ) {
+     $logger->log( $parser->errata_seen() );
+  }
+
 =item C<< $parser->detected_encoding() >>X<detected_encoding>
 
 Return the encoding corresponding to C<< =encoding >>, but only if the
