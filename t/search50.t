@@ -75,7 +75,7 @@ while (my ($testmod, $testpath) = each %{ $name2where }) {
   # print "#        => \"$x[0]\" to \"$x[1]\"\n";
   is(
       File::Spec->rel2abs($x[0]),
-      File::Spec->rel2abs($x[1]),
+      $x[1],
       " find('$testmod') should match survey's name2where{$testmod}"
   );
 }
