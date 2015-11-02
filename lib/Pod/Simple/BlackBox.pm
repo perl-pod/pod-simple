@@ -22,7 +22,7 @@ use integer; # vroom!
 use strict;
 use Carp ();
 use vars qw($VERSION );
-$VERSION = '3.32';
+$VERSION = '3.33';
 #use constant DEBUG => 7;
 BEGIN {
   require Pod::Simple;
