@@ -130,6 +130,10 @@ sub any_errata_seen {  # good for using as an exit() value...
   return shift->{'errors_seen'} || 0;
 }
 
+sub errata_seen {
+  return shift->{'all_errata'} || {};
+}
+
 # Returns the encoding only if it was recognized as being handled and set
 sub detected_encoding {
   return shift->{'detected_encoding'};
@@ -541,6 +545,7 @@ sub whine {
     DEBUG > 9 and print STDERR "Discarding complaint (at line $_[0]) $_[1]\n because no_whining is on.\n";
     return;
   }
+  push @{$self->{'all_errata'}{$_[0]}}, $_[1];
   return $self->_complain_warn(@_) if $self->{'complain_stderr'};
   return $self->_complain_errata(@_);
 }
@@ -549,6 +554,7 @@ sub scream {    # like whine, but not suppressible
   #my($self,$line,$complaint) = @_;
   my $self = shift(@_);
   ++$self->{'errors_seen'};
+  push @{$self->{'all_errata'}{$_[0]}}, $_[1];
   return $self->_complain_warn(@_) if $self->{'complain_stderr'};
   return $self->_complain_errata(@_);
 }
