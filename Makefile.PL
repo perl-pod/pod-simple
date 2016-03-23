@@ -48,6 +48,14 @@ WriteMakefile(
         mailto => 'bug-pod-simple@rt.cpan.org',
       },
     },
+    prereqs => {
+      runtime => {
+        recommends => {
+          'Encode' => 2.78, # Pod::Simple's new default code page (1252) is
+                            # pre-compiled in 2.78, which improves performance.
+        },
+      },
+    },
   },
 
 );
