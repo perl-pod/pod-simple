@@ -169,8 +169,8 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
       my $encoding;
 
-      # No =encoding line, and we are at the first line in the input that
-      # contains a non-ascii byte, that is one whose meaning varies depending
+      # No =encoding line, and we are at the first pod line in the input that
+      # contains a non-ascii byte, that is, one whose meaning varies depending
       # on whether the file is encoded in UTF-8 or CP1252, which are the two
       # possibilities permitted by the pod spec.  (ASCII is assumed if the
       # file only contains ASCII bytes.)  In order to process this line, we
@@ -190,10 +190,11 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # points in CP1252 and UTF-8.  In ASCII platform UTF-8 all other code
       # points require multiple (non-ASCII) bytes to represent.  (A separate
       # paragraph for EBCDIC is below.)  The multi-byte representation is
-      # quite structured.  If we find an isolated byte that requires multiple
-      # bytes to represent in UTF-8, we know that the encoding is not UTF-8.
-      # If we find a sequence of bytes that violates the UTF-8 structure, we
-      # also can presume the encoding isn't UTF-8, and hence must be 1252.
+      # quite structured.  If we find an isolated byte that would require
+      # multiple bytes to represent in UTF-8, we know that the encoding is not
+      # UTF-8.  If we find a sequence of bytes that violates the UTF-8
+      # structure, we also can presume the encoding isn't UTF-8, and hence
+      # must be 1252.
       #
       # But there are ambiguous cases where we could guess wrong.  If so, the
       # user will end up having to supply an =encoding line.  We use all
@@ -517,7 +518,7 @@ sub _handle_encoding_line {
 
 sub _handle_encoding_second_level {
   # By time this is called, the encoding (if well formed) will already
-  #  have been acted one.
+  #  have been acted on.
   my($self, $para) = @_;
   my @x = @$para;
   my $content = join ' ', splice @x, 2;
@@ -1684,7 +1685,7 @@ sub _verbatim_format {
     $p->[$i] .= "\n";
      # Unlike with simple Verbatim blocks, we don't end up just doing
      # a join("\n", ...) on the contents, so we have to append a
-     # newline to ever line, and then nix the last one later.
+     # newline to every line, and then nix the last one later.
   }
 
   if( DEBUG > 4 ) {
@@ -1816,6 +1817,15 @@ sub _treelet_from_formatting_codes {
   #            [ 'B', {}, "pie" ],
   #            "!"
   #       ]
+  # This illustrates the general format of a treelet.  It is an array:
+  #     [0]       is a scalar indicating its type.  In the example above, the
+  #               types are '~Top' and 'B'
+  #     [1]       is a hash of various flags about it, possibly empty
+  #     [2] - [N] are an ordered list of the subcomponents of the treelet.
+  #               Scalars are literal text, refs are sub-treelets, to
+  #               arbitrary levels.  Stringifying a treelet will recursively
+  #               stringify the sub-treelets, concatentating everything
+  #               together to form the exact text of the treelet.
   
   my($self, $para, $start_line, $preserve_space) = @_;
   
@@ -1830,11 +1840,19 @@ sub _treelet_from_formatting_codes {
   # Only apparent problem the above code is that N<<  >> turns into
   # N<< >>.  But then, word wrapping does that too!  So don't do that!
   
+
+  # As a Start-code is encountered, the number of opening bracket '<'
+  # characters minus 1 is pushed onto @stack (so 0 means a single bracket,
+  # etc).  When closing brackets are found in the text, at least this number
+  # (plus the 1) will be required to mean the Start-code is terminated.  When
+  # those are found, @stack is popped.
   my @stack;
+
   my @lineage = ($treelet);
   my $raw = ''; # raw content of L<> fcode before splitting/processing
     # XXX 'raw' is not 100% accurate: all surrounding whitespace is condensed
-    # into just 1 ' '. Is this the regex's doing or 'raw's?
+    # into just 1 ' '. Is this the regex's doing or 'raw's?  Answer is it's
+    # the 'collapse and trim all whitespace first' lines just above.
   my $inL = 0;
 
   DEBUG > 4 and print STDERR "Paragraph:\n$para\n\n";
@@ -1871,7 +1889,11 @@ sub _treelet_from_formatting_codes {
         |
         # Match multiple-bracket end codes.  $3 gets the whitespace that
         # should be discarded before an end bracket but kept in other cases
-        # and $4 gets the end brackets themselves.
+        # and $4 gets the end brackets themselves.  ($3 can be empty if the
+        # construct is empty, like C<<  >>, and all the white-space has been
+        # gobbled up already, considered to be space after the opening
+        # bracket.  In this case we use look-behind to verify that there are
+        # at least 2 spaces in a row before the ">".)
         (\s+|(?<=\s\s))(>{2,})
         |
         (\s?>)          # $5: simple end-codes
@@ -1990,6 +2012,7 @@ sub _treelet_from_formatting_codes {
       $raw .= $6 if $inL;
         # XXX does not capture multiplace whitespaces -- 'raw' ends up with
         #     at most 1 leading/trailing whitespace, why not all of it?
+        #     Answer, because we deliberately trimmed it above
 
     } else {
       # should never ever ever ever happen
