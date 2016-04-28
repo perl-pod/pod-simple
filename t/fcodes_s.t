@@ -43,17 +43,17 @@ skip( $unless_ascii,
 skip( $unless_ascii,
     $x->_out( sub { $_[0]->nbsp_for_S(1) },
     qq{=pod\n\nI like S<L</"bric-a-brac a gogo">>.\n}),
-'<Document><Para>I like <L content-implicit="yes" section="bric-a-brac a gogo" type="pod">&#34;bric-a-brac&#160;a&#160;gogo&#34;</L>.</Para></Document>'
+'<Document><Para>I like <L content-implicit="yes" raw="/&#34;bric-a-brac a gogo&#34;" section="bric-a-brac a gogo" type="pod">&#34;bric-a-brac&#160;a&#160;gogo&#34;</L>.</Para></Document>'
 );
 skip( $unless_ascii,
     $x->_out( sub { $_[0]->nbsp_for_S(1) },
     qq{=pod\n\nI like S<L<Stuff like that|/"bric-a-brac a gogo">>.\n}),
-'<Document><Para>I like <L section="bric-a-brac a gogo" type="pod">Stuff&#160;like&#160;that</L>.</Para></Document>'
+'<Document><Para>I like <L raw="Stuff like that|/&#34;bric-a-brac a gogo&#34;" section="bric-a-brac a gogo" type="pod">Stuff&#160;like&#160;that</L>.</Para></Document>'
 );
 skip( $unless_ascii,
     $x->_out( sub { $_[0]->nbsp_for_S(1) },
     qq{=pod\n\nI like S<L<Stuff I<like that>|/"bric-a-brac a gogo">>.\n}),
-'<Document><Para>I like <L section="bric-a-brac a gogo" type="pod">Stuff&#160;<I>like&#160;that</I></L>.</Para></Document>'
+'<Document><Para>I like <L raw="Stuff I&#60;like that&#62;|/&#34;bric-a-brac a gogo&#34;" section="bric-a-brac a gogo" type="pod">Stuff&#160;<I>like&#160;that</I></L>.</Para></Document>'
 );
 
 &ok( $x->_duo( sub { $_[0]->nbsp_for_S(1) },

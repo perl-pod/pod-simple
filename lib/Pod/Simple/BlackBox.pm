@@ -1938,7 +1938,7 @@ sub _treelet_from_formatting_codes {
         }
         else {
             $raw = ""; # reset raw content accumulator
-            $inL = 1
+            $inL = @stack;
         }
       } else {
         $raw .= $1 if $inL;
@@ -1976,15 +1976,14 @@ sub _treelet_from_formatting_codes {
       push @{ $lineage[-1] }, '' if 2 == @{ $lineage[-1] };
       # Keep the element from being childless
       
+      if ($inL == @stack) {
+        $lineage[-1][1]{'raw'} = $raw;
+        $inL = 0;
+      }
+
       pop @stack;
       pop @lineage;
 
-      unless (@stack) { # not in an L if there are no open fcodes
-        $inL = 0;
-        if (ref $lineage[-1][-1] && $lineage[-1][-1][0] eq 'L') {
-          $lineage[-1][-1][1]{'raw'} = $raw
-        }
-      }
       $raw .= $3.$4 if $inL;
       
     } elsif(defined $5) {
@@ -2000,6 +1999,11 @@ sub _treelet_from_formatting_codes {
           push @{ $lineage[-1] }, ''; # keep it from being really childless
         }
 
+        if ($inL == @stack) {
+          $lineage[-1][1]{'raw'} = $raw;
+          $inL = 0;
+        }
+
         pop @stack;
         pop @lineage;
       } else {
@@ -2007,12 +2011,6 @@ sub _treelet_from_formatting_codes {
         push @{ $lineage[-1] }, $5;
       }
 
-      unless (@stack) { # not in an L if there are no open fcodes
-        $inL = 0;
-        if (ref $lineage[-1][-1] && $lineage[-1][-1][0] eq 'L') {
-          $lineage[-1][-1][1]{'raw'} = $raw
-        }
-      }
       $raw .= $5 if $inL;
 
     } elsif(defined $6) {
