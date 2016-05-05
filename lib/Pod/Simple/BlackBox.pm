@@ -1918,13 +1918,17 @@ sub _treelet_from_formatting_codes {
   ) {
     DEBUG > 4 and print STDERR "\nParagraphic tokenstack = (@stack)\n";
     if(defined $1) {
+      my $bracket_count;    # How many '<<<' in a row this has.  Needed for
+                            # Pod::Simple::Pod
       if(defined $2) {
         DEBUG > 3 and print STDERR "Found complex start-text code \"$1\"\n";
-        push @stack, length($2) + 1; 
-          # length of the necessary complex end-code string
+        $bracket_count = length($2) + 1;
+        push @stack, $bracket_count; # length of the necessary complex
+                                     # end-code string
       } else {
         DEBUG > 3 and print STDERR "Found simple start-text code \"$1\"\n";
         push @stack, 0;  # signal that we're looking for simple
+        $bracket_count = 1;
       }
       my $code = substr($1,0,1);
       if ('L' eq $code) {
@@ -1943,6 +1947,13 @@ sub _treelet_from_formatting_codes {
         $raw .= $1 if $inL;
       }
       push @lineage, [ $code, {}, ];  # new node object
+
+      # Tell Pod::Simple::Pod how many brackets there were, but to save space,
+      # not in the most usual case of there was just 1.  It can inferred by
+      # the absence of this element.
+      $lineage[-1][1]{'~bracket_count'} = $bracket_count
+                                            if $self->_output_is_for_Pod
+                                            && $bracket_count > 1;
       push @{ $lineage[-2] }, $lineage[-1];
     } elsif(defined $4) {
       DEBUG > 3 and print STDERR "Found apparent complex end-text code \"$3$4\"\n";
