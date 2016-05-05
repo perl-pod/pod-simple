@@ -1926,15 +1926,24 @@ sub _treelet_from_formatting_codes {
         DEBUG > 3 and print STDERR "Found simple start-text code \"$1\"\n";
         push @stack, 0;  # signal that we're looking for simple
       }
-      push @lineage, [ substr($1,0,1), {}, ];  # new node object
-      push @{ $lineage[-2] }, $lineage[-1];
-      if ('L' eq substr($1,0,1)) {
-        $raw = $inL ? $raw.$1 : ''; # reset raw content accumulator
-        $inL = 1;
+      my $code = substr($1,0,1);
+      if ('L' eq $code) {
+        if ($inL) {
+            $raw .= $1;
+            $self->scream( $start_line,
+                           'Nested L<> are illegal.  Pretending inner one is '
+                         . 'X<...> so can continue looking for other errors.');
+            $code = "X";
+        }
+        else {
+            $raw = ""; # reset raw content accumulator
+            $inL = 1
+        }
       } else {
         $raw .= $1 if $inL;
       }
-
+      push @lineage, [ $code, {}, ];  # new node object
+      push @{ $lineage[-2] }, $lineage[-1];
     } elsif(defined $4) {
       DEBUG > 3 and print STDERR "Found apparent complex end-text code \"$3$4\"\n";
       # This is where it gets messy...
