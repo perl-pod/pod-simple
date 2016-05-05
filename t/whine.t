@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 {
   package Pod::Simple::ErrorFinder;
@@ -49,5 +49,15 @@ sub errors { Pod::Simple::ErrorFinder->errors_for_input(@_) }
     $errors,
     { 3 => [ "alternative text 'I/O Operators' contains non-escaped | or /" ] },
     "warning for / in text part of L<>",
+  );
+}
+
+{
+  my $input = "=pod\n\nnested LE<lt>E<sol>E<gt>: L<Nested L<http://foobar>|http://baz>\n";
+  my $errors = errors("$input");
+  is_deeply(
+    $errors,
+    { 3 => [ "Nested L<> are illegal.  Pretending inner one is X<...> so can continue looking for other errors." ] },
+      "warning for nested L<>",
   );
 }
