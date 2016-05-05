@@ -2,8 +2,6 @@
 require 5;
 package Pod::Simple::LinkSection;
   # Based somewhat dimly on Array::Autojoin
-use vars qw($VERSION );
-$VERSION = '3.35';
 
 use strict;
 use Pod::Simple::BlackBox;
