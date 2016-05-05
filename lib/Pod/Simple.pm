@@ -101,6 +101,9 @@ __PACKAGE__->_accessorize(
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events
 
+  '_output_is_for_Pod', # For use only by Pod::Simple::Pod,
+                       # If non-zero, don't expand Z<> E<> S<> L<>,
+                       # and count how many brackets in format codes
   'preserve_whitespace', # whether to try to keep whitespace as-is
   'strip_verbatim_indent', # What indent to strip from verbatim
 
@@ -652,12 +655,13 @@ sub _make_treelet {
     $treelet = $self->_treelet_from_formatting_codes(@_);
   }
   
-  if( $self->_remap_sequences($treelet) ) {
+  if( ! $self->_output_is_for_Pod   # Retain these as-is for pod output
+     && $self->_remap_sequences($treelet) )
+  {
     $self->_treat_Zs($treelet);  # Might as well nix these first
     $self->_treat_Ls($treelet);  # L has to precede E and S
     $self->_treat_Es($treelet);
     $self->_treat_Ss($treelet);  # S has to come after E
-
     $self->_wrap_up($treelet); # Nix X's and merge texties
     
   } else {
