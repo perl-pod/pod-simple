@@ -1,5 +1,10 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+	* Release 3.34
+2016-11-29  Karl Williamson <khw@cpan.org>
+	Stabilize t/search50.t.  Thanks to rurban for the patch!
+	Turn off utf8 warnings when trying to see if a file is UTF-8 or not.
+
 	* Release 3.33
 	No changes since 3.32.
 

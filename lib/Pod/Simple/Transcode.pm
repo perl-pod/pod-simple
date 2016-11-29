@@ -3,7 +3,7 @@ require 5;
 package Pod::Simple::Transcode;
 use strict;
 use vars qw($VERSION @ISA);
-$VERSION = '3.33';
+$VERSION = '3.34';
 
 BEGIN {
   if(defined &DEBUG) {;} # Okay

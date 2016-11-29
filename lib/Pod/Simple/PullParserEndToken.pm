@@ -5,7 +5,7 @@ use Pod::Simple::PullParserToken ();
 use strict;
 use vars qw(@ISA $VERSION);
 @ISA = ('Pod::Simple::PullParserToken');
-$VERSION = '3.33';
+$VERSION = '3.34';
 
 sub new {  # Class->new(tagname);
   my $class = shift;
