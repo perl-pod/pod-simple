@@ -1,6 +1,11 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
-	* Release 3.34
+	* Release 3.35
+2016-11-29  Karl Williamson <khw@cpan.org>
+	Needed to 'make manifest' before uploading to CPAN.  No changes beyond
+	version bump
+
+	* Release 3.35
 2016-11-29  Karl Williamson <khw@cpan.org>
 	Stabilize t/search50.t.  Thanks to rurban for the patch!
 	Turn off utf8 warnings when trying to see if a file is UTF-8 or not.
