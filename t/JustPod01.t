@@ -1,6 +1,6 @@
 #! user/bin/perl -w
 
-# t/simple01.t - check basics of Pod::Simple::Pod
+# t/JustPod01.t - check basics of Pod::Simple::JustPod
 
 BEGIN {
   chdir 't' if -d 't';
@@ -14,9 +14,9 @@ use Test::More tests => 2;
 use warnings;
 use utf8;
 
-use_ok('Pod::Simple::Pod') or exit;
+use_ok('Pod::Simple::JustPod') or exit;
 
-my $parser = Pod::Simple::Pod->new();
+my $parser = Pod::Simple::JustPod->new();
 
 my $input;
 while ( <DATA> ) { $input .= $_ }

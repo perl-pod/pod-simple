@@ -74,6 +74,9 @@ else { # EBCDIC on early Perl.  We know what the values are for the code
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 __PACKAGE__->_accessorize(
+  '_output_is_for_JustPod', # For use only by Pod::Simple::JustPod,
+                       # If non-zero, don't expand Z<> E<> S<> L<>,
+                       # and count how many brackets in format codes
   'nbsp_for_S',        # Whether to map S<...>'s to \xA0 characters
   'source_filename',   # Filename of the source, for use in warnings
   'source_dead',       # Whether to consider this parser's source dead
@@ -101,9 +104,6 @@ __PACKAGE__->_accessorize(
   'merge_text',        # whether to avoid breaking a single piece of
                        #  text up into several events
 
-  '_output_is_for_Pod', # For use only by Pod::Simple::Pod,
-                       # If non-zero, don't expand Z<> E<> S<> L<>,
-                       # and count how many brackets in format codes
   'preserve_whitespace', # whether to try to keep whitespace as-is
   'strip_verbatim_indent', # What indent to strip from verbatim
 
@@ -655,7 +655,7 @@ sub _make_treelet {
     $treelet = $self->_treelet_from_formatting_codes(@_);
   }
   
-  if( ! $self->_output_is_for_Pod   # Retain these as-is for pod output
+  if( ! $self->{'_output_is_for_JustPod'}   # Retain these as-is for pod output
      && $self->_remap_sequences($treelet) )
   {
     $self->_treat_Zs($treelet);  # Might as well nix these first
