@@ -1,4 +1,4 @@
-# Testing Pod::Simple::Pod against corpus/*.pod
+# Testing Pod::Simple::JustPod against *.pod in /t
 use strict;
 
 BEGIN {
@@ -18,7 +18,7 @@ use File::Find;
 use File::Spec;
 use Test qw(plan ok skip);
 
-use Pod::Simple::Pod;
+use Pod::Simple::JustPod;
 
 my @test_files;
 
@@ -59,7 +59,7 @@ BEGIN {
 }
 
 foreach my $file (@test_files) {
-  my $parser = Pod::Simple::Pod->new();
+  my $parser = Pod::Simple::JustPod->new();
 
   my $input;
   open( IN , '<' , $file ) or die "$file: $!";

@@ -1,5 +1,5 @@
 use 5;
-package Pod::Simple::Pod;
+package Pod::Simple::JustPod;
 # ABSTRACT: Pod::Simple formatter that outputs POD
 use strict;
 use warnings;
@@ -113,11 +113,11 @@ __END__
 
 =head1 NAME
 
-Pod::Simple::Pod -- format Pod as POD
+Pod::Simple::JustPod -- format Pod as POD
 
 =head1 SYNOPSIS
 
-  my $parser = Pod::Simple::Pod->new();
+  my $parser = Pod::Simple::JustPod->new();
   my $input  = read_in_perl_module();
   my $output;
   $parser->output_string( \$output );
@@ -175,6 +175,6 @@ Pod::Simple is maintained by:
 
 =back
 
-Pod::Simple::Pod was developed by John SJ Anderson C<genehack@genehack.org>
+Pod::Simple::JustPod was developed by John SJ Anderson C<genehack@genehack.org>
 
 =cut
