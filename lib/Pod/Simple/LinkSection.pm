@@ -8,7 +8,7 @@ $VERSION = '3.35';
 use strict;
 use Pod::Simple::BlackBox;
 use vars qw($VERSION );
-$VERSION = '3.35';
+$VERSION = '3.36';
 
 use overload( # So it'll stringify nice
   '""'   => \&Pod::Simple::BlackBox::stringify_lol,
