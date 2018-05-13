@@ -12,7 +12,7 @@ BEGIN {
 use strict;
 use Test;
 BEGIN {
-    plan tests => 5, todo => [4];
+    plan tests => 5, todo => [];
 }
 
 # fail with the supplied diagnostic
@@ -100,8 +100,10 @@ else {
 }
 
 
-# Initial accented character followed by 'smart' apostrophe causes heuristic
-# to choose UTF8 (a somewhat contrived example)
+# Initial accented character (E acute) followed by 'smart' apostrophe is legal
+# CP1252, which should be preferred over UTF-8 because the latter
+# interpretation would be "JOS" . \N{LATIN SMALL LETTER TURNED ALPHA} . "S
+# PLACE", and that \N{} letter is an IPA one.
 
 @output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
 
