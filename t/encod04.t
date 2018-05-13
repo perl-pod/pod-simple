@@ -12,14 +12,7 @@ BEGIN {
 use strict;
 use Test;
 BEGIN {
-    if ($] lt 5.007_003) {
-        plan tests => 5, todo => [4, 5];   # Need utf8::decode() to pass #5
-                                           # and isn't available in this
-                                           # release
-    }
-    else {
-        plan tests => 5, todo => [4];
-    }
+    plan tests => 5, todo => [4];
 }
 
 # fail with the supplied diagnostic

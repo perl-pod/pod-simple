@@ -200,9 +200,9 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # readily available information to improve our chances of guessing
       # right.  The odds of something not being UTF-8, but still passing a
       # UTF-8 validity test go down very rapidly with increasing length of the
-      # sequence.  Therefore we look at all the maximal length non-ascii
-      # sequences on the line.  If any of the sequences can't be UTF-8, we
-      # quit there and choose CP1252.  If all could be UTF-8, we guess UTF-8.
+      # sequence.  Therefore we look at all non-ascii sequences on the line.
+      # If any of the sequences can't be UTF-8, we quit there and choose
+      # CP1252.  If all could be UTF-8, we guess UTF-8.
       #
       # On EBCDIC platforms, the situation is somewhat different.  In
       # UTF-EBCDIC, not only do ASCII-range bytes represent their code points,
@@ -213,51 +213,105 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # very unlikely to be in pod text.  So if we encounter one of them, it
       # means that it is quite likely CP1252 and not UTF-8.  The net result is
       # the same code below is used for both platforms.
-      while ($line =~ m/($non_ascii_re+)/g) {
-        my $non_ascii_seq = $1;
 
-        if (length $non_ascii_seq == 1) {
-          $encoding = 'CP1252';
-          goto guessed;
-        } elsif ($] ge 5.007_003) {
+      goto set_1252 if $] lt 5.006_000;    # No UTF-8 on very early perls
 
-          # On Perls that have this function, we can see if the sequence is
-          # valid UTF-8 or not.
-          my $is_utf8;
-          {
-            no warnings 'utf8';
-            $is_utf8 = utf8::decode($non_ascii_seq);
-          }
-          if (! $is_utf8) {
-            $encoding = 'CP1252';
-            goto guessed;
-          }
-        } elsif (ord("A") == 65) {  # An early Perl, ASCII platform
+      no warnings 'utf8';
 
-          # Without utf8::decode, it's a lot harder to do a rigorous check
-          # (though some early releases had a different function that
-          # accomplished the same thing).  Since these are ancient Perls, not
-          # likely to be in use today, we take the easy way out, and look at
-          # just the first two bytes of the sequence to see if they are the
-          # start of a UTF-8 character.  In ASCII UTF-8, continuation bytes
-          # must be between 0x80 and 0xBF.  Start bytes can range from 0xC2
-          # through 0xFF, but anything above 0xF4 is not Unicode, and hence
-          # extremely unlikely to be in a pod.
-          if ($non_ascii_seq !~ /^[\xC2-\xF4][\x80-\xBF]/) {
-            $encoding = 'CP1252';
-            goto guessed;
+      if ($] ge 5.007_003) {
+
+        # On perls that have this function, we can use it to easily see if the
+        # sequence is valid UTF-8 or not; if valid it turns on the UTF-8 flag
+        # needed below for script run detection
+        goto set_1252 if ! utf8::decode($copy);
+      }
+      elsif (ord("A") != 65) {  # Early EBCDIC, assume UTF-8.  What's a windows
+                                # code page doing here anyway?
+        goto set_utf8;
+      }
+      else { # ASCII, no decode(): do it ourselves using the fundamental
+             # characteristics of UTF-8
+        use if $] le 5.006002, 'utf8';
+
+        my $char_ord;
+        my $needed;         # How many continuation bytes to gobble up
+
+        # Parse through the line
+        for (my $i = 0; $i < length $line; $i++) {
+          my $byte = substr($line, $i, 1);
+
+          # ASCII bytes are trivially dealt with
+          if ($byte !~ $non_ascii_re) {
+            next;
           }
 
-          # We don't bother doing anything special for EBCDIC on early Perls.
-          # If there is a solitary variant, CP1252 will be chosen; otherwise
-          # UTF-8.
-        }
-      } # End of loop through all variant sequences on the line
+          my $b_ord = ord $byte;
 
-      # All sequences in the line could be UTF-8.  Guess that.
+          # Now figure out what this code point would be if the input is
+          # actually in UTF-8.  If, in the process, we discover that it isn't
+          # well-formed UTF-8, we guess CP1252.
+          #
+          # Start the process.  If it is UTF-8, we are at the first, start
+          # byte, of a multi-byte sequence.  We look at this byte to figure
+          # out how many continuation bytes are needed, and to initialize the
+          # code point accumulator with the data from this byte.
+          #
+          # Normally the minimum continuation byte is 0x80, but in certain
+          # instances the minimum is a higher number.  So the code below
+          # overrides this for those instances.
+          my $min_cont = 0x80;
+
+          if ($b_ord < 0xC2) { #  A start byte < C2 is malformed
+            goto set_1252;
+          }
+          elsif ($b_ord <= 0xDF) {
+            $needed = 1;
+            $char_ord = $b_ord & 0x1F;
+          }
+          elsif ($b_ord <= 0xEF) {
+            $min_cont = 0xA0 if $b_ord == 0xE0;
+            $needed = 2;
+            $char_ord = $b_ord & (0x1F >> 1);
+          }
+          elsif ($b_ord <= 0xF4) {
+            $min_cont = 0x90 if $b_ord == 0xF0;
+            $needed = 3;
+            $char_ord = $b_ord & (0x1F >> 2);
+          }
+          else { # F4 is the highest start byte for legal Unicode; higher is
+                 # unlikely to be in pod.
+            goto set_1252;
+          }
+
+          # ? not enough continuation bytes available
+          goto set_1252 if $i + $needed >= length $line;
+
+          # Accumulate the ordinal of the character from the remaining
+          # (continuation) bytes.
+          while ($needed-- > 0) {
+            my $cont = substr($line, ++$i, 1);
+            $b_ord = ord $cont;
+            goto set_1252 if $b_ord < $min_cont || $b_ord > 0xBF;
+
+            # In all cases, any next continuation bytes all have the same
+            # minimum legal value
+            $min_cont = 0x80;
+          }
+
+          # Here, the sequence that formed this code point was valid UTF-8
+        } # End of loop through line
+      }
+
+      # To get here, the UTF-8 is legal; so the best we can do is to guess that
+
+     set_utf8:
       $encoding = 'UTF-8';
+      goto done_set;
 
-    guessed:
+     set_1252:
+      $encoding = 'CP1252';
+
+     done_set:
       $self->_handle_encoding_line( "=encoding $encoding" );
       delete $self->{'_processed_encoding'};
       $self->{'_transcoder'} && $self->{'_transcoder'}->($line);
