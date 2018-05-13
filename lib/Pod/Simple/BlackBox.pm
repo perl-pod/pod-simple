@@ -60,6 +60,27 @@ BEGIN {
 my $non_ascii_re = my_qr('[[:^ascii:]]', "\xB6");
 $non_ascii_re = qr/[\x80-\xFF]/ unless $non_ascii_re;
 
+# Use patterns understandable by Perl 5.6, if possible
+my $cs_re;
+{
+    no warnings;
+    $cs_re = my_qr('\p{IsCs}', "\x{D800}");
+    $cs_re = qr/[\x{D800}-\x{DFFF}]/ unless $cs_re;
+}
+my $cn_re = my_qr('\p{IsCn}', "\x{09E4}");  # <reserved> code point unlikely
+                                            # to get assigned
+my $rare_blocks_re = my_qr('[\p{InIPAExtensions}\p{InSpacingModifierLetters}]',
+                           "\x{250}");
+$rare_blocks_re = qr/[\x{0250}-\x{02FF}]/ unless $rare_blocks_re;
+
+# Latin script code points not in the first release of Unicode
+my $later_latin_re = my_qr('[^\P{Latin}\p{Age=1.1}]', "\x{1F6}");
+
+# If this perl doesn't have the Deprecated property, there's only one code
+# point in it that we need be concerned with.
+my $deprecated_re = my_qr('\p{Deprecated}', "\x{149}");
+$deprecated_re = qr/\x{149}/ unless $deprecated_re;
+
 my $utf8_bom;
 if (($] ge 5.007_003)) {
   $utf8_bom = "\x{FEFF}";
@@ -203,7 +224,9 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # UTF-8 validity test go down very rapidly with increasing length of the
       # sequence.  Therefore we look at all non-ascii sequences on the line.
       # If any of the sequences can't be UTF-8, we quit there and choose
-      # CP1252.  If all could be UTF-8, we guess UTF-8.
+      # CP1252.  If all could be UTF-8, we see if any of the code points
+      # represented are unlikely to be in pod.  If so, we guess CP1252.  If
+      # not, UTF-8.
       #
       # On EBCDIC platforms, the situation is somewhat different.  In
       # UTF-EBCDIC, not only do ASCII-range bytes represent their code points,
@@ -214,12 +237,18 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # very unlikely to be in pod text.  So if we encounter one of them, it
       # means that it is quite likely CP1252 and not UTF-8.  The net result is
       # the same code below is used for both platforms.
+      #
+      # XXX probably if the line has E<foo> that evaluates to illegal CP1252,
+      # then it is UTF-8.  But we haven't processed E<> yet.
 
       goto set_1252 if $] lt 5.006_000;    # No UTF-8 on very early perls
+
+      my $copy;
 
       no warnings 'utf8';
 
       if ($] ge 5.007_003) {
+        $copy = $line;
 
         # On perls that have this function, we can use it to easily see if the
         # sequence is valid UTF-8 or not; if valid it turns on the UTF-8 flag
@@ -236,12 +265,19 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
         my $char_ord;
         my $needed;         # How many continuation bytes to gobble up
 
+        # Initialize the translated line with a dummy character that will be
+        # deleted after everything else is done.  This dummy makes sure that
+        # $copy will be in UTF-8.  Doing it now avoids the bugs in early perls
+        # with upgrading in the middle
+        $copy = chr(0x100);
+
         # Parse through the line
         for (my $i = 0; $i < length $line; $i++) {
           my $byte = substr($line, $i, 1);
 
           # ASCII bytes are trivially dealt with
           if ($byte !~ $non_ascii_re) {
+            $copy .= $byte;
             next;
           }
 
@@ -296,13 +332,51 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
             # In all cases, any next continuation bytes all have the same
             # minimum legal value
             $min_cont = 0x80;
+
+            # Accumulate this byte's contribution to the code point
+            $char_ord <<= 6;
+            $char_ord |= ($b_ord & 0x3F);
           }
 
-          # Here, the sequence that formed this code point was valid UTF-8
+          # Here, the sequence that formed this code point was valid UTF-8,
+          # so add the completed character to the output
+          $copy .= chr $char_ord;
         } # End of loop through line
+
+        # Delete the dummy first character
+        $copy = substr($copy, 1);
       }
 
-      # To get here, the UTF-8 is legal; so the best we can do is to guess that
+      # Here, $copy is legal UTF-8.
+
+      # If it can't be legal CP1252, no need to look further.  (These bytes
+      # aren't valid in CP1252.)  This test could have been placed higher in
+      # the code, but it seemed wrong to set the encoding to UTF-8 without
+      # making sure that the very first instance is well-formed.  But what if
+      # it isn't legal CP1252 either?  We have to choose one or the other, and
+      # It seems safer to favor the single-byte encoding over the multi-byte.
+      goto set_utf8 if ord("A") == 65 && $line =~ /[\x81\x8D\x8F\x90\x9D]/;
+
+      # The C1 controls are not likely to appear in pod
+      goto set_1252 if ord("A") == 65 && $copy =~ /[\x80-\x9F]/;
+
+      # Nor are surrogates nor unassigned, nor deprecated.
+      goto set_1252 if $copy =~ $cs_re;
+      goto set_1252 if $cn_re && $copy =~ $cn_re;
+      goto set_1252 if $copy =~ $deprecated_re;
+
+      # Nor are rare code points.  But this is hard to determine.  khw
+      # believes that IPA characters and the modifier letters are unlikely to
+      # be in pod (and certainly very unlikely to be the in the first line in
+      # the pod containing non-ASCII)
+      goto set_1252 if $copy =~ $rare_blocks_re;
+
+      # The first Unicode version included essentially every Latin character
+      # in modern usage.  So, a Latin character not in the first release will
+      # unlikely be in pod.
+      goto set_1252 if $later_latin_re && $copy =~ $later_latin_re;
+
+      # To get here, the UTF-8 is legal, and we haven't excluded it, so guess that
 
      set_utf8:
       $encoding = 'UTF-8';
