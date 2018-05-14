@@ -67,6 +67,19 @@ my $rare_blocks_re = my_qr('[\p{InIPAExtensions}\p{InSpacingModifierLetters}]',
                            "\x{250}");
 $rare_blocks_re = my_qr('[\x{0250}-\x{02FF}]', "\x{250}") unless $rare_blocks_re;
 
+my $script_run_re = eval 'no warnings "experimental::script_run";
+                          qr/(*script_run: ^ .* $ )/x';
+my $latin_re = my_qr('[\p{IsLatin}\p{IsInherited}\p{IsCommon}]', "\x{100}");
+unless ($latin_re) {
+    # This was machine generated to be the ranges of the union of the above
+    # three properties, with things that were undefined by Unicode 4.1 filling
+    # gaps.  That is the version in use when Perl advanced enough to
+    # successfully compile and execute the above pattern.
+    $latin_re = my_qr('[\x00-\x{02E9}\x{02EC}-\x{0374}\x{037E}\x{0385}\x{0387}\x{0485}\x{0486}\x{0589}\x{060C}\x{061B}\x{061F}\x{0640}\x{064B}-\x{0655}\x{0670}\x{06DD}\x{0951}-\x{0954}\x{0964}\x{0965}\x{0E3F}\x{10FB}\x{16EB}-\x{16ED}\x{1735}\x{1736}\x{1802}\x{1803}\x{1805}\x{1D00}-\x{1D25}\x{1D2C}-\x{1D5C}\x{1D62}-\x{1D65}\x{1D6B}-\x{1D77}\x{1D79}-\x{1DBE}\x{1DC0}-\x{1EF9}\x{2000}-\x{2125}\x{2127}-\x{27FF}\x{2900}-\x{2B13}\x{2E00}-\x{2E1D}\x{2FF0}-\x{3004}\x{3006}\x{3008}-\x{3020}\x{302A}-\x{302D}\x{3030}-\x{3037}\x{303C}-\x{303F}\x{3099}-\x{309C}\x{30A0}\x{30FB}\x{30FC}\x{3190}-\x{319F}\x{31C0}-\x{31CF}\x{3220}-\x{325F}\x{327F}-\x{32CF}\x{3358}-\x{33FF}\x{4DC0}-\x{4DFF}\x{A700}-\x{A716}\x{FB00}-\x{FB06}\x{FD3E}\x{FD3F}\x{FE00}-\x{FE6B}\x{FEFF}-\x{FF65}\x{FF70}\x{FF9E}\x{FF9F}\x{FFE0}-\x{FFFD}\x{10100}-\x{1013F}\x{1D000}-\x{1D1DD}\x{1D300}-\x{1D7FF}]', "\x{100}");
+}
+
+my $every_char_is_latin_re = my_qr("^(?:$latin_re)*\\z", "A");
+
 # Latin script code points not in the first release of Unicode
 my $later_latin_re = my_qr('[^\P{IsLatin}\p{IsAge=1.1}]', "\x{1F6}");
 
@@ -111,8 +124,16 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
    # paragraph buffer.  Because we need to defer processing of =over
    # directives and verbatim paragraphs.  We call _ponder_paragraph_buffer
    # to process this.
-  
+
   $self->{'pod_para_count'} ||= 0;
+
+  # An attempt to match the pod portions of a line.  This is not fool proof,
+  # but is good enough to serve as part of the heuristic for guessing the pod
+  # encoding if not specified.
+  my $format_codes = join "", '[', grep { / ^ [A-Za-z] $/x }
+                                                keys %{$self->{accept_codes}};
+  $format_codes .= ']';
+  my $pod_chars_re = qr/ ^ = [A-Za-z]+ | $format_codes < /x;
 
   my $line;
   foreach my $source_line (@_) {
@@ -220,7 +241,10 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # If any of the sequences can't be UTF-8, we quit there and choose
       # CP1252.  If all could be UTF-8, we see if any of the code points
       # represented are unlikely to be in pod.  If so, we guess CP1252.  If
-      # not, UTF-8.
+      # not, we check if the line is all in the same script; if not guess
+      # CP1252; otherwise UTF-8.  For perls that don't have convenient script
+      # run testing, see if there is both Latin and non-Latin.  If so, CP1252,
+      # otherwise UTF-8.
       #
       # On EBCDIC platforms, the situation is somewhat different.  In
       # UTF-EBCDIC, not only do ASCII-range bytes represent their code points,
@@ -371,14 +395,35 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # unlikely be in pod.
       goto set_1252 if $later_latin_re && $copy =~ $later_latin_re;
 
-      # To get here, the UTF-8 is legal, and we haven't excluded it, so guess that
+      # On perls that handle script runs, if the UTF-8 interpretation yields
+      # a single script, we guess UTF-8, otherwise just having a mixture of
+      # scripts is suspicious, so guess CP1252.  We first strip off, as best
+      # we can, the ASCII characters that look like they are pod directives,
+      # as these would always show as mixed with non-Latin text.
+      $copy =~ s/$pod_chars_re//g;
 
-     set_utf8:
-      $encoding = 'UTF-8';
-      goto done_set;
+      if ($script_run_re) {
+        goto set_utf8 if $copy =~ $script_run_re;
+        goto set_1252;
+      }
+
+      # Even without script runs, but on recent enough perls and Unicodes, we
+      # can check if there is a mixture of both Latin and non-Latin.  Again,
+      # having a mixture of scripts is suspicious, so assume CP1252
+
+      # If it's all non-Latin, there is no CP1252, as that is Latin
+      # characters and punct, etc.
+      goto set_utf8 if $copy !~ $latin_re;
+
+      goto set_utf8 if $copy =~ $every_char_is_latin_re;
+
 
      set_1252:
       $encoding = 'CP1252';
+      goto done_set;
+
+     set_utf8:
+      $encoding = 'UTF-8';
 
      done_set:
       $self->_handle_encoding_line( "=encoding $encoding" );

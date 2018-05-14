@@ -12,7 +12,7 @@ BEGIN {
 use strict;
 use Test;
 BEGIN {
-    plan tests => 5, todo => [];
+    plan tests => 6, todo => [];
 }
 
 # fail with the supplied diagnostic
@@ -141,6 +141,36 @@ else {
 =head1 NAME
 
 Smart::Apostrophe::Fail - L\xE9\x92Strange
+
+=cut
+
+} );
+
+if (ord("A") != 65) { # ASCII-platform dependent test skipped on this platform
+    ok (1);
+}
+else {
+    ($guess) = "@output_lines" =~ m{Non-ASCII.*?Assuming ([\w-]+)};
+    if( $guess ) {
+        if( $guess eq 'CP1252' ) {
+            ok 1;
+        } else {
+            my_nok "parser guessed wrong encoding expected 'CP1252' got '$guess'";
+        }
+    } else {
+        my_nok "parser failed to detect non-ASCII bytes in input";
+    }
+}
+
+# The following is a real word example of something in CP1252 expressible in
+# UTF-8, but doesn't make sense in UTF-8, contributed by Bo Lindbergh.
+# Muvrarášša is a Sami word
+
+@output_lines = split m/[\r\n]+/, Pod::Simple::XMLOutStream->_out( qq{
+
+=head1 NAME
+
+Muvrar\xE1\x9A\x9Aa is a mountain in Norway
 
 =cut
 
