@@ -35,13 +35,20 @@ sub handle_text       {
   $_[0]{buffer} .= $_[1] unless $_[0]{linkbuffer} ;
 }
 
-sub start_Document    { $_[0]{buffer} = "=pod\n\n" }
+sub _generic_start {
 
-sub start_head1       { $_[0]{buffer} .= '=head1 '    }
-sub start_head2       { $_[0]{buffer} .= '=head2 '    }
-sub start_head3       { $_[0]{buffer} .= '=head3 '    }
-sub start_head4       { $_[0]{buffer} .= '=head4 '    }
-sub start_encoding    { $_[0]{buffer} .= '=encoding ' }
+  # Called from tags like =head1, etc.
+
+  my ($self, $text, $arg) = @_;
+  $self->{buffer} .= $text;
+}
+
+sub start_Document    { shift->_generic_start("=pod\n\n"); }
+sub start_head1       { shift->_generic_start('=head1', @_); }
+sub start_head2       { shift->_generic_start('=head2', @_); }
+sub start_head3       { shift->_generic_start('=head3', @_); }
+sub start_head4       { shift->_generic_start('=head4', @_); }
+sub start_encoding    { shift->_generic_start('=encoding', @_); }
 # sub start_Para
 # sub start_Verbatim
 
@@ -58,42 +65,84 @@ sub start_item_bullet {
 sub start_item_number { $_[0]{buffer} .= '=item ' }
 sub start_item_text   { $_[0]{buffer} .= '=item ' }
 
-sub end_item_bullet { $_[0]->emit }
-sub end_item_number { $_[0]->emit }
-sub end_item_text   { $_[0]->emit }
+sub _end_item {
+  my $self = shift;
+  $self->emit;
+}
 
-sub start_over_bullet  { $_[0]{buffer} .= '=over ' . $_[1]->{indent} . "\n\n"}
-sub start_over_number  { $_[0]{buffer} .= '=over ' . $_[1]->{indent} . "\n\n"}
-sub start_over_text    { $_[0]{buffer} .= '=over ' . $_[1]->{indent} . "\n\n"}
-sub start_over_block   { $_[0]{buffer} .= '=over ' . $_[1]->{indent} . "\n\n"}
+*end_item_bullet = *_end_item;
+*end_item_number = *_end_item;
+*end_item_text   = *_end_item;
 
-sub end_over_bullet  { $_[0]->{buffer} .= '=back' ; $_[0]->emit }
-sub end_over_number  { $_[0]->{buffer} .= '=back' ; $_[0]->emit }
-sub end_over_text    { $_[0]->{buffer} .= '=back' ; $_[0]->emit }
-sub end_over_block   { $_[0]->{buffer} .= '=back' ; $_[0]->emit }
+sub _start_over  {
+  my ($self, $arg) = @_;
+  $self->{buffer} .= '=over ' . $arg->{indent} . "\n\n";
+}
 
-sub end_Document    { print {$_[0]{'output_fh'} } "=cut\n" }
+*start_over_bullet = *_start_over;
+*start_over_number = *_start_over;
+*start_over_text   = *_start_over;
+*start_over_block  = *_start_over;
 
-sub end_head1       { $_[0]->emit }
-sub end_head2       { $_[0]->emit }
-sub end_head3       { $_[0]->emit }
-sub end_head4       { $_[0]->emit }
-sub end_encoding    { $_[0]->emit }
-sub end_Para        { $_[0]->emit }
-sub end_Verbatim    { $_[0]->emit }
+sub _end_over  {
+  my $self = shift;
+  $self->{buffer} .= '=back';
+  $self->emit;
+}
 
-sub start_B { $_[0]{buffer} .= 'B<' ; $_[0]{escape} = 1 }
-sub end_B   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
-sub start_C { $_[0]{buffer} .= 'C<' ; $_[0]{escape} = 1 }
-sub end_C   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
-sub start_F { $_[0]{buffer} .= 'F<' }
-sub end_F   { $_[0]{buffer} .= '>'  }
-sub start_I { $_[0]{buffer} .= 'I<' ; $_[0]{escape} = 1 }
-sub end_I   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
-sub start_S { $_[0]{buffer} .= 'S<' ; $_[0]{escape} = 1 }
-sub end_S   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
-sub start_X { $_[0]{buffer} .= 'X<' ; $_[0]{escape} = 1 }
-sub end_X   { $_[0]{buffer} .= '>'  ; $_[0]{escape} = 0 }
+*end_over_bullet = *_end_over;
+*end_over_number = *_end_over;
+*end_over_text   = *_end_over;
+*end_over_block  = *_end_over;
+
+sub end_Document    {
+  my $self = shift;
+  $self->emit;        # Make sure buffer gets flushed
+  print {$self->{'output_fh'} } "=cut\n"
+}
+
+sub _end_generic  {
+  my $self = shift;
+  $self->emit;
+}
+
+*end_head1    = *_end_generic;
+*end_head2    = *_end_generic;
+*end_head3    = *_end_generic;
+*end_head4    = *_end_generic;
+*end_encoding = *_end_generic;
+*end_Para     = *_end_generic;
+*end_Verbatim = *_end_generic;
+
+sub _start_fcode {
+  my ($type, $self, $flags) = @_;
+  $self->{buffer} .= "$type<";
+  $self->{escape} = 1;
+}
+
+sub start_B { _start_fcode('B', @_); }
+sub start_C { _start_fcode('C', @_); }
+sub start_E { _start_fcode('E', @_); }
+sub start_F { _start_fcode('F', @_); }
+sub start_I { _start_fcode('I', @_); }
+sub start_S { _start_fcode('S', @_); }
+sub start_X { _start_fcode('X', @_); }
+sub start_Z { _start_fcode('Z', @_); }
+
+sub _end_fcode {
+  my $self = shift;
+  $self->{buffer} .= '>';
+  $self->{escape} = 0;
+}
+
+*end_B   = *_end_fcode;
+*end_C   = *_end_fcode;
+*end_E   = *_end_fcode;
+*end_F   = *_end_fcode;
+*end_I   = *_end_fcode;
+*end_S   = *_end_fcode;
+*end_X   = *_end_fcode;
+*end_Z   = *_end_fcode;
 
 sub start_L { $_[0]{buffer} .= 'L<' . $_[1]->{raw} . '>' ; $_[0]->{linkbuffer} = 1 }
 sub end_L   { $_[0]{linkbuffer} = 0 }
