@@ -40,7 +40,7 @@ sub _generic_start {
   # Called from tags like =head1, etc.
 
   my ($self, $text, $arg) = @_;
-  $self->{buffer} .= $text;
+  $self->handle_text($text);
 }
 
 sub start_Document    { shift->_generic_start("=pod\n\n"); }
@@ -52,18 +52,27 @@ sub start_encoding    { shift->_generic_start('=encoding', @_); }
 # sub start_Para
 # sub start_Verbatim
 
-sub start_item_bullet {
-  $_[0]{buffer} .= '=item *';
+sub start_item_bullet { # Handle =item *
+  my ($self, $arg) = @_;
+  $self->handle_text('=item *');
 
   if ( $_[1]{'~orig_content'} eq '*' ) {
-    $_[0]{buffer} .= "\n\n"
+    $self->handle_text("\n\n");
   }
   else {
-    $_[0]{buffer} .= " ";
+    $self->handle_text(" ");
   }
 }
-sub start_item_number { $_[0]{buffer} .= '=item ' }
-sub start_item_text   { $_[0]{buffer} .= '=item ' }
+
+sub start_item_number {     # Handle '=item 2'
+  my ($self, $arg) = @_;
+  $self->handle_text("=item ");
+}
+
+sub start_item_text {   # Handle '=item foo bar baz'
+  my ($self, $arg) = @_;
+  $self->handle_text('=item ');
+}
 
 sub _end_item {
   my $self = shift;
@@ -76,7 +85,9 @@ sub _end_item {
 
 sub _start_over  {
   my ($self, $arg) = @_;
-  $self->{buffer} .= '=over ' . $arg->{indent} . "\n\n";
+  $self->handle_text("=over");
+  $self->handle_text($arg->{indent});
+  $self->handle_text("\n\n");
 }
 
 *start_over_bullet = *_start_over;
@@ -86,7 +97,7 @@ sub _start_over  {
 
 sub _end_over  {
   my $self = shift;
-  $self->{buffer} .= '=back';
+  $self->handle_text('=back');
   $self->emit;
 }
 
@@ -116,7 +127,7 @@ sub _end_generic  {
 
 sub _start_fcode {
   my ($type, $self, $flags) = @_;
-  $self->{buffer} .= "$type<";
+  $self->handle_text("$type<");
   $self->{escape} = 1;
 }
 
@@ -131,7 +142,7 @@ sub start_Z { _start_fcode('Z', @_); }
 
 sub _end_fcode {
   my $self = shift;
-  $self->{buffer} .= '>';
+  $self->handle_text('>');
   $self->{escape} = 0;
 }
 
@@ -144,8 +155,17 @@ sub _end_fcode {
 *end_X   = *_end_fcode;
 *end_Z   = *_end_fcode;
 
-sub start_L { $_[0]{buffer} .= 'L<' . $_[1]->{raw} . '>' ; $_[0]->{linkbuffer} = 1 }
-sub end_L   { $_[0]{linkbuffer} = 0 }
+sub start_L {
+    _start_fcode('L', @_);
+    $_[0]->handle_text($_[1]->{raw});
+    $_[0]->{linkbuffer} = 1;
+}
+
+sub end_L {
+  my $self = shift;
+  $self->{linkbuffer} = 0;
+  $self->_end_fcode(@_);
+}
 
 sub emit {
   my $self = shift;
