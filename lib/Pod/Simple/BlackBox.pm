@@ -1734,6 +1734,7 @@ sub _ponder_Verbatim {
 
   $para->[1]{'xml:space'} = 'preserve';
 
+  unless ($self->{'_output_is_for_JustPod'}) {
   my $indent = $self->strip_verbatim_indent;
   if ($indent && ref $indent eq 'CODE') {
       my @shifted = (shift @{$para}, shift @{$para});
@@ -1757,7 +1758,8 @@ sub _ponder_Verbatim {
 
     }
   }
-  
+  }
+
   # Now the VerbatimFormatted hoodoo...
   if( $self->{'accept_codes'} and
       $self->{'accept_codes'}{'VerbatimFormatted'}
