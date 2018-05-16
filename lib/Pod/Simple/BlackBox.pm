@@ -1474,6 +1474,7 @@ sub _ponder_over {
    # yes, we reuse the paragraph as a stack item
   
   my $content = join ' ', splice @$para, 2;
+  $para->[1]{'~orig_content'} = $content;
   my $overness;
   if($content =~ m/^\s*$/s) {
     $para->[1]{'indent'} = 4;
