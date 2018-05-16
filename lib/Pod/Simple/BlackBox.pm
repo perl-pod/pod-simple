@@ -1056,7 +1056,7 @@ sub _ponder_paragraph_buffer {
 
             if( $para->[1]{'~_freaky_para_hack'} ) {
               DEBUG and print STDERR "Accomodating '=item * Foo' tolerance hack.\n";
-              push @$para, delete $para->[1]{'~_freaky_para_hack'};
+              push @$para, $para->[1]{'~_freaky_para_hack'};
             }
 
           } elsif($item_type eq 'number') {
@@ -1667,7 +1667,7 @@ sub _ponder_item {
 
       if( $para->[1]{'~_freaky_para_hack'} ) {
         DEBUG and print STDERR "Accomodating '=item * Foo' tolerance hack.\n";
-        push @$para, delete $para->[1]{'~_freaky_para_hack'};
+        push @$para, $para->[1]{'~_freaky_para_hack'};
       }
 
     } elsif($item_type eq 'number') {
