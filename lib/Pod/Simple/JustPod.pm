@@ -83,6 +83,7 @@ sub start_item_number {     # Handle '=item 2'
   my ($self, $arg) = @_;
   $self->handle_text("=item");
   $self->spacer($arg);
+  $self->handle_text("$arg->{'~orig_content'}\n\n");
 }
 
 sub start_item_text {   # Handle '=item foo bar baz'
@@ -103,7 +104,12 @@ sub _end_item {
 sub _start_over  {
   my ($self, $arg) = @_;
   $self->handle_text("=over");
-  $self->handle_text($arg->{indent});
+
+  # The =over amount is optional
+  if ($arg->{'~orig_content'}) {
+    $self->spacer($arg);
+    $self->handle_text("$arg->{'~orig_content'}");
+  }
   $self->handle_text("\n\n");
 }
 
