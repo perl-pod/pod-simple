@@ -69,13 +69,26 @@ sub start_encoding    { shift->_generic_start('=encoding', @_); }
 
 sub start_item_bullet { # Handle =item *
   my ($self, $arg) = @_;
-  $self->handle_text('=item *');
+  $self->handle_text('=item');
 
-  if ( $_[1]{'~orig_content'} eq '*' ) {
+  # It can be that they said simply '=item', and it is inferred that it is to
+  # be a bullet.
+  if (! $arg->{'~orig_content'}) {
     $self->handle_text("\n\n");
   }
   else {
     $self->spacer($arg);
+    if ($arg->{'~_freaky_para_hack'}) {
+
+        # See Message Id <87y3gtcwa2.fsf@hope.eyrie.org>
+        my $item_text = $arg->{'~orig_content'};
+        my $trailing = quotemeta $arg->{'~_freaky_para_hack'};
+        $item_text =~ s/$trailing$//;
+        $self->handle_text($item_text);
+    }
+    else {
+        $self->handle_text("*\n\n");
+    }
   }
 }
 
