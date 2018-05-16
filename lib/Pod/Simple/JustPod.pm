@@ -35,12 +35,27 @@ sub handle_text       {
   $_[0]{buffer} .= $_[1] unless $_[0]{linkbuffer} ;
 }
 
+sub spacer {
+
+  # Prints the white space following things like =head1.  This is normally a
+  # blank, unless BlackBox has told us otherwise.
+
+  my ($self, $arg) = @_;
+  return unless $arg;
+
+  my $spacer = ($arg->{'~orig_spacer'})
+                ? $arg->{'~orig_spacer'}
+                : " ";
+  $self->handle_text($spacer);
+}
+
 sub _generic_start {
 
   # Called from tags like =head1, etc.
 
   my ($self, $text, $arg) = @_;
   $self->handle_text($text);
+  $self->spacer($arg);
 }
 
 sub start_Document    { shift->_generic_start("=pod\n\n"); }
@@ -60,18 +75,20 @@ sub start_item_bullet { # Handle =item *
     $self->handle_text("\n\n");
   }
   else {
-    $self->handle_text(" ");
+    $self->spacer($arg);
   }
 }
 
 sub start_item_number {     # Handle '=item 2'
   my ($self, $arg) = @_;
-  $self->handle_text("=item ");
+  $self->handle_text("=item");
+  $self->spacer($arg);
 }
 
 sub start_item_text {   # Handle '=item foo bar baz'
   my ($self, $arg) = @_;
-  $self->handle_text('=item ');
+  $self->handle_text('=item');
+  $self->spacer($arg);
 }
 
 sub _end_item {
