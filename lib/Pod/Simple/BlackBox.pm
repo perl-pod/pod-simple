@@ -526,9 +526,10 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       
     } elsif($self->{'last_was_blank'}) {  # A non-blank line starting a new para...
       
-      if($line =~ m/^(=[a-zA-Z][a-zA-Z0-9]*)(?:\s+|$)(.*)/s) {
+      if($line =~ m/^(=[a-zA-Z][a-zA-Z0-9]*)(\s+|$)(.*)/s) {
         # THIS IS THE ONE PLACE WHERE WE CONSTRUCT NEW DIRECTIVE OBJECTS
-        my $new = [$1, {'start_line' => $self->{'line_count'}}, $2];
+        my $new = [$1, {'start_line' => $self->{'line_count'}}, $3];
+        $new->[1]{'~orig_spacer'} = $2 if $2 && $2 ne " ";
          # Note that in "=head1 foo", the WS is lost.
          # Example: ['=head1', {'start_line' => 123}, ' foo']
         
