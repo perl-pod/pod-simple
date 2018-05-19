@@ -14,6 +14,7 @@ sub new {
   $new->accept_targets('*');
   $new->keep_encoding_directive(1);
   $new->preserve_whitespace(1);
+  $new->complain_stderr(1);
   $new->_output_is_for_JustPod(1);
 
   return $new;
