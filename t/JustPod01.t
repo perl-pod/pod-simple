@@ -9,7 +9,6 @@ BEGIN {
 use strict;
 use lib '../lib';
 use Test::More tests => 2;
-#use Test::More 'no_plan';
 
 use warnings;
 use utf8;
@@ -27,10 +26,43 @@ $parser->parse_string_document( $input );
 
 $input =~ s/^.*(=pod.*)$/$1/mgs;
 
- use Text::Diff;
-diag diff \$output , \$input , { STYLE => 'Unified' };
+my $msg = "got expected output";
+if ($output eq $input) {
+    pass($msg);
+}
+elsif ($ENV{PERL_TEST_DIFF}) {
+    fail($msg);
+    require File::Temp;
+    my $orig_file = File::Temp->new();
+    local $/ = "\n";
+    chomp $input;
+    print $orig_file $input, "\n";
+    close $orig_file || die "Can't close orig_file: $!";
 
-is( $output , $input , 'expected output' );
+    chomp $output;
+    my $parsed_file = File::Temp->new();
+    print $parsed_file $output, "\n";
+    close $parsed_file || die "Can't close parsed_file";
+
+    my $diff = File::Temp->new();
+    system("$ENV{PERL_TEST_DIFF} $orig_file $parsed_file > $diff");
+
+    open my $fh, "<", $diff || die "Can't open $diff";
+    my @diffs = <$fh>;
+    diag(@diffs);
+}
+else {
+    eval { require Text::Diff; };
+    if ($@) {
+        is($output, $input, $msg);
+        diag("Set environment variable PERL_TEST_DIFF=diff_tool or install"
+           . " Text::Diff to see just the differences.");
+    }
+    else {
+        fail($msg);
+        diag Text::Diff::diff(\$input, \$output, { STYLE => 'Unified' });
+    }
+}
 
 
 __DATA__
