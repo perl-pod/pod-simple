@@ -1,6 +1,7 @@
 use 5;
 package Pod::Simple::JustPod;
-# ABSTRACT: Pod::Simple formatter that outputs POD
+# ABSTRACT: Pod::Simple formatter that extracts POD from a file containing
+#           other things as well
 use strict;
 use warnings;
 
@@ -36,7 +37,11 @@ sub check_that_all_is_closed {
   }
 }
 
-sub handle_text       {
+sub handle_text {
+
+  # Add text to the output buffer.  This is skipped if within a L<>, as we use
+  # the 'raw' attribute of that tag instead.
+
   $_[0]{buffer} .= $_[1] unless $_[0]{inL} ;
 }
 
@@ -124,7 +129,7 @@ sub _end_item {
 *end_item_number = *_end_item;
 *end_item_text   = *_end_item;
 
-sub _start_over  {
+sub _start_over  {  # Handle =over
   my ($self, $arg) = @_;
   $self->check_that_all_is_closed();
   $self->handle_text("=over");
@@ -273,22 +278,37 @@ __END__
 
 =head1 NAME
 
-Pod::Simple::JustPod -- format Pod as POD
+Pod::Simple::JustPod -- just the Pod, the whole Pod, and nothing but the Pod
 
 =head1 SYNOPSIS
 
-  my $parser = Pod::Simple::JustPod->new();
-  my $input  = read_in_perl_module();
-  my $output;
-  $parser->output_string( \$output );
-  $parser->parse_string_document( $input );
+ my $infile  = "mixed_code_and_pod.pm";
+ my $outfile = "just_the_pod.pod";
+ open my $fh, ">$outfile" or die "Can't write to $outfile: $!";
+
+ my $parser = Pod::Simple::JustPod->new();
+ $parser->output_fh($fh);
+ $parser->parse_file($infile);
+ close $fh or die "Can't close $outfile: $!";
 
 =head1 DESCRIPTION
 
-This class is a formatter that takes Pod and renders it as
-POD.
+This class returns a copy of its input, translated into Perl's internal
+encoding (UTF-8), and with all the non-Pod lines removed.
 
 This is a subclass of L<Pod::Simple::Methody> and inherits all its methods.
+And since, that in turn is a subclass of L<Pod::Simple>, you can use any of
+its methods.  This means you can output to a string instead of a file, or
+you can parse from an array.
+
+This class strives to return the Pod lines of the input completely unchanged,
+except for any necessary translation into Perl's internal encoding, and it makes
+no effort to return trailing spaces on lines; these likely will be stripped.
+If the input pod is well-formed with no warnings nor errors generated, the
+extracted pod should generate the same documentation when formatted by a Pod
+formatter as the original file does.
+
+By default, warnings are output to STDERR
 
 =head1 SEE ALSO
 
@@ -297,15 +317,15 @@ L<Pod::Simple>, L<Pod::Simple::Methody>
 =head1 SUPPORT
 
 Questions or discussion about POD and Pod::Simple should be sent to the
-pod-people@perl.org mail list. Send an empty email to
-pod-people-subscribe@perl.org to subscribe.
+L<mailto:pod-people@perl.org> mail list. Send an empty email to
+L<mailto:pod-people-subscribe@perl.org> to subscribe.
 
 This module is managed in an open GitHub repository,
 L<https://github.com/theory/pod-simple/>. Feel free to fork and contribute, or
 to clone L<git://github.com/theory/pod-simple.git> and send patches!
 
 Patches against Pod::Simple are welcome. Please send bug reports to
-<bug-pod-simple@rt.cpan.org>.
+L<mailto:<bug-pod-simple@rt.cpan.org>.
 
 =head1 COPYRIGHT AND DISCLAIMERS
 
@@ -335,6 +355,8 @@ Pod::Simple is maintained by:
 
 =back
 
-Pod::Simple::JustPod was developed by John SJ Anderson C<genehack@genehack.org>
+Pod::Simple::JustPod was developed by John SJ Anderson
+C<genehack@genehack.org>, with contributions from Karl Williamson
+C<khw@cpan.org>.
 
 =cut
