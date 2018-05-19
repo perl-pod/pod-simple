@@ -16,7 +16,7 @@ BEGIN {
 
 use File::Find;
 use File::Spec;
-use Test qw(plan ok skip);
+use Test::More;
 
 use Pod::Simple::JustPod;
 
@@ -60,6 +60,7 @@ BEGIN {
 
 foreach my $file (@test_files) {
   my $parser = Pod::Simple::JustPod->new();
+  $parser->complain_stderr(0);
 
   my $input;
   open( IN , '<' , $file ) or die "$file: $!";
@@ -68,28 +69,87 @@ foreach my $file (@test_files) {
 
   my $output;
   $parser->output_string( \$output );
-
-  $input =~ s/^[^=]*(.*)$/$1/mgs;
-  $input =~ s/\s*$/\n/s;
-  $input =~ s/\t/        /mgs;
-
   $parser->parse_string_document( $input );
 
-  $input = "=pod\n\n$input"
-    unless $input =~ /^\s*=pod/mgs;
-  $input = "$input\n=cut\n"
-    unless $input =~ /=cut\s*$/mgs;
+  if ($parser->any_errata_seen()) {
+    pass("Skip '$file' because of pod errors");
+    my $errata = $parser->errata_seen();
+    foreach my $line_number (sort { $a <=> $b } keys %$errata) {
+        foreach my $err_msg (sort @{$errata->{$line_number}}) {
+            diag "$file: $line_number: $err_msg";
+        }
+    }
+    next;
+  }
 
-  if ( $output eq $input ) {
-    ok 1
+  my $encoding = $parser->encoding();
+  if (defined $encoding) {
+    eval { require Encode; };
+    $input = Encode::decode($parser->encoding(), $input);
+  }
+
+  my @input = split "\n", $input;
+  my $stripped_input = "";
+  while (defined ($_ = shift @input)) {
+    if (/ ^ = [a-z]+ /x) {
+      my $line = "$_\n";
+
+      if ($stripped_input eq "" || $_ !~ /^=pod/) {
+        $stripped_input .= $line;
+      }
+      while (defined ($_ = shift @input)) {
+        $stripped_input .= "$_\n";
+        last if / ^ =cut /x;
+      }
+    }
+  }
+  $stripped_input =~ s/ ^ =cut \n (.) /$1/mgx;
+
+  $input = $stripped_input if $stripped_input ne "";
+  if ($input !~ / ^ =pod /x) {
+    $input =~ s/ ^ \s+ //x;
+    $input = "=pod\n\n$input";
+  }
+  if ($input !~ / =cut $ /x) {
+    $input =~ s/ \s+ $ //x;
+    $input .= "\n\n=cut\n";
+  }
+
+  my $msg = "got expected output for $file";
+  if ($output eq $input) {
+      pass($msg);
+  }
+  elsif ($ENV{PERL_TEST_DIFF}) {
+    fail($msg);
+    require File::Temp;
+    my $orig_file = File::Temp->new();
+    local $/ = "\n";
+    chomp $input;
+    print $orig_file $input, "\n";
+    close $orig_file || die "Can't close orig_file: $!";
+
+    chomp $output;
+    my $parsed_file = File::Temp->new();
+    print $parsed_file $output, "\n";
+    close $parsed_file || die "Can't close parsed_file";
+
+    my $diff = File::Temp->new();
+    system("$ENV{PERL_TEST_DIFF} $orig_file $parsed_file > $diff");
+
+    open my $fh, "<", $diff || die "Can't open $diff";
+    my @diffs = <$fh>;
+    diag(@diffs);
   }
   else {
-     use Text::Diff;
-     print diff \$output , \$input , { STYLE => 'Unified' };
-
-    print "# $file\n";
-     ok 0;
-     exit;
-
+      eval { require Text::Diff; };
+      if ($@) {
+          is($output, $input, $msg);
+          diag("Set environment variable PERL_TEST_DIFF=diff_tool or install"
+             . " Text::Diff to see just the differences.");
+      }
+      else {
+          fail($msg);
+          diag Text::Diff::diff(\$input, \$output, { STYLE => 'Unified' });
+      }
   }
 }
