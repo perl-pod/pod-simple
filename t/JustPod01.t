@@ -24,6 +24,7 @@ my $output;
 $parser->output_string( \$output );
 $parser->parse_string_document( $input );
 
+# Strip off text before =pod in the input
 $input =~ s/^.*(=pod.*)$/$1/mgs;
 
 my $msg = "got expected output";
