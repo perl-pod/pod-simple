@@ -229,9 +229,11 @@ sub end_L {
 sub emit {
   my $self = shift;
 
-  print { $self->{'output_fh'} } '',$self->{buffer} ,"\n\n";
+  if ($self->{buffer} ne "") {
+    print { $self->{'output_fh'} } "",$self->{buffer} ,"\n\n";
 
-  $self->{buffer} = '';
+    $self->{buffer} = "";
+  }
 
   return;
 }
