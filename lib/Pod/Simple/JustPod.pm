@@ -22,7 +22,7 @@ sub new {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub handle_text       {
-  $_[0]{buffer} .= $_[1] unless $_[0]{linkbuffer} ;
+  $_[0]{buffer} .= $_[1] unless $_[0]{inL} ;
 }
 
 sub spacer {
@@ -217,12 +217,18 @@ sub _end_fcode {
 sub start_L {
     _start_fcode('L', @_);
     $_[0]->handle_text($_[1]->{raw});
-    $_[0]->{linkbuffer} = 1;
+    $_[0]->{inL}++
 }
 
 sub end_L {
   my $self = shift;
-  $self->{linkbuffer} = 0;
+  $self->{inL}--;
+  if ($self->{inL} < 0) {   # If BlackBox is working, this shouldn't
+                            # happen, but verify
+    $self->whine($self->{line_count}, "Extra '>' ending L<>");
+    $self->{inL} = 0;
+  }
+
   $self->_end_fcode(@_);
 }
 
