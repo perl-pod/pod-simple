@@ -21,6 +21,20 @@ sub new {
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+sub check_that_all_is_closed {
+
+  # Actually checks that the things we depend on being balanced in fact are,
+  # so that we can continue in spit of pod errors
+
+  my $self = shift;
+  while ($self->{inL}) {
+    $self->end_L(@_);
+  }
+  while ($self->{fcode_end} && @{$self->{fcode_end}}) {
+    $self->_end_fcode(@_);
+  }
+}
+
 sub handle_text       {
   $_[0]{buffer} .= $_[1] unless $_[0]{inL} ;
 }
@@ -44,6 +58,7 @@ sub _generic_start {
   # Called from tags like =head1, etc.
 
   my ($self, $text, $arg) = @_;
+  $self->check_that_all_is_closed();
   $self->handle_text($text);
   $self->spacer($arg);
 }
@@ -59,6 +74,7 @@ sub start_encoding    { shift->_generic_start('=encoding', @_); }
 
 sub start_item_bullet { # Handle =item *
   my ($self, $arg) = @_;
+  $self->check_that_all_is_closed();
   $self->handle_text('=item');
 
   # It can be that they said simply '=item', and it is inferred that it is to
@@ -84,6 +100,7 @@ sub start_item_bullet { # Handle =item *
 
 sub start_item_number {     # Handle '=item 2'
   my ($self, $arg) = @_;
+  $self->check_that_all_is_closed();
   $self->handle_text("=item");
   $self->spacer($arg);
   $self->handle_text("$arg->{'~orig_content'}\n\n");
@@ -91,12 +108,14 @@ sub start_item_number {     # Handle '=item 2'
 
 sub start_item_text {   # Handle '=item foo bar baz'
   my ($self, $arg) = @_;
+  $self->check_that_all_is_closed();
   $self->handle_text('=item');
   $self->spacer($arg);
 }
 
 sub _end_item {
   my $self = shift;
+  $self->check_that_all_is_closed();
   $self->emit;
 }
 
@@ -106,6 +125,7 @@ sub _end_item {
 
 sub _start_over  {
   my ($self, $arg) = @_;
+  $self->check_that_all_is_closed();
   $self->handle_text("=over");
 
   # The =over amount is optional
@@ -123,6 +143,7 @@ sub _start_over  {
 
 sub _end_over  {
   my $self = shift;
+  $self->check_that_all_is_closed();
   $self->handle_text('=back');
   $self->emit;
 }
@@ -140,6 +161,7 @@ sub end_Document    {
 
 sub _end_generic  {
   my $self = shift;
+  $self->check_that_all_is_closed();
   $self->emit;
 }
 
