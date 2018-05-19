@@ -2122,10 +2122,15 @@ sub _treelet_from_formatting_codes {
 
       # Tell Pod::Simple::JustPod how many brackets there were, but to save
       # space, not in the most usual case of there was just 1.  It can be
-      # inferred by the absence of this element.
-      $lineage[-1][1]{'~bracket_count'} = $bracket_count
-                                            if $self->_output_is_for_JustPod
-                                            && $bracket_count > 1;
+      # inferred by the absence of this element.  Similarly, if there is more
+      # than one bracket, extract the white space between the final bracket
+      # and the real beginning of the interior.  Save that if it isn't just a
+      # single space
+      if ($self->{'_output_is_for_JustPod'} && $bracket_count > 1) {
+        $lineage[-1][1]{'~bracket_count'} = $bracket_count;
+        my $lspacer = substr($1, 1 + $bracket_count);
+        $lineage[-1][1]{'~lspacer'} = $lspacer if $lspacer ne " ";
+      }
       push @{ $lineage[-2] }, $lineage[-1];
     } elsif(defined $4) {
       DEBUG > 3 and print STDERR "Found apparent complex end-text code \"$3$4\"\n";
@@ -2154,6 +2159,22 @@ sub _treelet_from_formatting_codes {
         next;
       }
       #print STDERR "\nHOOBOY ", scalar(@{$lineage[-1]}), "!!!\n";
+
+      if ($3 ne " " && $self->{'_output_is_for_JustPod'}) {
+        if ($3 ne "") {
+          $lineage[-1][1]{'~rspacer'} = $3;
+        }
+        elsif ($lineage[-1][1]{'~lspacer'} eq "  ") {
+
+          # Here we had something like C<<  >> which was a false positive
+          delete $lineage[-1][1]{'~lspacer'};
+        }
+        else {
+          $lineage[-1][1]{'~rspacer'}
+                                = substr($lineage[-1][1]{'~lspacer'}, -1, 1);
+          chop $lineage[-1][1]{'~lspacer'};
+        }
+      }
 
       push @{ $lineage[-1] }, '' if 2 == @{ $lineage[-1] };
       # Keep the element from being childless
