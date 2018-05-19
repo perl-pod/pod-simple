@@ -22,16 +22,6 @@ sub new {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub handle_text       {
-  ### FIXME need to figure out how to count number of characters that need to
-  ### be escaped
-
-  #### EXAMPLE: C<<< $? >> 8 >>> needs three escapes because of '>>'
-
-  if ( $_[0]{escape} and $_[1] =~ m|([<>]+)|) {
-    my $l = '<' x length $1;
-    my $r = '>' x length $1;
-    $_[1] = "$l $_[1] $r";
-  }
   $_[0]{buffer} .= $_[1] unless $_[0]{linkbuffer} ;
 }
 
@@ -163,8 +153,28 @@ sub _end_generic  {
 
 sub _start_fcode {
   my ($type, $self, $flags) = @_;
-  $self->handle_text("$type<");
-  $self->{escape} = 1;
+
+  # How many brackets is set by BlackBox unless the count is 1
+  my $bracket_count = (exists $flags->{'~bracket_count'})
+                       ? $flags->{'~bracket_count'}
+                       : 1;
+  $self->handle_text($type . ( "<" x $bracket_count));
+
+  my $rspacer = "";
+  if ($bracket_count > 1) {
+    my $lspacer = (exists $flags->{'~lspacer'})
+                  ? $flags->{'~lspacer'}
+                  : " ";
+    $self->handle_text($lspacer);
+
+    $rspacer = (exists $flags->{'~rspacer'})
+                  ? $flags->{'~rspacer'}
+                  : " ";
+  }
+
+  # BlackBox doesn't output things for for the ending code callbacks, so save
+  # what we need.
+  push @{$self->{'fcode_end'}}, [ $bracket_count, $rspacer ];
 }
 
 sub start_B { _start_fcode('B', @_); }
@@ -177,9 +187,22 @@ sub start_X { _start_fcode('X', @_); }
 sub start_Z { _start_fcode('Z', @_); }
 
 sub _end_fcode {
-  my $self = shift;
-  $self->handle_text('>');
-  $self->{escape} = 0;
+    my $self = shift;
+    my $fcode_end = pop @{$self->{'fcode_end'}};
+    my $bracket_count = 1;
+    my $rspacer = "";
+
+    if (! defined $fcode_end) { # If BlackBox is working, this shouldn't
+                                # happen, but verify
+      $self->whine($self->{line_count}, "Extra '>'");
+    }
+    else {
+      $bracket_count = $fcode_end->[0];
+      $rspacer = $fcode_end->[1];
+    }
+
+    $self->handle_text($rspacer) if $bracket_count > 1;
+    $self->handle_text(">" x $bracket_count);
 }
 
 *end_B   = *_end_fcode;
