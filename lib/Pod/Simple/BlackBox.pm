@@ -843,15 +843,28 @@ sub _ponder_paragraph_buffer {
 
   my($para, $para_type);
   while(@$paras) {
-    last if @$paras == 1 and
-      ( $paras->[0][0] eq '=over' or $paras->[0][0] eq '~Verbatim'
-        or $paras->[0][0] eq '=item' )
-    ;
+    last if      @$paras == 1
+            and (    $paras->[0][0] eq '=over'
+                 or  $paras->[0][0] eq '=item'
+                 or ($paras->[0][0] eq '~Verbatim' and $self->{'in_pod'}));
     # Those're the three kinds of paragraphs that require lookahead.
     #   Actually, an "=item Foo" inside an <over type=text> region
     #   and any =item inside an <over type=block> region (rare)
     #   don't require any lookahead, but all others (bullets
     #   and numbers) do.
+    # The verbatim is different from the other two, because those might be
+    # like:
+    #
+    #   =item
+    #   ...
+    #   =cut
+    #   ...
+    #   =item
+    #
+    # The =cut here finishes the paragraph but doesn't terminate the =over
+    # they should be in. (khw apologizes that he didn't comment at the time
+    # why the 'in_pod' works, and no longer remembers why, and doesn't think
+    # it is currently worth the effort to re-figure it out.)
 
 # TODO: whinge about many kinds of directives in non-resolving =for regions?
 # TODO: many?  like what?  =head1 etc?
