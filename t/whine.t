@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 {
   package Pod::Simple::ErrorFinder;
@@ -59,5 +59,15 @@ sub errors { Pod::Simple::ErrorFinder->errors_for_input(@_) }
     $errors,
     { 3 => [ "Nested L<> are illegal.  Pretending inner one is X<...> so can continue looking for other errors." ] },
       "warning for nested L<>",
+  );
+}
+    
+{
+  my $input = "=pod\n\nLE<lt>E<sol>E<gt> containing only slash: L< / >\n";
+  my $errors = errors("$input");
+  is_deeply(
+    $errors,
+    { 3 => [ "L<> contains only '/'" ] },
+      "warning for L< / > containing only a slash",
   );
 }
