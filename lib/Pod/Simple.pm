@@ -1086,7 +1086,12 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
       my $ell = $treelet->[$i];
       DEBUG > 1 and print STDERR "Ogling L node " . pretty($ell) . "\n";
         
-      # bitch if it's empty
+      # bitch if it's empty or is just '/'
+      if (@{$ell} == 3 and $ell->[2] =~ m!\A\s*/\s*\z!) {
+        $self->whine( $start_line, "L<> contains only '/'" );
+        $treelet->[$i] = 'L</>';  # just make it a text node
+        next;  # and move on
+      }
       if(  @{$ell} == 2
        or (@{$ell} == 3 and $ell->[2] eq '')
       ) {
