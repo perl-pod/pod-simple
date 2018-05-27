@@ -1084,7 +1084,7 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
       
       # By here, $treelet->[$i] is definitely an L node
       my $ell = $treelet->[$i];
-      DEBUG > 1 and print STDERR "Ogling L node $ell\n";
+      DEBUG > 1 and print STDERR "Ogling L node " . pretty($ell) . "\n";
         
       # bitch if it's empty
       if(  @{$ell} == 2
@@ -1351,7 +1351,7 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
       # And update children to be the link-text:
       @$ell = (@$ell[0,1], defined($link_text) ? splice(@$link_text) : '');
       
-      DEBUG > 2 and print STDERR "End of L-parsing for this node $treelet->[$i]\n";
+      DEBUG > 2 and print STDERR "End of L-parsing for this node " . pretty($treelet->[$i]) . "\n";
 
       unshift @stack, $treelet->[$i]; # might as well recurse
     }
@@ -1511,6 +1511,7 @@ sub _accessorize {  # A simple-minded method-maker
       $Carp::CarpLevel = 1,  Carp::croak(
        "Accessor usage: \$obj->$attrname() or \$obj->$attrname(\$new_value)"
       ) unless (@_ == 1 or @_ == 2) and ref $_[0];
+
       (@_ == 1) ?  $_[0]->{$attrname}
                 : ($_[0]->{$attrname} = $_[1]);
     };
