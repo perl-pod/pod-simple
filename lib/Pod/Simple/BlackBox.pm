@@ -507,6 +507,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # ++$self->{'pod_para_count'};
       $self->_ponder_paragraph_buffer();
        # by now it's safe to consider the previous paragraph as done.
+      DEBUG > 6 and print STDERR "Processing any cut handler, line ${$self}{'line_count'}\n";
       $cut_handler->(map $_, $line, $self->{'line_count'}, $self)
        if $cut_handler;
 
