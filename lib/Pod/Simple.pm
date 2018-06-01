@@ -1298,6 +1298,7 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
         $section_name = [splice @ell_content];
         $section_name->[ 0] =~ s/^\"//s;
         $section_name->[-1] =~ s/\"$//s;
+        $ell->[1]{'~tolerated'} = 1;
       }
 
       # Turn L<Foo Bar> into L</Foo Bar>.
