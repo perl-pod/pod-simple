@@ -1305,8 +1305,8 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
          and grep !ref($_) && m/ /s, @ell_content
       ) {
         $section_name = [splice @ell_content];
+        $ell->[1]{'~deprecated'} = 1;
         # That's support for the now-deprecated syntax.
-        # (Maybe generate a warning eventually?)
         # Note that it deliberately won't work on L<...|Foo Bar>
       }
 
