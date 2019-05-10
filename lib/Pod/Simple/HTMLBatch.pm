@@ -1110,12 +1110,15 @@ Example:
 
 =item $batchconv = Pod::Simple::HTMLBatch->new;
 
-This TODO
-
+This creates a new batch converter.  The method doesn't take parameters.
+To change the converter's attributes, use the L<"/ACCESSOR METHODS">
+below.
 
 =item $batchconv->batch_convert( I<indirs>, I<outdir> );
 
-this TODO
+This searches the directories given in I<indirs> and writes
+HTML files for each of these to a corresponding directory
+in I<outdir>.  The directory I<outdir> must exist.
 
 =item $batchconv->batch_convert( undef    , ...);
 
