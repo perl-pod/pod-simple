@@ -49,11 +49,20 @@ $WRAP = 1 unless defined $WRAP;
   "\cc" => "}",
 );
 
+# Generate a string of all the characters in %Escape that don't map to
+# themselves.  First, one without the hyphen, then one with.
+my $escaped_sans_hyphen = "";
+$escaped_sans_hyphen .= $_ for grep { $_ ne $Escape{$_} && $_ ne '-' }
+                                                            sort keys %Escape;
+my $escaped = "-$escaped_sans_hyphen";
+
+# Then convert to patterns
+$escaped_sans_hyphen = qr/[\Q$escaped_sans_hyphen \E]/;
+$escaped= qr/[\Q$escaped\E]/;
+
 # These are broken for early Perls on EBCDIC; they could be fixed to work
 # better there, but not worth it.  These are part of a larger [...] class, so
 # are just the strings to substitute into it, as opposed to compiled patterns.
-my $cntrl = '[:cntrl:]';
-$cntrl = '\x00-\x1F\x7F' unless eval "qr/[$cntrl]/";
 
 my $not_ascii = '[:^ascii:]';
 $not_ascii = '\x80-\xFF' unless eval "qr/[$not_ascii]/";
@@ -525,19 +534,19 @@ sub rtf_esc {
   my $x; # scratch
   if(!defined wantarray) { # void context: alter in-place!
     for(@_) {
-      s/([F${cntrl}\-\\\{\}${not_ascii}])/$Escape{$1}/g;  # ESCAPER
+      s/($escaped)/$Escape{$1}/g;  # ESCAPER
       s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
     }
     return;
   } elsif(wantarray) {  # return an array
     return map {; ($x = $_) =~
-      s/([F${cntrl}\-\\\{\}${not_ascii}])/$Escape{$1}/g;  # ESCAPER
+      s/($escaped)/$Escape{$1}/g;  # ESCAPER
       $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
       $x;
     } @_;
   } else { # return a single scalar
     ($x = ((@_ == 1) ? $_[0] : join '', @_)
-    ) =~ s/([F${cntrl}\-\\\{\}${not_ascii}])/$Escape{$1}/g;  # ESCAPER
+    ) =~ s/($escaped)/$Escape{$1}/g;  # ESCAPER
              # Escape \, {, }, -, control chars, and 7f-ff.
     $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
     return $x;
@@ -554,19 +563,19 @@ sub rtf_esc_codely {
   my $x; # scratch
   if(!defined wantarray) { # void context: alter in-place!
     for(@_) {
-      s/([F${cntrl}\\\{\}${not_ascii}])/$Escape{$1}/g;  # ESCAPER
+      s/($escaped_sans_hyphen)/$Escape{$1}/g;  # ESCAPER
       s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
     }
     return;
   } elsif(wantarray) {  # return an array
     return map {; ($x = $_) =~
-      s/([F${cntrl}\\\{\}${not_ascii}])/$Escape{$1}/g;  # ESCAPER
+      s/($escaped_sans_hyphen)/$Escape{$1}/g;  # ESCAPER
       $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
       $x;
     } @_;
   } else { # return a single scalar
     ($x = ((@_ == 1) ? $_[0] : join '', @_)
-    ) =~ s/([F${cntrl}\\\{\}${not_ascii}])/$Escape{$1}/g;  # ESCAPER
+    ) =~ s/($escaped_sans_hyphen)/$Escape{$1}/g;  # ESCAPER
              # Escape \, {, }, -, control chars, and 7f-ff.
     $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
     return $x;
