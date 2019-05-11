@@ -530,6 +530,13 @@ END
 #-------------------------------------------------------------------------
 
 use integer;
+
+sub esc_uni($) {
+    my $x = shift;
+    $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
+    return $x;
+}
+
 sub rtf_esc ($$) {
   # The parameter is true if we should escape hyphens
   my $escape_re = ((shift) ? $escaped : $escaped_sans_hyphen);
@@ -546,20 +553,20 @@ sub rtf_esc ($$) {
   if(!defined wantarray) { # void context: alter in-place!
     for(@_) {
       s/($escape_re)/$Escape{$1}/g;  # ESCAPER
-      s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
+      $_ = esc_uni($_);
     }
     return;
   } elsif(wantarray) {  # return an array
     return map {; ($x = $_) =~
       s/($escape_re)/$Escape{$1}/g;  # ESCAPER
-      $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
+      $x = esc_uni($x);
       $x;
     } @_;
   } else { # return a single scalar
     ($x = ((@_ == 1) ? $_[0] : join '', @_)
     ) =~ s/($escape_re)/$Escape{$1}/g;  # ESCAPER
              # Escape \, {, }, -, control chars, and 7f-ff.
-    $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
+    $x = esc_uni($x);
     return $x;
   }
 }
