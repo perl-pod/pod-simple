@@ -533,7 +533,18 @@ use integer;
 
 sub esc_uni($) {
     my $x = shift;
-    $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
+
+    # The output is expected to be UTF-16.  Surrogates and above-Unicode get
+    # mapped to '?'
+    $x =~ s/([^\x00-\x{D7FF}\x{E000}-\x{10FFFF}])/?/g;
+
+    # Non-surrogate Plane 0 characters get mapped to their code points.  But
+    # the standard calls for a 16bit SIGNED value.
+    $x =~ s/([\x{100}-\x{FFFF}])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
+
+    # Use surrogate pairs for the rest
+    $x =~ s/([\x{10000}-\x{10FFFF}])/'\\uc1\\u' . ((ord($1) >> 10) + 0xD7C0 - 65536) . '\\u' . (((ord$1) & 0x03FF) + 0xDC00 - 65536) . '?'/eg;
+
     return $x;
 }
 
