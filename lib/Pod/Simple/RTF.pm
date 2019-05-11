@@ -16,6 +16,38 @@ use Carp ();
 BEGIN { *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG }
 
 $WRAP = 1 unless defined $WRAP;
+%Escape = (
+  (($] lt 5.007_003) # Broken for non-ASCII on early Perls
+   ? (map( (chr($_),chr($_)), # things not apparently needing escaping
+       0x20 .. 0x7E ),
+      map( (chr($_),sprintf("\\'%02x", $_)), # apparently escapeworthy things
+       0x00 .. 0x1F, 0x5c, 0x7b, 0x7d, 0x7f .. 0xFF, 0x46))
+   : (map( (chr(utf8::unicode_to_native($_)),chr(utf8::unicode_to_native($_))),
+       0x20 .. 0x7E ),
+      map( (chr($_),sprintf("\\'%02x", utf8::unicode_to_native($_))),
+       0x00 .. 0x1F, 0x5c, 0x7b, 0x7d, 0x7f .. 0xFF, 0x46))),
+
+  # We get to escape out 'F' so that we can send RTF files thru the mail
+  # without the slightest worry that paragraphs beginning with "From"
+  # will get munged.
+
+  # And some refinements:
+  "\r"  => "\n",
+  "\cj"  => "\n",
+  "\n"   => "\n\\line ",
+
+  "\t"   => "\\tab ",     # Tabs (altho theoretically raw \t's are okay)
+  "\f"   => "\n\\page\n", # Formfeed
+  "-"    => "\\_",        # Turn plaintext '-' into a non-breaking hyphen
+  $Pod::Simple::nbsp => "\\~",        # Latin-1 non-breaking space
+  $Pod::Simple::shy => "\\-",        # Latin-1 soft (optional) hyphen
+
+  # CRAZY HACKS:
+  "\n" => "\\line\n",
+  "\r" => "\n",
+  "\cb" => "{\n\\cs21\\lang1024\\noproof ",  # \\cf1
+  "\cc" => "}",
+);
 
 # These are broken for early Perls on EBCDIC; they could be fixed to work
 # better there, but not worth it.  These are part of a larger [...] class, so
@@ -541,38 +573,6 @@ sub rtf_esc_codely {
   }
 }
 
-%Escape = (
-  (($] lt 5.007_003) # Broken for non-ASCII on early Perls
-   ? (map( (chr($_),chr($_)), # things not apparently needing escaping
-       0x20 .. 0x7E ),
-      map( (chr($_),sprintf("\\'%02x", $_)), # apparently escapeworthy things
-       0x00 .. 0x1F, 0x5c, 0x7b, 0x7d, 0x7f .. 0xFF, 0x46))
-   : (map( (chr(utf8::unicode_to_native($_)),chr(utf8::unicode_to_native($_))),
-       0x20 .. 0x7E ),
-      map( (chr($_),sprintf("\\'%02x", utf8::unicode_to_native($_))),
-       0x00 .. 0x1F, 0x5c, 0x7b, 0x7d, 0x7f .. 0xFF, 0x46))),
-
-  # We get to escape out 'F' so that we can send RTF files thru the mail
-  # without the slightest worry that paragraphs beginning with "From"
-  # will get munged.
-
-  # And some refinements:
-  "\r"  => "\n",
-  "\cj"  => "\n",
-  "\n"   => "\n\\line ",
-
-  "\t"   => "\\tab ",     # Tabs (altho theoretically raw \t's are okay)
-  "\f"   => "\n\\page\n", # Formfeed
-  "-"    => "\\_",        # Turn plaintext '-' into a non-breaking hyphen
-  $Pod::Simple::nbsp => "\\~",        # Latin-1 non-breaking space
-  $Pod::Simple::shy => "\\-",        # Latin-1 soft (optional) hyphen
-
-  # CRAZY HACKS:
-  "\n" => "\\line\n",
-  "\r" => "\n",
-  "\cb" => "{\n\\cs21\\lang1024\\noproof ",  # \\cf1
-  "\cc" => "}",
-);
 1;
 
 __END__
