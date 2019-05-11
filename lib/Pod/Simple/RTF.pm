@@ -70,14 +70,6 @@ my $escaped = "-$escaped_sans_hyphen";
 $escaped_sans_hyphen = qr/[\Q$escaped_sans_hyphen \E]/;
 $escaped= qr/[\Q$escaped\E]/;
 
-# These are broken for early Perls on EBCDIC; they could be fixed to work
-# better there, but not worth it.  These are part of a larger [...] class, so
-# are just the strings to substitute into it, as opposed to compiled patterns.
-
-my $not_ascii = '[:^ascii:]';
-$not_ascii = '\x80-\xFF' unless eval "qr/[$not_ascii]/";
-
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub _openclose {
@@ -209,6 +201,13 @@ sub run {
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# Match something like an identifier.  Prefer XID if available, then plain ID,
+# then just ASCII
+my $id_re = Pod::Simple::BlackBox::my_qr('[\'_\p{XIDS}][\'\p{XIDC}]+', "ab");
+$id_re    = Pod::Simple::BlackBox::my_qr('[\'_\p{IDS}][\'\p{IDC}]+', "ab")
+                                                                  unless $id_re;
+$id_re = qr/['_a-zA-Z]['a-zA-Z0-9_]+/ unless $id_re;
+
 sub do_middle {      # the main work
   my $self = $_[0];
   my $fh = $self->{'output_fh'};
@@ -246,7 +245,7 @@ sub do_middle {      # the main work
           |
           # or starting alpha, but containing anything strange:
           (?:
-           [a-zA-Z'${not_ascii}]+[\$\@\:_<>\(\\\*]\S+
+           ${id_re}[\$\@\:_<>\(\\\*]\S+
           )
          )
         /\cb$1\cc/xsg
