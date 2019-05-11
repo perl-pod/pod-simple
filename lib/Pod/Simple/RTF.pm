@@ -213,7 +213,7 @@ sub do_middle {      # the main work
     if( ($type = $token->type) eq 'text' ) {
       if( $self->{'rtfverbatim'} ) {
         DEBUG > 1 and print STDERR "  $type " , $token->text, " in verbatim!\n";
-        rtf_esc_codely($scratch = $token->text);
+        rtf_esc(0, $scratch = $token->text); # 0 => Don't escape hyphen
         print $fh $scratch;
         next;
       }
@@ -242,7 +242,7 @@ sub do_middle {      # the main work
         /\cb$1\cc/xsg
       ;
       
-      rtf_esc($scratch);
+      rtf_esc(1, $scratch);     # 1 => escape hyphen
       $scratch =~
          s/(
             [^\r\n]{65}        # Snare 65 characters from a line
@@ -352,7 +352,7 @@ sub do_middle {      # the main work
         print $fh $token->attr('number'), ". \n";
       } elsif ($tagname eq 'item-bullet') {
         print $fh "\\'", ord("_"), "\n";
-        #for funky testing: print $fh '', rtf_esc("\x{4E4B}\x{9053}");
+        #for funky testing: print $fh '', rtf_esc(1, "\x{4E4B}\x{9053}");
       }
 
     } elsif( $type eq 'end' ) {
@@ -506,7 +506,7 @@ sub doc_start {
     # catches the most common case, at least
 
   DEBUG and print STDERR "Title0: <$title>\n";
-  $title = rtf_esc($title);
+  $title = rtf_esc(1, $title);  # 1 => escape hyphen
   DEBUG and print STDERR "Title1: <$title>\n";
   $title = '\lang1024\noproof ' . $title
    if $is_obviously_module_name;
@@ -530,52 +530,34 @@ END
 #-------------------------------------------------------------------------
 
 use integer;
-sub rtf_esc {
-  my $x; # scratch
-  if(!defined wantarray) { # void context: alter in-place!
-    for(@_) {
-      s/($escaped)/$Escape{$1}/g;  # ESCAPER
-      s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
-    }
-    return;
-  } elsif(wantarray) {  # return an array
-    return map {; ($x = $_) =~
-      s/($escaped)/$Escape{$1}/g;  # ESCAPER
-      $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
-      $x;
-    } @_;
-  } else { # return a single scalar
-    ($x = ((@_ == 1) ? $_[0] : join '', @_)
-    ) =~ s/($escaped)/$Escape{$1}/g;  # ESCAPER
-             # Escape \, {, }, -, control chars, and 7f-ff.
-    $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
-    return $x;
-  }
-}
+sub rtf_esc ($$) {
+  # The parameter is true if we should escape hyphens
+  my $escape_re = ((shift) ? $escaped : $escaped_sans_hyphen);
 
-sub rtf_esc_codely {
-  # Doesn't change "-" to hard-hyphen, nor apply computerese style-smarts.
-  # We don't want to change the "-" to hard-hyphen, because we want to
+  # When false, it doesn't change "-" to hard-hyphen.
+  #  We don't want to change the "-" to hard-hyphen, because we want to
   #  be able to paste this into a file and run it without there being
   #  dire screaming about the mysterious hard-hyphen character (which
   #  looks just like a normal dash character).
-  
+  # XXX The comments used to claim that when false it didn't apply computerese
+  #     style-smarts, but khw didn't see this actually
+
   my $x; # scratch
   if(!defined wantarray) { # void context: alter in-place!
     for(@_) {
-      s/($escaped_sans_hyphen)/$Escape{$1}/g;  # ESCAPER
+      s/($escape_re)/$Escape{$1}/g;  # ESCAPER
       s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
     }
     return;
   } elsif(wantarray) {  # return an array
     return map {; ($x = $_) =~
-      s/($escaped_sans_hyphen)/$Escape{$1}/g;  # ESCAPER
+      s/($escape_re)/$Escape{$1}/g;  # ESCAPER
       $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
       $x;
     } @_;
   } else { # return a single scalar
     ($x = ((@_ == 1) ? $_[0] : join '', @_)
-    ) =~ s/($escaped_sans_hyphen)/$Escape{$1}/g;  # ESCAPER
+    ) =~ s/($escape_re)/$Escape{$1}/g;  # ESCAPER
              # Escape \, {, }, -, control chars, and 7f-ff.
     $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
     return $x;
