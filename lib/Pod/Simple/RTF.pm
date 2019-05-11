@@ -531,9 +531,31 @@ END
 
 use integer;
 
+my $question_mark_code_points =
+        Pod::Simple::BlackBox::my_qr('([^\x00-\x{D7FF}\x{E000}-\x{10FFFF}])',
+                                     "\x{110000}");
+my $plane0 =
+        Pod::Simple::BlackBox::my_qr('([\x{100}-\x{FFFF}])', "\x{100}");
+my $other_unicode =
+        Pod::Simple::BlackBox::my_qr('([\x{10000}-\x{10FFFF}])', "\x{10000}");
+
 sub esc_uni($) {
+    use if $] le 5.006002, 'utf8';
+
     my $x = shift;
-    $x =~ s/([^\x00-\xFF])/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg;
+
+    # The output is expected to be UTF-16.  Surrogates and above-Unicode get
+    # mapped to '?'
+    $x =~ s/$question_mark_code_points/?/g if $question_mark_code_points;
+
+    # Non-surrogate Plane 0 characters get mapped to their code points.  But
+    # the standard calls for a 16bit SIGNED value.
+    $x =~ s/$plane0/'\\uc1\\u'.((ord($1)<32768)?ord($1):(ord($1)-65536)).'?'/eg
+                                                                    if $plane0;
+
+    # Use surrogate pairs for the rest
+    $x =~ s/$other_unicode/'\\uc1\\u' . ((ord($1) >> 10) + 0xD7C0 - 65536) . '\\u' . (((ord$1) & 0x03FF) + 0xDC00 - 65536) . '?'/eg if $other_unicode;
+
     return $x;
 }
 
