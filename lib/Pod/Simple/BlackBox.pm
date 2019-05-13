@@ -1759,8 +1759,12 @@ sub _ponder_Verbatim {
     for(my $i = 2; $i < @$para; $i++) {
       foreach my $line ($para->[$i]) { # just for aliasing
         # Strip indentation.
-        $line =~ s/^\Q$indent// if $indent
-            && !($self->{accept_codes} && $self->{accept_codes}{VerbatimFormatted});
+        $line =~ s/^\Q$indent// if $indent;
+
+            # This is commented out because of github issue #85, and the
+            # current maintainers don't know why it was there in the first
+            # place.
+            #&& !($self->{accept_codes} && $self->{accept_codes}{VerbatimFormatted});
         while( $line =~
           # Sort of adapted from Text::Tabs -- yes, it's hardwired in that
           # tabs are at every EIGHTH column.  For portability, it has to be
