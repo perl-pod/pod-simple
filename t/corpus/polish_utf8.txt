@@ -14,6 +14,11 @@ a few lines to test RTF specially.
 ﬀ  is a character in the upper half of Plane 0, so should be negative in RTF
 𝔸 is a character in Plane 1, so should be expressed as a surrogate pair in RTF
 
+All the ASCII printables
+ !"#$%&\'()*+,-./0123456789:;<=>?@
+ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`
+abcdefghijklmnopqrstuvwxyz{|}~
+
 Wśród nocnej ciszy głos się rozchodzi: /
 Wstańcie, pasterze, Bóg się nam rodzi! /
 Czym prędzej się wybierajcie, /
@@ -44,6 +49,11 @@ And now as verbatim text:
 
   ﬀ  upper half, Plane 0
   𝔸 Plane 1
+
+  All the ASCII printables
+   !"#$%&\'()*+,-./0123456789:;<=>?@
+  ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`
+  abcdefghijklmnopqrstuvwxyz{|}~
 
   Wśród nocnej ciszy głos się rozchodzi:
   Wstańcie, pasterze, Bóg się nam rodzi!
