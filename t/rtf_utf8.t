@@ -135,6 +135,11 @@ be negative in RT\'46 \uc1\u-10187\u-8904? is a character in Plane
 \par}
 
 {\pard\li0\sa180
+All the ASCII printables !"#$%&\'5c'()*+,\_./0123456789:;<=>?@ ABCDE\'46GHIJKLMNOPQRSTUVWXYZ[{
+\cs21\lang1024\noproof \'5c]^\'5f`} abcdefghijklmnopqrstuvwxyz\'7b|\'7d~
+\par}
+
+{\pard\li0\sa180
 W\uc1\u347?r\'f3d nocnej ciszy g\uc1\u322?os si\uc1\u281? rozchodzi: 
 / Wsta\uc1\u324?cie, pasterze, B\'f3g si\uc1\u281? nam rodzi! / Czym 
 pr\uc1\u281?dzej si\uc1\u281? wybierajcie, / Do Betlejem pospieszajcie 
@@ -171,6 +176,11 @@ And now as verbatim text:
 {\pard\li0\plain\s20\sa180\f1\fs18\lang1024\noproof
   \uc1\u-1280?  upper half, Plane 0\line
   \uc1\u-10187\u-8904? Plane 1\line
+\line
+  All the ASCII printables\line
+   !"#$%&\'5c'()*+,-./0123456789:;<=>?@\line
+  ABCDE\'46GHIJKLMNOPQRSTUVWXYZ[\'5c]^\'5f`\line
+  abcdefghijklmnopqrstuvwxyz\'7b|\'7d~\line
 \line
   W\uc1\u347?r\'f3d nocnej ciszy g\uc1\u322?os si\uc1\u281? rozchodzi:\line
   Wsta\uc1\u324?cie, pasterze, B\'f3g si\uc1\u281? nam rodzi!\line

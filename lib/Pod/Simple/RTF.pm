@@ -15,21 +15,31 @@ BEGIN {@ISA = ('Pod::Simple::PullParser')}
 use Carp ();
 BEGIN { *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG }
 
+sub to_uni ($) {    # Convert native code point to Unicode
+    my $x = shift;
+
+    # Broken for early EBCDICs
+    $x = chr utf8::native_to_unicode(ord $x) if $] ge 5.007_003
+                                             && ord("A") != 65;
+    return $x;
+}
+
+# We escape out 'F' so that we can send RTF files thru the mail without the
+# slightest worry that paragraphs beginning with "From" will get munged.
+# We also escape '\', '{', '}', and '_'
+my $map_to_self = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEGHIJKLMNOPQRSTUVWXYZ[]^`abcdefghijklmnopqrstuvwxyz|~';
+
 $WRAP = 1 unless defined $WRAP;
 %Escape = (
-  (($] lt 5.007_003) # Broken for non-ASCII on early Perls
-   ? (map( (chr($_),chr($_)), # things not apparently needing escaping
-       0x20 .. 0x7E ),
-      map( (chr($_),sprintf("\\'%02x", $_)), # apparently escapeworthy things
-       0x00 .. 0x1F, 0x5c, 0x7b, 0x7d, 0x7f .. 0xFF, 0x46))
-   : (map( (chr(utf8::unicode_to_native($_)),chr(utf8::unicode_to_native($_))),
-       0x20 .. 0x7E ),
-      map( (chr($_),sprintf("\\'%02x", utf8::unicode_to_native($_))),
-       0x00 .. 0x1F, 0x5c, 0x7b, 0x7d, 0x7f .. 0xFF, 0x46))),
 
-  # We get to escape out 'F' so that we can send RTF files thru the mail
-  # without the slightest worry that paragraphs beginning with "From"
-  # will get munged.
+  # Start with every character mapping to its hex equivalent
+  map( (chr($_) => sprintf("\\'%02x", $_)), 0 .. 0xFF),
+
+  # Override most ASCII printables with themselves (or on non-ASCII platforms,
+  # their ASCII values.  This is because the output is UTF-16, which is always
+  # based on Unicode code points)
+  map( (   substr($map_to_self, $_, 1)
+        => to_uni(substr($map_to_self, $_, 1))), 0 .. length($map_to_self) - 1),
 
   # And some refinements:
   "\r"  => "\n",
