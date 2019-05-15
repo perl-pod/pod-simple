@@ -1,5 +1,18 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+	* Release 3.36
+2019-05-15 Karl Williamson <khw@cpan.org>
+	Added Pod::Simple::JustPod to extract the pod lines from a file
+	Improved detection of input encoding CP1252 vs UTF-8
+	Fixed github issue #79, =cut event out of order
+	Fixed github issue #85, verbatim_indent doesn't work on HTML
+	Fixed github issue #89, css files refer to themselves
+	Fixed github issue #92, broken RTF with Unicode inputs 
+	Extended RTF to handle Unicode code points above 0xFFFF
+	Nested L<> is now flagged as an error
+	Turned off negative repeat count does nothing warnings
+	Fixed/improved some docs about this distribution
+
 	* Release 3.35
 2016-11-29  Karl Williamson <khw@cpan.org>
 	Needed to 'make manifest' before uploading to CPAN.  No changes beyond
