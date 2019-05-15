@@ -47,6 +47,7 @@ WriteMakefile(
         web    => 'https://github.com/perl-pod/pod-simple/issues',
         mailto => 'bug-pod-simple@rt.cpan.org',
       },
+      x_MailingList => 'https://lists.perl.org/list/pod-people.html',
     },
     prereqs => {
       runtime => {
