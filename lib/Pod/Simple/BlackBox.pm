@@ -24,6 +24,30 @@ use Carp ();
 use vars qw($VERSION );
 $VERSION = '3.36';
 #use constant DEBUG => 7;
+
+sub my_qr ($$) {
+
+    # $1 is a pattern to compile and return.  Older perls compile any
+    # syntactically valid property, even if it isn't legal.  To cope with
+    # this, return an empty string unless the compiled pattern also
+    # successfully matches $2, which the caller furnishes.
+
+    my ($input_re, $should_match) = @_;
+    # XXX could have a third parameter $shouldnt_match for extra safety
+
+    my $use_utf8 = ($] le 5.006002) ? 'use utf8;' : "";
+
+    my $re = eval "no warnings; $use_utf8 qr/$input_re/";
+    return "" if $@;
+
+    my $matches = eval "no warnings; $use_utf8 '$should_match' =~ /$re/";
+    return "" if $@;
+
+    return $re if $matches;
+
+    return "";
+}
+
 BEGIN {
   require Pod::Simple;
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG
