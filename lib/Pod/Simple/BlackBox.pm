@@ -57,8 +57,8 @@ BEGIN {
 # Matches a character iff the character will have a different meaning
 # if we choose CP1252 vs UTF-8 if there is no =encoding line.
 # This is broken for early Perls on non-ASCII platforms.
-my $non_ascii_re = eval "qr/[[:^ascii:]]/";
-$non_ascii_re = qr/[\x80-\xFF]/ if ! defined $non_ascii_re;
+my $non_ascii_re = my_qr('[[:^ascii:]]', "\xB6");
+$non_ascii_re = qr/[\x80-\xFF]/ unless $non_ascii_re;
 
 my $utf8_bom;
 if (($] ge 5.007_003)) {
