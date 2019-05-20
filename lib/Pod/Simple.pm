@@ -168,6 +168,7 @@ sub encoding {
 BEGIN {
   *pretty        = \&Pod::Simple::BlackBox::pretty;
   *stringify_lol = \&Pod::Simple::BlackBox::stringify_lol;
+  *my_qr         = \&Pod::Simple::BlackBox::my_qr;
 }
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -339,10 +340,9 @@ sub unaccept_targets {
 
 # XXX Probably it is an error that the digit '9' is excluded from these re's.
 # Broken for early Perls on EBCDIC
-my $xml_name_re = eval "qr/[^-.0-8:A-Z_a-z[:^ascii:]]/";
-if (! defined $xml_name_re) {
-    $xml_name_re = qr/[\x00-\x2C\x2F\x39\x3B-\x40\x5B-\x5E\x60\x7B-\x7F]/;
-}
+my $xml_name_re = my_qr('[^-.0-8:A-Z_a-z[:^ascii:]]', '9');
+$xml_name_re = qr/[\x00-\x2C\x2F\x39\x3B-\x40\x5B-\x5E\x60\x7B-\x7F]/
+                                                            unless $xml_name_re;
 
 sub accept_code { shift->accept_codes(@_) } # alias
 
