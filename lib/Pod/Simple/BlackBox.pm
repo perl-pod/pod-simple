@@ -38,13 +38,17 @@ sub my_qr ($$) {
     my $use_utf8 = ($] le 5.006002) ? 'use utf8;' : "";
 
     my $re = eval "no warnings; $use_utf8 qr/$input_re/";
+    #print STDERR  __LINE__, ": $input_re: $@\n" if $@;
     return "" if $@;
 
     my $matches = eval "no warnings; $use_utf8 '$should_match' =~ /$re/";
+    #print STDERR  __LINE__, ": $input_re: $@\n" if $@;
     return "" if $@;
 
+    #print STDERR  __LINE__, ": SUCCESS: $re\n" if $matches;
     return $re if $matches;
 
+    #print STDERR  __LINE__, ": $re: didn't match\n";
     return "";
 }
 
@@ -380,19 +384,24 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       goto set_1252 if ord("A") == 65 && $copy =~ /[\x80-\x9F]/;
 
       # Nor are surrogates nor unassigned, nor deprecated.
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: surrogate\n" if $copy =~ $cs_re;
       goto set_1252 if $cs_re && $copy =~ $cs_re;
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: unassigned\n" if $cn_re && $copy =~ $cn_re;
       goto set_1252 if $cn_re && $copy =~ $cn_re;
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: deprecated\n" if $copy =~ $deprecated_re;
       goto set_1252 if $copy =~ $deprecated_re;
 
       # Nor are rare code points.  But this is hard to determine.  khw
       # believes that IPA characters and the modifier letters are unlikely to
       # be in pod (and certainly very unlikely to be the in the first line in
       # the pod containing non-ASCII)
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: rare\n" if $copy =~ $rare_blocks_re;
       goto set_1252 if $rare_blocks_re && $copy =~ $rare_blocks_re;
 
       # The first Unicode version included essentially every Latin character
       # in modern usage.  So, a Latin character not in the first release will
       # unlikely be in pod.
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: later_latin\n" if $later_latin_re && $copy =~ $later_latin_re;
       goto set_1252 if $later_latin_re && $copy =~ $later_latin_re;
 
       # On perls that handle script runs, if the UTF-8 interpretation yields
@@ -404,6 +413,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
       if ($script_run_re) {
         goto set_utf8 if $copy =~ $script_run_re;
+        DEBUG > 8 and print STDERR __LINE__, ":  not script run\n";
         goto set_1252;
       }
 
@@ -413,16 +423,21 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
       # If it's all non-Latin, there is no CP1252, as that is Latin
       # characters and punct, etc.
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: not latin\n" if $copy !~ $latin_re;
       goto set_utf8 if $copy !~ $latin_re;
 
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: all latin\n" if $copy =~ $every_char_is_latin_re;
       goto set_utf8 if $copy =~ $every_char_is_latin_re;
 
+      DEBUG > 8 and print STDERR __LINE__, ": $copy: mixed\n";
 
      set_1252:
+      DEBUG > 9 and print STDERR __LINE__, ": $copy: is 1252\n";
       $encoding = 'CP1252';
       goto done_set;
 
      set_utf8:
+      DEBUG > 9 and print STDERR __LINE__, ": $copy: is UTF-8\n";
       $encoding = 'UTF-8';
 
      done_set:
