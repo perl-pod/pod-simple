@@ -1,5 +1,10 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+	* Release 3.38
+2019-05-30 Karl Williamson <khw@cpan.org>
+	Removed some alien files that somehow got in the tar, including a copy
+	of Pod::Escapes.  Spotted by Petr Pisar++
+
 	* Release 3.37
 2019-05-30 Karl Williamson <khw@cpan.org>
 	Suppressed some expected diagnostics under harness
