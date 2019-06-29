@@ -1,5 +1,12 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+3.39 2019-06-30 Karl Williamson <khw@cpan.org>
+	- Fixed JustPod not opening file with :raw.  Spotted by Dave Mitchell.
+	  Fixed by James Keenan
+	- Fixed garbage line looking like pod.  Spotted by Todd Rinaldo.
+	- Finished fixing Issue 95 by adding note that = in column 1 can be
+	  misinterpreted as pod.
+
 3.38 2019-05-30 Karl Williamson <khw@cpan.org>
 	- Removed some alien files that somehow got in the tar, including a copy
 	of Pod::Escapes.  Spotted by Petr Pisar++
