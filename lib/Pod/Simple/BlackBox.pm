@@ -1208,7 +1208,7 @@ sub _ponder_paragraph_buffer {
       DEBUG and print STDERR "\n", pretty($para), "\n";
 
       # traverse the treelet (which might well be just one string scalar)
-      $self->{'content_seen'} ||= 1;
+      $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
       $self->_traverse_treelet_bit(@$para);
     }
   }
@@ -1336,7 +1336,7 @@ sub _ponder_begin {
   if(!$dont_ignore or scalar grep $_->[1]{'~ignore'}, @$curr_open) {
     DEBUG > 1 and print STDERR "Ignoring ignorable =begin\n";
   } else {
-    $self->{'content_seen'} ||= 1;
+    $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
     $self->_handle_element_start((my $scratch='for'), $para->[1]);
   }
 
@@ -1404,7 +1404,7 @@ sub _ponder_end {
     $curr_open->[-1][1]{'start_line'} = $para->[1]{'start_line'};
       # what's that for?
 
-    $self->{'content_seen'} ||= 1;
+    $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
     $self->_handle_element_end( my $scratch = 'for', $para->[1]);
   }
   DEBUG > 1 and print STDERR "Popping $curr_open->[-1][0] $curr_open->[-1][1]{'target'} because of =end $content\n";
@@ -1468,7 +1468,7 @@ sub _ponder_pod {
 
   # The surrounding methods set content_seen, so let us remain consistent.
   # I do not know why it was not here before -- should it not be here?
-  # $self->{'content_seen'} ||= 1;
+  # $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
 
   return;
 }
@@ -1526,7 +1526,7 @@ sub _ponder_over {
   }
   DEBUG > 1 and print STDERR "=over found of type $list_type\n";
 
-  $self->{'content_seen'} ||= 1;
+  $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
   $self->_handle_element_start((my $scratch = 'over-' . $list_type), $para->[1]);
 
   return;
@@ -1548,7 +1548,7 @@ sub _ponder_back {
     DEBUG > 1 and print STDERR "=back happily closes matching =over\n";
     # Expected case: we're closing the most recently opened thing
     #my $over = pop @$curr_open;
-    $self->{'content_seen'} ||= 1;
+    $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
     $self->_handle_element_end( my $scratch =
       'over-' . ( (pop @$curr_open)->[1]{'~type'} ), $para->[1]
     );
