@@ -390,8 +390,8 @@ This module is managed in an open GitHub repository,
 L<https://github.com/perl-pod/pod-simple/>. Feel free to fork and contribute, or
 to clone L<git://github.com/perl-pod/pod-simple.git> and send patches!
 
-Patches against Pod::Simple are welcome. Please send bug reports to
-<bug-pod-simple@rt.cpan.org>.
+Please use L<https://github.com/perl-pod/pod-simple/issues/new> to file a bug
+report.
 
 =head1 COPYRIGHT AND DISCLAIMERS
 
@@ -418,6 +418,8 @@ Pod::Simple is maintained by:
 =item * Hans Dieter Pearcey C<hdp@cpan.org>
 
 =item * David E. Wheeler C<dwheeler@cpan.org>
+
+=item * Karl Williamson C<khw@cpan.org>
 
 =back
 
