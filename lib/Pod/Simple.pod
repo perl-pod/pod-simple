@@ -19,7 +19,11 @@ Be sure to read L</ENCODING> if your Pod contains non-ASCII characters.
 Pod formatters can use Pod::Simple to parse Pod documents and render them into
 plain text, HTML, or any number of other formats. Typically, such formatters
 will be subclasses of Pod::Simple, and so they will inherit its methods, like
-C<parse_file>.
+C<parse_file>.  But note that Pod::Simple doesn't understand and
+properly parse Perl itself, so if you have a file which contains a Perl
+program that has a multi-line quoted string which has lines that look
+like pod, Pod::Simple will treat them as pod.  This can be avoided if
+the file makes these into indented here documents instead.
 
 If you're reading this document just because you have a Pod-processing
 subclass that you want to use, this document (plus the documentation for the
