@@ -100,6 +100,11 @@ if (($] ge 5.007_003)) {
   $utf8_bom = "\xEF\xBB\xBF";   # No EBCDIC BOM detection for early Perls.
 }
 
+# This is used so that the 'content_seen' method doesn't return true on a
+# file that just happens to have a line that matches /^=[a-zA-z]/.  Only if
+# there is a valid =foo line will we return that content was seen.
+my $seen_legal_directive = 0;
+
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 sub parse_line { shift->parse_lines(@_) } # alias
@@ -859,6 +864,10 @@ sub _ponder_paragraph_buffer {
 
   my($para, $para_type);
   while(@$paras) {
+
+    # If a directive, assume it's legal; subtract below if found not to be
+    $seen_legal_directive++ if $paras->[0][0] =~ /^=/;
+
     last if      @$paras == 1
             and (    $paras->[0][0] eq '=over'
                  or  $paras->[0][0] eq '=item'
@@ -1148,6 +1157,7 @@ sub _ponder_paragraph_buffer {
         DEBUG > 1 and print STDERR " Pondering known directive ${$para}[0] as $para_type\n";
       } else {
         # An unknown directive!
+        $seen_legal_directive--;
         DEBUG > 1 and printf STDERR "Unhandled directive %s (Handled: %s)\n",
          $para->[0], join(' ', sort keys %{$self->{'accept_directives'}} )
         ;
@@ -1208,7 +1218,8 @@ sub _ponder_paragraph_buffer {
       DEBUG and print STDERR "\n", pretty($para), "\n";
 
       # traverse the treelet (which might well be just one string scalar)
-      $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
+      $self->{'content_seen'} ||= 1 if   $seen_legal_directive
+                                    && ! $self->{'~tried_gen_errata'};
       $self->_traverse_treelet_bit(@$para);
     }
   }
