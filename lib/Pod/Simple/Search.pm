@@ -259,7 +259,7 @@ sub _path2modname {
   while(@m
     and defined($x = lc( $m[0] ))
     and(  $x eq 'site_perl'
-       or($x eq 'pod' and @m == 1 and $shortname =~ m{^perl.*\.pod$}s )
+       or($x =~ m/^pods?$/ and @m == 1 and $shortname =~ m{^perl.*\.pod$}s )
        or $x =~ m{\\d+\\.z\\d+([_.]?\\d+)?}  # if looks like a vernum
        or $x eq lc( $Config::Config{'archname'} )
   )) { shift @m }
@@ -611,7 +611,7 @@ sub find {
     }
 
     # Case-insensitively Look for ./pod directories and slip them in.
-    for my $subdir ( _actual_filenames($dir, 'pod') ) {
+    for my $subdir ( _actual_filenames($dir, 'pods'), _actual_filenames($dir, 'pod') ) {
       if (-d $subdir) {
         $verbose and print "Noticing $subdir and looking there...\n";
         unshift @search_dirs, $subdir;
