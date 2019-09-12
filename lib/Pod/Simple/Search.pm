@@ -12,7 +12,6 @@ $SLEEPY = 1 if !defined $SLEEPY and $^O =~ /mswin|mac/i;
   # flag to occasionally sleep for $SLEEPY - 1 seconds.
 
 $MAX_VERSION_WITHIN ||= 60;
-my $IS_CASE_INSENSITIVE = -e uc __FILE__ && -e lc __FILE__;
 
 #############################################################################
 
@@ -26,7 +25,7 @@ use Cwd qw( cwd );
 __PACKAGE__->_accessorize(  # Make my dumb accessor methods
  'callback', 'progress', 'dir_prefix', 'inc', 'laborious', 'limit_glob',
  'limit_re', 'shadows', 'verbose', 'name2path', 'path2name', 'recurse',
- 'ciseen'
+ 'ciseen', 'is_case_insensitive'
 );
 #==========================================================================
 
@@ -42,6 +41,7 @@ sub init {
   $self->inc(1);
   $self->recurse(1);
   $self->verbose(DEBUG);
+  $self->is_case_insensitive(-e uc __FILE__ && -e lc __FILE__);
   return $self;
 }
 
@@ -130,12 +130,12 @@ sub _make_search_callback {
 
   # Put the options in variables, for easy access
   my( $laborious, $verbose, $shadows, $limit_re, $callback, $progress,
-      $path2name, $name2path, $recurse, $ciseen) =
+      $path2name, $name2path, $recurse, $ciseen, $is_case_insensitive) =
     map scalar($self->$_()),
      qw(laborious verbose shadows limit_re callback progress
-        path2name name2path recurse ciseen);
+        path2name name2path recurse ciseen is_case_insensitive);
   my ($seen, $remember, $files_for);
-  if ($IS_CASE_INSENSITIVE) {
+  if ($is_case_insensitive) {
       $seen      = sub { $ciseen->{ lc $_[0] } };
       $remember  = sub { $name2path->{ $_[0] } = $ciseen->{ lc $_[0] } = $_[1]; };
       $files_for = sub { my $n = lc $_[0]; grep { lc $path2name->{$_} eq $n } %{ $path2name } };
@@ -588,7 +588,7 @@ sub find {
       my $fullext = $fullname . $ext;
       if ( -f $fullext and $self->contains_pod($fullext) ) {
         print "FOUND: $fullext\n" if $verbose;
-        if (@parts > 1 && lc $parts[0] eq 'pod' && $IS_CASE_INSENSITIVE && $ext eq '.pod') {
+        if (@parts > 1 && lc $parts[0] eq 'pod' && $self->is_case_insensitive() && $ext eq '.pod') {
           # Well, this file could be for a program (perldoc) but we actually
           # want a module (Pod::Perldoc). So see if there is a .pm with the
           # proper casing.
