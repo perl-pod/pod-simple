@@ -849,6 +849,20 @@ inspected too, and are noted in the pathname2podname return hash.
 This attribute's default value is false; and normally you won't
 need to turn it on.
 
+=item $search->is_case_insensitive( I<true-or-false> );
+
+Pod::Simple::Search will by default internally make an assumption
+based on the underlying filesystem where the class file is found
+whether it is case insensitive or not.
+
+If it is determined to be case insensitive, during survey() it may
+skip pod files/modules that happen to be equal to names it's already
+seen, ignoring case.
+
+However, it's possible to have distinct files in different directories
+that intentionally has the same name, just differing in case, that should
+be reported. Hence, you may force the behavior by setting this to true
+or false.
 
 =item $search->limit_re( I<some-regxp> );
 
@@ -856,7 +870,6 @@ Setting this attribute (to a value that's a regexp) means that you want
 to limit the results just to items whose podnames match the given
 regexp. Normally this option is not needed, and the more efficient
 C<limit_glob> attribute is used instead.
-
 
 =item $search->dir_prefix( I<some-string-value> );
 
