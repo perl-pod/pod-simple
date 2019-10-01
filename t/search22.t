@@ -121,7 +121,7 @@ skip $^O eq 'VMS' ? '-- case may or may not be preserved' : 0,
     '/testlib2/';
 
 my $in_pods = $x->find('perlzoned', $here2);
-ok $in_pods, qr{^$here2};
+ok $in_pods, qr{^\Q$here2\E};
 ok $in_pods, qr{perlzoned.pod$};
 
 print "# OK, bye from ", __FILE__, "\n";
