@@ -1,5 +1,11 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+3.40 2019-10-23 Karl Williamson <khw@cpan.org>
+	- Fixed iusse #108, Roy Storey++
+	- Make case sensitivity determination overridable by user, Kenneth
+	  Ölwing++
+	- Add expand_verbatim_tabs() method, which also can turn off
+	  expansion, fixing #110
 3.39 2019-06-30 Karl Williamson <khw@cpan.org>
 	- Fixed JustPod not opening file with :raw.  Spotted by Dave Mitchell.
 	  Fixed by James Keenan
