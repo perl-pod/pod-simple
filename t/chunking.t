@@ -11,13 +11,18 @@ use strict;
 use Test;
 BEGIN { plan tests => 11 };
 
+BEGIN {
+  require FindBin;
+  unshift @INC, $FindBin::Bin . '/lib';
+  require helpers;
+  helpers->import;
+}
 
 ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
 print "# Pod::Simple version $Pod::Simple::VERSION\n";
-sub e ($$) { Pod::Simple::DumpAsXML->_duo(@_) }
 
 ok( Pod::Simple::XMLOutStream->_out("=head1 =head1"),
     '<Document><head1>=head1</head1></Document>'

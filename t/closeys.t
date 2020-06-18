@@ -9,6 +9,13 @@ use strict;
 use Test;
 BEGIN { plan tests => 3 };
 
+BEGIN {
+  require FindBin;
+  unshift @INC, $FindBin::Bin . '/lib';
+  require helpers;
+  helpers->import('f');
+}
+
 my $d;
 #use Pod::Simple::Debug (\$d,0);
 #use Pod::Simple::Debug (10);
@@ -18,7 +25,6 @@ ok 1;
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
 print "# Pod::Simple version $Pod::Simple::VERSION\n";
-sub e     ($$) { Pod::Simple::XMLOutStream::->_duo(\&nowhine, @_) }
 
 sub nowhine {
 #  $_[0]->{'no_whining'} = 1;
@@ -26,7 +32,8 @@ sub nowhine {
 }
 
 local $Pod::Simple::XMLOutStream::SORT_ATTRS = 1;
-&ok(e(
+&ok(f(
+	\&nowhine,
 "=begin :foo\n\n=begin :bar\n\nZaz\n\n",
 "=begin :foo\n\n=begin :bar\n\nZaz\n\n=end :bar\n\n=end :foo\n\n",
 ));

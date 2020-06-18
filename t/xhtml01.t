@@ -51,12 +51,18 @@ initialize($parser, $results);
 $parser->parse_string_document( "=head4 Zort & Zog!" );
 is($results, qq{<h4 id="Zort-Zog">Zort &amp; Zog!</h4>\n\n}, "head4 level output");
 
-sub x ($;&) {
+use Sub::Util 1.55;
+
+sub x {
   my $code = $_[1];
   Pod::Simple::XHTML->_out(
   sub { $code->($_[0]) if $code },
   "=pod\n\n$_[0]",
 ) }
+
+BEGIN {
+  Sub::Util::set_prototype('$;&', \&x);
+}
 
 like(
   x("=head1 Header\n\n=for html <div>RAW<span>!</span></div>\n\nDone."),

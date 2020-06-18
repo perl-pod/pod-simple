@@ -17,7 +17,13 @@ ok 1;
 use Pod::Simple::XMLOutStream;
 print "# Pod::Simple version $Pod::Simple::VERSION\n";
 my $x = 'Pod::Simple::XMLOutStream';
-sub e ($$) { $x->_duo(@_) }
+
+use Sub::Util 1.55;
+
+sub e { $x->_duo(@_) }
+BEGIN {
+  Sub::Util::set_prototype('$$', \&e);
+}
 
 $Pod::Simple::XMLOutStream::ATTR_PAD   = ' ';
 $Pod::Simple::XMLOutStream::SORT_ATTRS = 1; # for predictably testable output
@@ -221,11 +227,15 @@ ok(
 use Pod::Simple::HTML;
 my $PERLDOC = "https://metacpan.org/pod";
 my $MANURL = "http://man.he.net/man";
-sub x ($) {
+sub x {
     Pod::Simple::HTML->_out(
         sub {  $_[0]->bare_output(1)  },
         "=pod\n\n$_[0]",
     )
+}
+
+BEGIN {
+    Sub::Util::set_prototype('$', \&x);
 }
 
 ok(
