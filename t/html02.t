@@ -13,11 +13,16 @@ use strict;
 use Test;
 BEGIN { plan tests => 7};
 use Pod::Simple::HTML;
+use Sub::Util 1.55;
 
-sub x ($) { Pod::Simple::HTML->_out(
+sub x { Pod::Simple::HTML->_out(
   sub{  $_[0]->bare_output(1)  },
   "=pod\n\n$_[0]",
 ) }
+
+BEGIN {
+    Sub::Util::set_prototype('$', \&x);
+}
 
 ok 1;
 

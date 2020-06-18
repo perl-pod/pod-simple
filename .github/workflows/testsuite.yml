@@ -9,7 +9,6 @@ on:
   pull_request:
 
 jobs:
-
   ubuntu:
     env:
       PERL_USE_UNSAFE_INC: 0
@@ -23,6 +22,13 @@ jobs:
       - uses: actions/checkout@v1
       - name: perl -V
         run: perl -V
+      - name: install dependencies
+        uses: perl-actions/install-with-cpm@v1.3
+        with:
+          install: |
+            Pod::Escapes
+            Sub::Util
+            Text::Wrap
       - name: Makefile.PL
         run: perl -I$(pwd) Makefile.PL
       - name: make test
@@ -70,7 +76,9 @@ jobs:
         with:
           sudo: false
           install: |
+            ExtUtils::MakeMaker
             Pod::Escapes
+            Sub::Util
             Text::Wrap
       - name: Makefile.PL
         run: perl -I$(pwd) Makefile.PL
@@ -96,6 +104,13 @@ jobs:
       - uses: actions/checkout@v1
       - name: perl -V
         run: perl -V
+      - name: install dependencies
+        uses: perl-actions/install-with-cpm@v1.3
+        with:
+          install: |
+            Pod::Escapes
+            Sub::Util
+            Text::Wrap
       - name: Makefile.PL
         run: perl -I$(pwd) Makefile.PL
       - name: make test
@@ -130,9 +145,6 @@ jobs:
           sudo: false
           install: |
             Pod::Escapes
+            Sub::Util
             Text::Wrap
-      # - name: Makefile.PL
-      #   run: perl -I Makefile.PL
-      # - name: make test
-      #   run: make test
       - run: prove -vl t/*.t
