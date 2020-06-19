@@ -1,5 +1,6 @@
 # Testing verbatim sections
 use strict;
+use warnings;
 
 use Test;
 

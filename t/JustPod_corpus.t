@@ -1,5 +1,6 @@
 # Testing Pod::Simple::JustPod against *.pod in /t
 use strict;
+use warnings;
 
 BEGIN {
   if($ENV{PERL_CORE}) {
