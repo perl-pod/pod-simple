@@ -7,6 +7,7 @@ BEGIN {
 }
 
 use strict;
+use warnings;
 use lib '../lib';
 use Test::More tests => 62;
 #use Test::More 'no_plan';

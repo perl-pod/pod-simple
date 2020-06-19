@@ -10,6 +10,7 @@ BEGIN {
 #use Pod::Simple::Debug (10);
 
 use strict;
+use warnings;
 use Test;
 BEGIN { plan tests => 7};
 use Pod::Simple::HTML;

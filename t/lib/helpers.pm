@@ -7,7 +7,10 @@ use warnings;
 
 use Sub::Util 1.55;
 
-use Exporter 'import';
+use Exporter;
+
+our @ISA = qw{Exporter};
+
 our @EXPORT_OK = qw(e f);
 our @EXPORT = qw{e};
 

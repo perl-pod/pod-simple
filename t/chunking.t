@@ -8,6 +8,7 @@ BEGIN {
 #use Pod::Simple::Debug (2);
 
 use strict;
+use warnings;
 use Test;
 BEGIN { plan tests => 11 };
 

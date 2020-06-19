@@ -1,5 +1,6 @@
 # Testing verbatim formatted sections
 use strict;
+use warnings;
 use Test;
 BEGIN { plan tests => 62 };
 
