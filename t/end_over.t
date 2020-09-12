@@ -9,7 +9,7 @@ BEGIN {
 use strict;
 use warnings;
 use Test;
-BEGIN { plan tests => 5 };
+BEGIN { plan tests => 7 };
 
 BEGIN {
   require FindBin;
@@ -53,6 +53,18 @@ sub nowhine {
 \&nowhine,
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head4 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head4 SVUP\n\nMyup.",
+));
+
+&ok(f(
+\&nowhine,
+"=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head5 SVUP\n\nMyup.",
+"=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head5 SVUP\n\nMyup.",
+));
+
+&ok(f(
+\&nowhine,
+"=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head6 SVUP\n\nMyup.",
+"=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head6 SVUP\n\nMyup.",
 ));
 
 
