@@ -9,7 +9,7 @@ BEGIN {
 use strict;
 use warnings;
 use lib '../lib';
-use Test::More tests => 62;
+use Test::More tests => 64;
 #use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
@@ -51,6 +51,14 @@ is($results, qq{<h3 id="I-say-Brain">I say, Brain...</h3>\n\n}, "head3 level out
 initialize($parser, $results);
 $parser->parse_string_document( "=head4 Zort & Zog!" );
 is($results, qq{<h4 id="Zort-Zog">Zort &amp; Zog!</h4>\n\n}, "head4 level output");
+
+initialize($parser, $results);
+$parser->parse_string_document( "=head5 I think so Brain, but..." );
+is($results, qq{<h5 id="I-think-so-Brain-but">I think so Brain, but...</h5>\n\n}, "head5 level output");
+
+initialize($parser, $results);
+$parser->parse_string_document( "=head6 Narf!" );
+is($results, qq{<h6 id="Narf">Narf!</h6>\n\n}, "head6 level output");
 
 use Sub::Util 1.55;
 

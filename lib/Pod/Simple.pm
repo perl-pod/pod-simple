@@ -22,7 +22,7 @@ $VERSION = '3.40';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
-@Known_directives       = qw(head1 head2 head3 head4 item over back); 
+@Known_directives       = qw(head1 head2 head3 head4 head5 head6 item over back); 
 %Known_directives       = map(($_=>'Plain'), @Known_directives);
 $NL = $/ unless defined $NL;
 

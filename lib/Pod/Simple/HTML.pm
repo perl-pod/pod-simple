@@ -109,10 +109,14 @@ my @_to_accept;
   'head2' => "\n<h2>",  #  ''
   'head3' => "\n<h3>",  #  ''
   'head4' => "\n<h4>",  #  ''
+  'head5' => "\n<h5>",  #  ''
+  'head6' => "\n<h6>",  #  ''
   '/head1' => "</a></h1>\n",
   '/head2' => "</a></h2>\n",
   '/head3' => "</a></h3>\n",
   '/head4' => "</a></h4>\n",
+  '/head5' => "</a></h5>\n",
+  '/head6' => "</a></h6>\n",
 
   'X'  => "<!--\n\tINDEX: ",
   '/X' => "\n-->",
@@ -224,7 +228,7 @@ sub __adjust_html_h_levels {
   return if ($self->{'Adjusted_html_h_levels'}||0) == $add;
 
   $add -= 1;
-  for (1 .. 4) {
+  for (1 .. 6) {
     $Tagmap->{"head$_"}  =~ s/$_/$_ + $add/e;
     $Tagmap->{"/head$_"} =~ s/$_/$_ + $add/e;
   }

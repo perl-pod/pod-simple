@@ -871,7 +871,8 @@ $CSS = <<'EOCSS';
     background-color: #000;
   }
 
-  body.pod h1, body.pod h2, body.pod h3, body.pod h4  {
+  body.pod h1, body.pod h2, body.pod h3,
+  body.pod h4, body.pod h5, body.pod h6  {
     font-family: Tahoma, Verdana, Helvetica, Arial, sans-serif;
     font-weight: normal;
     margin-top: 1.2em;
@@ -884,11 +885,15 @@ $CSS = <<'EOCSS';
   body.pod h2  { border-top-color: #080; }
   body.pod h3  { border-top-color: #040; }
   body.pod h4  { border-top-color: #010; }
+  body.pod h5  { border-top-color: #010; }
+  body.pod h6  { border-top-color: #010; }
 
   p.backlinktop + h1 { border-top: none; margin-top: 0em;  }
   p.backlinktop + h2 { border-top: none; margin-top: 0em;  }
   p.backlinktop + h3 { border-top: none; margin-top: 0em;  }
   p.backlinktop + h4 { border-top: none; margin-top: 0em;  }
+  p.backlinktop + h5 { border-top: none; margin-top: 0em;  }
+  p.backlinktop + h6 { border-top: none; margin-top: 0em;  }
 
   body.pod dt {
     font-size: 105%; /* just a wee bit more than normal */
