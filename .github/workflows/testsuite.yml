@@ -27,7 +27,6 @@ jobs:
         with:
           install: |
             Pod::Escapes
-            Sub::Util
             Text::Wrap
       - name: Makefile.PL
         run: perl -I$(pwd) Makefile.PL
@@ -78,7 +77,6 @@ jobs:
           install: |
             ExtUtils::MakeMaker
             Pod::Escapes
-            Sub::Util
             Text::Wrap
       - name: Makefile.PL
         run: perl -I$(pwd) Makefile.PL
@@ -109,7 +107,6 @@ jobs:
         with:
           install: |
             Pod::Escapes
-            Sub::Util
             Text::Wrap
       - name: Makefile.PL
         run: perl -I$(pwd) Makefile.PL
@@ -145,6 +142,5 @@ jobs:
           sudo: false
           install: |
             Pod::Escapes
-            Sub::Util
             Text::Wrap
       - run: prove -vl t/*.t
