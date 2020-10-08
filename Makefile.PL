@@ -16,8 +16,6 @@ WriteMakefile(
     VERSION_FROM  => 'lib/Pod/Simple.pm',
     ABSTRACT_FROM => 'lib/Pod/Simple.pod',
     TEST_REQUIRES => {
-        'Sub::Util' => 1.55,
-
         # RT#29439
         'Test' => 1.25,
     },

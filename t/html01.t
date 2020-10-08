@@ -15,7 +15,6 @@ BEGIN { plan tests => 16 };
 #use Pod::Simple::Debug (10);
 
 use Pod::Simple::HTML;
-use Sub::Util 1.55;
 
 sub x {
   my $code = $_[1];
@@ -23,10 +22,6 @@ sub x {
   sub{  $_[0]->bare_output(1); $code->($_[0]) if $code  },
   "=pod\n\n$_[0]",
 ) }
-
-BEGIN {
-  Sub::Util::set_prototype('$;&', \&x);
-}
 
 ok( x(
 q{

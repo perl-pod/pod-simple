@@ -19,12 +19,7 @@ use Pod::Simple::XMLOutStream;
 print "# Pod::Simple version $Pod::Simple::VERSION\n";
 my $x = 'Pod::Simple::XMLOutStream';
 
-use Sub::Util 1.55;
-
 sub e { $x->_duo(@_) }
-BEGIN {
-  Sub::Util::set_prototype('$$', \&e);
-}
 
 $Pod::Simple::XMLOutStream::ATTR_PAD   = ' ';
 $Pod::Simple::XMLOutStream::SORT_ATTRS = 1; # for predictably testable output
@@ -233,10 +228,6 @@ sub x {
         sub {  $_[0]->bare_output(1)  },
         "=pod\n\n$_[0]",
     )
-}
-
-BEGIN {
-    Sub::Util::set_prototype('$', \&x);
 }
 
 ok(
