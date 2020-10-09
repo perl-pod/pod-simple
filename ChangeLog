@@ -1,5 +1,12 @@
  # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+3.41 2020-10-09 Karl Williamson <khw@cpan.org>
+	- Factorize tests functions in one helper module, Nicolas Rochelmagne++
+	- Support =head5, =head6, John M. Gamble++
+	- Support SOURCE_DATE_EPOCH, Bernhard M. Wiedemann++
+	- Enforce warnings for tests, Nicolas Rochelmagne++
+	- Add github CI, atoomic++
+	- suppress "UTF-16 surrogate 0xd800" warning, Shoichi Kaji++
 3.40 2019-10-23 Karl Williamson <khw@cpan.org>
 	- Fixed iusse #108, Roy Storey++
 	- Make case sensitivity determination overridable by user, Kenneth
