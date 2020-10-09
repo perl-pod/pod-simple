@@ -5,8 +5,9 @@ use 5.008;
 package Pod::Simple::TranscodeSmart;
 use strict;
 use Pod::Simple;
-use Encode;
-our $VERSION = '3.40';
+require Encode;
+use vars qw($VERSION );
+$VERSION = '3.41';
 
 sub is_dumb  {0}
 sub is_smart {1}

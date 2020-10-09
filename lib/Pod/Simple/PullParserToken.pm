@@ -1,4 +1,7 @@
 package Pod::Simple::PullParserToken;
+ # Base class for tokens gotten from Pod::Simple::PullParser's $parser->get_token
+@ISA = ();
+$VERSION = '3.41';
 use strict;
  # Base class for tokens gotten from Pod::Simple::PullParser's $parser->get_token
 our @ISA = ();

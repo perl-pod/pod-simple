@@ -1,6 +1,7 @@
 package Pod::Simple::Debug;
 use strict;
-our $VERSION = '3.40';
+use vars qw($VERSION );
+$VERSION = '3.41';
 
 sub import {
   my($value,$variable);

@@ -1,4 +1,8 @@
 package Pod::Simple::DumpAsXML;
+$VERSION = '3.41';
+use Pod::Simple ();
+BEGIN {@ISA = ('Pod::Simple')}
+
 use strict;
 our $VERSION = '3.40';
 use Pod::Simple ();

@@ -2,7 +2,8 @@ package Pod::Simple::XMLOutStream;
 use strict;
 use Carp ();
 use Pod::Simple ();
-our $VERSION = '3.40';
+use vars qw( $ATTR_PAD @ISA $VERSION $SORT_ATTRS);
+$VERSION = '3.41';
 BEGIN {
   our @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;

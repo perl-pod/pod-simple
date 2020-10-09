@@ -1,8 +1,9 @@
 package Pod::Simple::Methody;
 use strict;
 use Pod::Simple ();
-our $VERSION = '3.40';
-our @ISA = ('Pod::Simple');
+use vars qw(@ISA $VERSION);
+$VERSION = '3.41';
+@ISA = ('Pod::Simple');
 
 # Yes, we could use named variables, but I want this to be impose
 # as little an additional performance hit as possible.

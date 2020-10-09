@@ -1,8 +1,14 @@
 package Pod::Simple::HTML;
 use strict;
 use Pod::Simple::PullParser ();
-our @ISA = ('Pod::Simple::PullParser');
-our $VERSION = '3.40';
+use vars qw(
+  @ISA %Tagmap $Computerese $LamePad $Linearization_Limit $VERSION
+  $Perldoc_URL_Prefix $Perldoc_URL_Postfix $Man_URL_Prefix $Man_URL_Postfix
+  $Title_Prefix $Title_Postfix $HTML_EXTENSION %ToIndex
+  $Doctype_decl  $Content_decl
+);
+@ISA = ('Pod::Simple::PullParser');
+$VERSION = '3.41';
 BEGIN {
   if(defined &DEBUG) { } # no-op
   elsif( defined &Pod::Simple::DEBUG ) { *DEBUG = \&Pod::Simple::DEBUG }

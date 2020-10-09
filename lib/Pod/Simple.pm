@@ -9,8 +9,15 @@ use Pod::Simple::BlackBox ();
 use Pod::Simple::TiedOutFH;
 #use utf8;
 
-our @ISA = ('Pod::Simple::BlackBox');
-our $VERSION = '3.40';
+use vars qw(
+  $VERSION @ISA
+  @Known_formatting_codes  @Known_directives
+  %Known_formatting_codes  %Known_directives
+  $NL
+);
+
+@ISA = ('Pod::Simple::BlackBox');
+$VERSION = '3.41';
 
 our @Known_formatting_codes = qw(I B C L E F S X Z);
 our %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
