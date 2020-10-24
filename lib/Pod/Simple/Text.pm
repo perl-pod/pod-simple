@@ -63,6 +63,7 @@ sub end_head1       { $_[0]->emit_par(-4) }
 sub end_head2       { $_[0]->emit_par(-3) }
 sub end_head3       { $_[0]->emit_par(-2) }
 sub end_head4       { $_[0]->emit_par(-1) }
+sub end_Data        { $_[0]->emit_par( 0) }
 sub end_Para        { $_[0]->emit_par( 0) }
 sub end_item_bullet { $_[0]->emit_par( 0) }
 sub end_item_number { $_[0]->emit_par( 0) }

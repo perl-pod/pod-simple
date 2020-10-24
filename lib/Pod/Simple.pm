@@ -411,6 +411,12 @@ sub unaccept_codes { # remove some codes
   return;
 }
 
+sub accept_image
+{
+  my ($this) = @_;
+  $this->accept_targets('image', 'image-title', 'image-text', 'image-cut');
+  $this->accept_codes('Image', 'ImageTitle', 'ImageText');
+}
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1615,8 +1621,6 @@ sub _duo {
 
   return @out;
 }
-
-
 
 #-----------------------------------------------------------------------------
 1;

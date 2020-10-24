@@ -192,6 +192,7 @@ sub new {
   $new->accept_targets( 'html', 'HTML' );
   $new->accept_codes('VerbatimFormatted');
   $new->accept_codes(@_to_accept);
+  $new->accept_image;
   DEBUG > 2 and print STDERR "To accept: ", join(' ',@_to_accept), "\n";
 
   $new->perldoc_url_prefix(  $Perldoc_URL_Prefix  );
@@ -462,11 +463,13 @@ sub _do_middle_main_loop {
   my($token, $type, $tagname, $linkto, $linktype);
   my @stack;
   my $dont_wrap = 0;
+  my $skip;
 
   while($token = $self->get_token) {
-
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if( ($type = $token->type) eq 'start' ) {
+      next if $skip;
+
       if(($tagname = $token->tagname) eq 'L') {
         $linktype = $token->attr('type') || 'insane';
         
@@ -532,7 +535,29 @@ sub _do_middle_main_loop {
         (my $text = $next->text) =~ s/\n\z//;
         print $fh $text, "\n";
         next;
-       
+ 
+      } elsif ($tagname eq 'Image') {
+        my $c = $token->attr('image');
+        DEBUG and print STDERR "    image src=$c->{src}\n";
+        my $s = '';
+        my %prop = ( src => $self->general_url_escape($c->{src}) );
+        if (defined $c->{alt}) {
+          $prop{alt} = $c->{alt};
+          $prop{alt} =~ s/\n*<[^>]*>\n*//gs;
+          $prop{alt} =~ s/\n+/ /gs;
+          $prop{alt} = $self-> general_url_escape($prop{alt});
+        }
+
+         $s .= '<figure><img';
+        for my $k ( sort keys %prop ) {
+          $s .= " $k='$prop{$k}'";
+        }
+        $s .= ">\n";
+        print $fh $s, "\n";
+      } elsif ($tagname eq 'ImageTitle') {
+      	print $fh "<figcaption>";
+      } elsif ($tagname eq 'ImageText') {
+        $skip = 1;
       } else {
         if( $tagname =~ m/^over-/s ) {
           push @stack, '';
@@ -547,10 +572,21 @@ sub _do_middle_main_loop {
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     } elsif( $type eq 'end' ) {
-      if( ($tagname = $token->tagname) =~ m/^over-/s ) {
+      $tagname = $token->tagname;
+      if ($tagname eq 'ImageText') {
+        $skip = 0;
+      } elsif ( $skip ) {
+        next;
+      }
+
+      if( $tagname =~ m/^over-/s ) {
         if( my $end = pop @stack ) {
           print $fh $end;
         }
+      } elsif ($tagname eq 'Image') {
+      	print $fh "</figure>";
+      } elsif ($tagname eq 'ImageTitle') {
+      	print $fh "</figcaption>";
       } elsif( $tagname =~ m/^item-/s and @stack) {
         $stack[-1] = $tagmap->{"/$tagname"};
         if( $tagname eq 'item-text' and defined(my $next = $self->get_token) ) {
@@ -566,6 +602,7 @@ sub _do_middle_main_loop {
       --$dont_wrap if $tagname eq 'Verbatim' or $tagname eq 'X';
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    } elsif ( $skip ) {
     } elsif( $type eq 'text' ) {
       esc($type = $token->text);  # reuse $type, why not
       $type =~ s/([\?\!\"\'\.\,]) /$1\n/g unless $dont_wrap;

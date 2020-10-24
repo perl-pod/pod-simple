@@ -283,6 +283,14 @@ Allows C<$parser> to accept a list of directives for L<perlpod/Verbatim
 Paragraph>. A directive is the label of a L<perlpod/Command Paragraph>. This
 can be used to implement user-defined directives.
 
+=item C<< $parser->accept_image >>X<accept_image>
+
+Allows C<$parser> to accept image targets, parsed as a structure. This
+automatically enabled accepted codes C<'Image'> and C<'ImageTitle'>, that
+receive these structures as a C<'image'> entry in the paragraph hash.
+
+See more in L<< Pod::Simple::Images >>.
+
 =item C<< $parser->accept_target( @targets ) >>X<accept_target>
 
 Alias for L<< accept_targets >>.
@@ -390,6 +398,8 @@ make no attempt to decode the input.
 =head1 SEE ALSO
 
 L<Pod::Simple::Subclassing>
+
+L<Pod::Simple::Images>
 
 L<perlpod|perlpod>
 

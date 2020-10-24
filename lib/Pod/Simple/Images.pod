@@ -1,0 +1,253 @@
+=head1 NAME
+
+Pod::Simple::Images -- use images in POD.
+
+=head1 SYNOPSIS
+
+=for image src:onion.png
+
+ # 1. simplest case
+ =for image src:img.png
+
+
+ # 2. extended case
+ =begin image
+
+ src: img.png
+ title: Fig.B<1>
+
+ =end image
+
+
+ # 3. Multi-line title
+ =for image src:img.png
+ title: |
+  multi-line
+  title
+
+
+ # 4. Title as fallback
+ =for image-title src:img.png
+
+ This <i>will</i> be shown as formatted pod on old parsers
+ and on non-graphic media, as a text fallback
+
+ =for image-cut
+
+
+ # 5. Standalone fallback
+ =begin image-text
+ 
+ src: img.png
+ title: Fig.1
+
+ =end image-text
+
+ This <i>will</i> be shown as formatted pod on old parsers
+ and on non-graphic media, as a text fallback. "title:" though
+ may only be specified inside "image-text" block.
+
+ =for image-cut
+
+=head1 DESCRIPTION
+
+Images are now made first class citizens, with a gracefull fallback for both
+older installations and the parsers that produce non-graphic output. As
+seen in the examples above, four reserved formatting targets are introduced,
+C<image>, C<image-text>, C<image-title>, C<image-pod>.  The content of the
+image block is a YAML 1.2 proper; see how is it different from the YAML
+standard in L<Pod::Simple::YAML>.
+
+In case you are reading this document and your parser is a derived class from
+C<Pod::Simple>, but it doesn't produce any graphic output, you may stop reading
+here, because older code is intended to be 100% compatible with the new syntax.
+
+This document describes how to write parsers that can understand images, or
+what to be aware of if your parser is a derived class from C<Pod::Simple::HTML>
+or C<Pod::Simple::XHTML>, the classes included in this distribution that can
+deal with the image targets.
+
+=head1 POD Syntax Extensions
+
+Images can be supported by POD as a later addition to the syntax, where these
+are declared using C<=begin image/=end image> or C<=for image> paragraphs.
+
+Also, in order to make a full use of existing POD editor support, it has two
+special targets, C<image-title> and C<image-text> that declare related content
+as regular POD.  There, section between the respective target's C<=end>
+directive, and C<=for image-cut> command (or C<=begin image-cut> but that
+doesn't make much sense), is treated in a special matter in a newer parsers
+that declare image support. However, the older parsers and the parsers that do
+not generate graphic content, get that section as a regular POD without being
+aware of the surrounding image tag. It is a good idea to use these targets
+having in mind I<pod2man> and I<pod2text>, at least.
+
+Here the description of the syhtax in details:
+
+=over
+
+=item image
+
+The C<image> target should contain a valid YAML hash, with at least C<src>
+field intialized. See the recognized fields below:
+
+=over
+
+=item src FILEPATH
+
+This field should point to an image file, with the same path considerations as
+in perlpod's C<< F<> >> command. I.e., C<src:img.png> will tell the formatter
+to generate path to the image C<img.png> that is to be found in the current
+directory.
+
+If FILEPATH starts with /, that means the root is the distribution root, so that
+f ex online services like github or metacpan can correctly trace and point image
+requests to their internal storage.
+
+Generally it is a good idea to either store image files together with .pod files, 
+or, if there are also .pm files, create a special directory for images.
+
+=item title TEXT
+
+Text in POD format that can be used in an image-aware formatter. For example,
+the HTML formatter translates it to the C<< <figcaption> >> tag.
+
+The title can very much be multiline, even in YAML. Refer to
+L<< https://yaml-multiline.info/ >> or to YAML 1.2 spec for the rules.
+For example, when verbatim text is to be used in C<=for> tag, YAML needs to
+be told that Pod verbatim indent (say, 1 space) is different from YAML multiline
+indent (say, also 1 space):
+
+   =for image src:img.png
+   title: |1
+     multiline
+     multiline
+
+If C<1> is not present, The title will not be a treated as a verbatim
+paragraph, because the YAML parser would guess that the indent is 2 spaces.
+
+See also C<image-title> below.
+
+=item alt TEXT
+
+This is so far HTML-specific, non-POD but plain text entry that will
+generate C<< <img alt=".."> >> code.
+
+=back
+
+One can store anything else there, as long as this is valid YAML. C<Pod::Simple>
+ignores these data:
+
+   =for image src:png
+   comment: totally ignored
+
+Naturally, the syntax can be extended in the future, but so far there are no reserved 
+keywords.
+
+=item image-title
+
+Same as C<image>, however silently ignores C<title:> content found in the YAML
+in favor of the pod content between C<=end image-title> and C<=for image-cut>.
+
+When processed by the older or non-image-aware parsers, that section is treated as
+regular POD.
+
+=item image-text
+
+Same as C<image>, but silently ignores the pod content between C<=end image-text>
+and C<=for image-cut>.
+
+When processed by the older or non-image-aware parsers, that section is treated as
+regular POD.
+
+=item image-cut
+
+Closes special section after C<=end image-text> and C<=end image-title>.
+
+=back
+
+=head2 Special considerations
+
+There are some points where YAML, POD, and image declarations clash.
+Be aware of them when writing documends:
+
+=over
+
+=item *
+
+C<=begin>/C<=end> clause, as well as C<=for>, is always strictly one image
+declaration.  One cannot use neither YAML nor POD breaks to set up for more
+than one image per section.
+
+=item *
+
+Pod syntax declares breaks as empty lines, and these clash with YAML multilines,
+for example:
+
+  =for image src:foo
+  title: |
+     multiline
+
+     entry
+
+The title here will be C<multiline>, not C<multiline entry>, due to POD parser
+interpreting the empty line as the end of the C<=for> statement. Consider
+using C<=begin>/C<=end> where this syntax is allowed.
+
+=item *
+
+It is not advisable to use POD flow and index commands between 
+C<=end image-text>/C<=end image-title> and C<=for image cut>, such as C<=cut>,
+C<=headX>, C<=begin/=end/=for>, etc.
+
+C<=over>, verbatim paragraphs, C<B/C/I> etc are okay.
+
+=back
+
+=head1 Development
+
+A parser that wishes to recognize image commands, is required to call
+C<accept_image> once. After that, it may receive new events,
+C<Image>, C<ImageTitle>, and C<ImageText>.
+
+For example, a html formatter may emit C<< <figure><img src="..."> >> and C<<
+</figure> >> code in its C<start_Image> / C<end_Image>, and C<< figcaption >>
+tags in its C<ImageTitle> handler.
+
+=head2 Events
+
+=over
+
+=item Image
+
+The first parameter, hash, contains C<image> field that has the parsed YAML
+content, C<src>, C<title>, etc.
+
+Html analog: C<< <figure> >>
+
+=item ImageTitle
+
+Called before and after title text.
+
+Html analog: C<< <figcaption> >>
+
+=item ImageText
+
+Called before and after text to be ignored. It is up to the formatter to
+actually ignore it or not.
+
+=back
+
+=head1 SEE ALSO
+
+L< Pod::Simple >
+
+L< Pod::Simple::Subclassing >
+
+L< Pod::Simple::YAML >
+
+=head1 AUTHOR
+
+Dmitry Karasik C<dmitry@karasik.eu.org>
+
+=cut

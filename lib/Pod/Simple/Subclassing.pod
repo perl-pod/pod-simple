@@ -724,8 +724,13 @@ TODO...
 
 TODO...
 
-=back
+=item events with element_name of Image, ImageTitle, ImageText
 
+These events are fired when a formatter requests C<< accept_image >> , stating
+that it is able to process the parsed YAML structure. See L<Pod::Simple::Images> for full
+description.
+
+=back
 
 
 =head1 More Pod::Simple Methods
