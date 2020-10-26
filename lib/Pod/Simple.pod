@@ -286,7 +286,7 @@ can be used to implement user-defined directives.
 =item C<< $parser->accept_image >>X<accept_image>
 
 Allows C<$parser> to accept image targets, parsed as a structure. This
-automatically enabled accepted codes C<'Image'> and C<'ImageTitle'>, that
+automatically enabled accepted codes C<'Image'>, C<'ImageTitle'>, and C<ImageText>, that
 receive these structures as a C<'image'> entry in the paragraph hash.
 
 See more in L<< Pod::Simple::Images >>.

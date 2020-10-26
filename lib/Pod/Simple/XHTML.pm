@@ -260,7 +260,7 @@ sub new {
 
   $new->{'__region_targets'}  = [];
   $new->{'__literal_targets'} = {};
-  $new->accept_targets_as_html( 'html', 'HTML', 'image-title', 'image-cut' );
+  $new->accept_targets_as_html( 'html', 'HTML');
   $new->accept_image;
 
   return $new;

@@ -555,10 +555,10 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
          # Example: ['=head1', {'start_line' => 123}, ' foo']
 
         ++$self->{'pod_para_count'};
- 
+
         $self->_ponder_paragraph_buffer();
 
-        # =begin and =for are called inside para processing,
+        # =begin is called inside para processing,
         # so that para clumping can occur on the next Plain/Para entry
         # however =end is immediate
         $self->_ponder_image_directive( $new->[0], $1) if
@@ -635,7 +635,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 #    =for   image-cut      end_ImageTitle, curr_image=undef, end_Image
 #
 #   That means, because pod parsing implementation is twofold (first it reads lines,
-#   then parses paragraphs in batches), =end and =for image-cut need to be caught
+#   then parses paragraphs in batches), =end needs to be caught
 #   immediately in lines, while all other directives need to (or best suited to, actually),
 #   handled in paragraph batches inside _ponder_paragraph_buffer.
 sub _ponder_image_directive
@@ -900,7 +900,7 @@ sub _ponder_paragraph_buffer {
   #                   over-bullet, over-number, over-text, over-block,
   #                   item-bullet, item-number, item-text,
   #                   Document,
-  #                   Subdocument, Image, ImageTitle, ImageText
+  #                   Image, ImageTitle, ImageText
   #                   Data, Para, Verbatim
   #                   B, C, longdirname (TODO -- wha?), etc. for all directives
   #
