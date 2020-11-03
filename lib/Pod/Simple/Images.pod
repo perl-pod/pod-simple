@@ -104,8 +104,21 @@ If FILEPATH starts with /, that means the root is the distribution root, so that
 f ex online services like github or metacpan can correctly trace and point image
 requests to their internal storage.
 
-Generally it is a good idea to either store image files together with .pod files, 
+Generally it is a good idea to either store image files together with .pod files,
 or, if there are also .pm files, create a special directory for images.
+
+The image itself should preferrably be in one of the well-understood formats,
+one of jpeg, png, gif. It is up to the target formatter and the module author
+to either convert images into another format on the fly, or provide alternative
+images. For example, a LaTeX/PostScript formatter that needs EPS files may
+provide an option to run ImageMagick to convert the images. Or a module may
+install pre-rendered EPS files and include them with C<=for latex> commands if
+it wishes to generate its documentation in LaTeX.
+
+The module doesn't try to recognize image format nor validate it in any way.
+If the image file is not found during the POD processing, it is up to the
+target formatter or, preferrably, the consumer of the target format, to deal
+with this problem.
 
 =item title TEXT
 
