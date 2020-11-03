@@ -182,7 +182,7 @@ Closes special section after C<=end image-text> and C<=end image-title>.
 =head2 Special considerations
 
 There are some points where YAML, POD, and image declarations clash.
-Be aware of them when writing documends:
+Be aware of them when writing documents:
 
 =over
 

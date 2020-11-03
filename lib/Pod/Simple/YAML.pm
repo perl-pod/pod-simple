@@ -457,7 +457,7 @@ sub parse_inline_ref
   } elsif ( $$t =~ /^\{(.*\})$/ ) {
     return $self->parse_inline_hash(\"$1");
   } else {
-    return $self->raise('neither has nor an array');
+    return $self->raise('neither hash nor an array');
   }
 }
 
