@@ -29,6 +29,9 @@ WriteMakefile(
             if integer File::Find Test::More
             ]
     },
+    CONFIGURE_REQUIRES => {
+        'ExtUtils::MakeMaker' => '6.64',
+    },
 
     INSTALLDIRS => $] >= 5.009003 && $] <= 5.011000 ? 'perl' : 'site',
 
