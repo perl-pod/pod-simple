@@ -9,9 +9,9 @@
 require 5;
 
 use strict;
-use ExtUtils::MakeMaker 6.64;
+use ExtUtils::MakeMaker;
 
-WriteMakefile(
+my %WriteMakefileArgs = (
     NAME          => 'Pod::Simple',
     VERSION_FROM  => 'lib/Pod/Simple.pm',
     ABSTRACT_FROM => 'lib/Pod/Simple.pod',
@@ -62,6 +62,22 @@ WriteMakefile(
     },
 
 );
+
+unless ( eval { ExtUtils::MakeMaker->VERSION('6.63_03') } ) {
+  $WriteMakefileArgs{BUILD_REQUIRES} = {
+      %{ delete $WriteMakefileArgs{TEST_REQUIRES} || {} },
+      %{ $WriteMakefileArgs{BUILD_REQUIRES} || {} },
+  };
+}
+
+unless ( eval { ExtUtils::MakeMaker->VERSION('6.55_01') } ) {
+  $WriteMakefileArgs{PREREQ_PM} = {
+      %{ delete $WriteMakefileArgs{BUILD_REQUIRES} || {} },
+      %{ $WriteMakefileArgs{PREREQ_PM} || {} },
+  };
+}
+
+WriteMakefile(%WriteMakefileArgs);
 
 package MY;
 
