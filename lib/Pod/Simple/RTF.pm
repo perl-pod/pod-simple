@@ -5,7 +5,9 @@ use strict;
 #sub Pod::Simple::DEBUG () {4};
 #sub Pod::Simple::PullParser::DEBUG () {4};
 
-our $VERSION = '3.40';
+use strict;
+use vars qw($VERSION @ISA %Escape $WRAP %Tagmap);
+$VERSION = '3.42';
 use Pod::Simple::PullParser ();
 our @ISA;
 BEGIN {@ISA = ('Pod::Simple::PullParser')}

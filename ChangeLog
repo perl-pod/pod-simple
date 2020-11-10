@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------
 3.42 2020-11-10 Karl Williamson <khw@cpan.org>
 	- Drop EUMM version prereq, Graham Knop++
-3.41 2020-10-09 Karl Williamson <khw@cpan.org>
+3.42 2020-10-09 Karl Williamson <khw@cpan.org>
 	- Factorize tests functions in one helper module, Nicolas Rochelmagne++
 	- Support =head5, =head6, John M. Gamble++
 	- Support SOURCE_DATE_EPOCH, Bernhard M. Wiedemann++
