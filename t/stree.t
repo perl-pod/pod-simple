@@ -122,11 +122,11 @@ $hashes_dont_matter = 1;
   ]
 ));
 
-&ok( deq( x("=for image src:foo.png"),
+&ok( deq( x("=for image src: foo.png"),
   [ "Document", { start_line => 1} ]
 ));
 
-&ok( deq( xi("=for image src:foo.png"),
+&ok( deq( xi("=for image src: foo.png"),
   [ "Document", {},
     [ "for", {"start_line"=>1, "target"=>"image", "target_matching"=>"image", "~ignore"=>0, "~image"=>'plain', "~really"=>"=for", "~resolve"=>0},
       [ "Image", {"image"=>{"src"=>"foo.png"}, "start_line"=>1} ]
@@ -135,7 +135,7 @@ $hashes_dont_matter = 1;
 ));
 
 
-&ok( deq( xi("=begin image-title\n\nsrc:foo.png\n\n=end image-title\n\ntitle\n\n=for image-cut"),
+&ok( deq( xi("=begin image-title\n\nsrc: foo.png\n\n=end image-title\n\ntitle\n\n=for image-cut"),
   [ "Document", {},
     [ "for", {"start_line"=>5, "target"=>"image-title", "target_matching"=>"image-title", "~ignore"=>0, "~image"=>'title', "~really"=>"=for", "~resolve"=>0},
       [ "Image", {"image"=>{"src"=>"foo.png"}, "start_line"=>3}, 
@@ -147,7 +147,7 @@ $hashes_dont_matter = 1;
   ]
 ));
 
-&ok( deq( xi("=begin image-text\n\nsrc:foo.png\n\n=end image-text\n\nskip\n\n=for image-cut"),
+&ok( deq( xi("=begin image-text\n\nsrc: foo.png\n\n=end image-text\n\nskip\n\n=for image-cut"),
   [ "Document", {},
     [ "for", {"start_line"=>1, "target"=>"image", "target_matching"=>"image", "~ignore"=>0, "~image"=>'plain', "~really"=>"=for", "~resolve"=>0},
       [ "Image", {"image"=>{"src"=>"foo.png"}, "start_line"=>1} ]

@@ -4,10 +4,10 @@ Pod::Simple::Images -- use images in POD.
 
 =head1 SYNOPSIS
 
-=for image src:onion.png
+=for image src: onion.png
 
  # 1. simplest case
- =for image src:img.png
+ =for image src: img.png
 
 
  # 2. extended case
@@ -20,14 +20,14 @@ Pod::Simple::Images -- use images in POD.
 
 
  # 3. Multi-line title
- =for image src:img.png
+ =for image src: img.png
  title: |
   multi-line
   title
 
 
  # 4. Title as fallback
- =for image-title src:img.png
+ =for image-title src: img.png
 
  This <i>will</i> be shown as formatted pod on old parsers
  and on non-graphic media, as a text fallback
@@ -131,7 +131,7 @@ For example, when verbatim text is to be used in C<=for> tag, YAML needs to
 be told that Pod verbatim indent (say, 1 space) is different from YAML multiline
 indent (say, also 1 space):
 
-   =for image src:img.png
+   =for image src: img.png
    title: |1
      multiline
      multiline
@@ -151,7 +151,7 @@ generate C<< <img alt=".."> >> code.
 One can store anything else there, as long as this is valid YAML. C<Pod::Simple>
 ignores these data:
 
-   =for image src:png
+   =for image src: png
    comment: totally ignored
 
 Naturally, the syntax can be extended in the future, but so far there are no reserved 
@@ -197,7 +197,7 @@ than one image per section.
 Pod syntax declares breaks as empty lines, and these clash with YAML multilines,
 for example:
 
-  =for image src:foo
+  =for image src: foo
   title: |
      multiline
 

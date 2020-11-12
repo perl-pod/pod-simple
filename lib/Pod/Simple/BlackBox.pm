@@ -1951,6 +1951,7 @@ sub _ponder_Image {
     line          => $para->[1]{'start_line'}
   );
   my $parsed = $yaml->parse(join("\n", splice( @$para, 2 )));
+  $self->whine( @$_ ) for $yaml->warnings;
   unless (defined $parsed) {
     DEBUG > 1 and print STDERR "Image parse error: ", $yaml->error, "\n";
     $self->whine($yaml->line, $yaml->error);
