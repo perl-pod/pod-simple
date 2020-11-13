@@ -70,7 +70,7 @@ sub raise_warning
   push @{$self->{warnings}}, [ $self->{line}, $warning ];
 }
 
-our $SPACE     = qr/[\x{20}\t]/;
+our $SPACE     = qr/[ \t]/;
 our $INDENTING = qr/\x{20}/;
 our $URI_CHAR  = qr/[\!\w\%\;\/\?\:\@\&\=\+\$\,\_\.\~\*\'\(\)\[\]]/;
 
@@ -79,7 +79,9 @@ sub regex_spaces
   my ( $self, $at_least ) = @_;
   my $sp = $_[0]->{spaces}->[-1];
   $sp++ if $at_least || $sp < 0;
-  return $at_least ? qr/${INDENTING}{$sp,}/ : qr/${INDENTING}{$sp}/;
+  return $at_least ? 
+  	qr/$INDENTING {$sp,}/x :
+	qr/$INDENTING {$sp} /x;
 }
 
 sub expect_newline
