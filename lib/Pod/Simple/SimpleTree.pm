@@ -19,6 +19,8 @@ __PACKAGE__->_accessorize(
 
 sub _handle_element_start { # self, tagname, attrhash
   DEBUG > 2 and print STDERR "Handling $_[1] start-event\n";
+  $_[0]->{skip} = 1 if $_[1] eq 'ImageText';
+  return if $_[0]->{skip};
   my $x = [$_[1], $_[2]];
   if($_[0]{'_currpos'}) {
     push    @{ $_[0]{'_currpos'}[0] }, $x; # insert in parent's child-list
@@ -34,6 +36,11 @@ sub _handle_element_start { # self, tagname, attrhash
 }
 
 sub _handle_element_end { # self, tagname
+  if ($_[1] eq 'ImageText') {
+    $_[0]->{skip} = 0;
+    return;
+  }
+  return if $_[0]->{skip};
   DEBUG > 2 and print STDERR "Handling $_[1] end-event\n";
   shift @{$_[0]{'_currpos'}};
   DEBUG > 3 and print STDERR "Stack is now: ",
@@ -42,6 +49,7 @@ sub _handle_element_end { # self, tagname
 }
 
 sub _handle_text { # self, text
+  return if $_[0]->{skip};
   DEBUG > 2 and print STDERR "Handling $_[1] text-event\n";
   push @{ $_[0]{'_currpos'}[0] }, $_[1];
   return;
@@ -50,6 +58,7 @@ sub _handle_text { # self, text
 
 # A bit of evil from the black box...  please avert your eyes, kind souls.
 sub _traverse_treelet_bit {
+  return if $_[0]->{skip};
   DEBUG > 2 and print STDERR "Handling $_[1] paragraph event\n";
   my $self = shift;
   push @{ $self->{'_currpos'}[0] }, [@_];

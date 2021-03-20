@@ -22,6 +22,7 @@ use integer; # vroom!
 use strict;
 use Carp ();
 use vars qw($VERSION );
+use Pod::Simple::YAML;
 $VERSION = '3.40';
 #use constant DEBUG => 7;
 
@@ -141,6 +142,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
   # encoding if not specified.
   my $codes = join '', grep { / ^ [A-Za-z] $/x } sort keys %{$self->{accept_codes}};
   my $pod_chars_re = qr/ ^ = [A-Za-z]+ | [\Q$codes\E] < /x;
+
 
   my $line;
   foreach my $source_line (@_) {
@@ -526,7 +528,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # TODO: add to docs: Note: this may cause cuts to be processed out
       #  of order relative to pods, but in order relative to code.
 
-    } elsif($line =~ m/^(\s*)$/s) {  # it's a blank line
+    } elsif(!$self->{clump_target_para} && $line =~ m/^(\s*)$/s) {  # it's a blank line
       if (defined $1 and $1 =~ /[^\S\r\n]/) { # it's a white line
         $wl_handler->(map $_, $line, $self->{'line_count'}, $self)
           if $wl_handler;
@@ -543,7 +545,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
       $self->{'last_was_blank'} = 1;
 
-    } elsif($self->{'last_was_blank'}) {  # A non-blank line starting a new para...
+    } elsif($self->{'last_was_blank'} || $self->{clump_target_para}) {  # A non-blank line starting a new para...
 
       if($line =~ m/^(=[a-zA-Z][a-zA-Z0-9]*)(\s+|$)(.*)/s) {
         # THIS IS THE ONE PLACE WHERE WE CONSTRUCT NEW DIRECTIVE OBJECTS
@@ -555,12 +557,22 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
         ++$self->{'pod_para_count'};
 
         $self->_ponder_paragraph_buffer();
+
+        # =begin is called inside para processing,
+        # so that para clumping can occur on the next Plain/Para entry
+        # however =end is immediate
+        $self->_ponder_image_directive( $new->[0], $1) if
+          $new->[2] =~ /^(image-?\w*)/ &&
+          $new->[0] eq '=end';
+
          # by now it's safe to consider the previous paragraph as done.
 
         push @$paras, $new; # the new incipient paragraph
         DEBUG > 1 and print STDERR "Starting new ${$paras}[-1][0] para at line ${$self}{'line_count'}\n";
-
-      } elsif($line =~ m/^\s/s) {
+      } elsif ($self->{clump_target_para}) {
+        # clump to the last paragraph
+        push @{$paras->[-1]}, $line;
+      } elsif ($line =~ m/^\s/s) {
 
         if(!$self->{'start_of_pod_block'} and @$paras and $paras->[-1][0] eq '~Verbatim') {
           DEBUG > 1 and print STDERR "Resuming verbatim para at line ${$self}{'line_count'}\n";
@@ -597,6 +609,72 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
   DEBUG > 1 and print STDERR (pretty(@$paras), "\n");
   return $self;
+}
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+# handles special treatment of image paragraphs:
+#
+# 1: =begin image       -> clump_target_para=1
+#    =end image         -> clump_target_para=0, start_Image,
+#                          [start_ImageTitle, end_ImageTitle],
+#                          end_Image
+#
+# 2: =begin image-text  -> clump_target_para=1, curr_image=text
+#    =end   image-text     clump_target_para=0
+#                             start_Image,
+#                             [start_ImageTitle, end_ImageTitle]
+#                             start_ImageText
+#    ... any pod ..           should be ignored (up to formatter)
+#                             end_ImageText
+#    =for   image-cut   -> curr_image=undef, end_Image
+#
+# 3: =begin image-title -> clump_target_para=1, curr_image=title
+#    =end   image-title    clump_target_para=0, start_Image, start_ImageTitle
+#    ... any pod..         treated as image title
+#    =for   image-cut      end_ImageTitle, curr_image=undef, end_Image
+#
+#   That means, because pod parsing implementation is twofold (first it reads lines,
+#   then parses paragraphs in batches), =end needs to be caught
+#   immediately in lines, while all other directives need to (or best suited to, actually),
+#   handled in paragraph batches inside _ponder_paragraph_buffer.
+sub _ponder_image_directive
+{
+  my ( $self, $directive, $target ) = @_;
+
+  return unless
+    $directive =~ /^=(begin|end)$/ &&
+    $target    =~ /^image(-cut|-title|-text)?$/ &&
+    $self->{accept_targets}->{$target};
+
+  if ( $directive eq '=begin') {
+    $self->{clump_target_para} = $target ne 'image-cut';
+
+    my $image_wanted;
+    if ($target eq 'image') {
+      $image_wanted = 'plain';
+    } elsif ($target eq 'image-text') {
+      if ( $self->{curr_image} ) {
+        $self->scream("unexpected =begin/=for $target");
+      } else {
+        $self->{curr_image} = $image_wanted = 'text';
+      }
+    } elsif ($target eq 'image-title') {
+      if ( $self->{curr_image} ) {
+        $self->scream("unexpected =begin/=for $target");
+      } else {
+        $self->{curr_image} = $image_wanted = 'title';
+      }
+    } elsif ($target eq 'image-cut') {
+      $image_wanted = $self->{curr_image}.'-cut'
+        if ($self->{curr_image} || '') =~ /^(title|text)$/;
+      delete $self->{curr_image};
+    }
+
+    return $image_wanted;
+  } elsif ( $directive eq '=end') {
+    $self->{clump_target_para} = 0;
+  }
 }
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -809,7 +887,8 @@ sub _ponder_paragraph_buffer {
 
   # Para-token types as found in the buffer.
   #   ~Verbatim, ~Para, ~end, =head1..4, =for, =begin, =end,
-  #   =over, =back, =item
+  #   =over, =back, =item,
+  #   =image, =image-text, =image-title, =image-cut,
   #   and the null =pod (to be complained about if over one line)
   #
   # "~data" paragraphs are something we generate at this level, depending on
@@ -821,6 +900,7 @@ sub _ponder_paragraph_buffer {
   #                   over-bullet, over-number, over-text, over-block,
   #                   item-bullet, item-number, item-text,
   #                   Document,
+  #                   Image, ImageTitle, ImageText
   #                   Data, Para, Verbatim
   #                   B, C, longdirname (TODO -- wha?), etc. for all directives
   #
@@ -1175,7 +1255,6 @@ sub _ponder_paragraph_buffer {
           my @fors = grep $_->[0] eq '=for', @$curr_open;
           DEBUG > 1 and print STDERR "Containing fors: ",
             join(',', map $_->[1]{'target'}, @fors), "\n";
-
           if(! @fors) {
             DEBUG and print STDERR "Treating $para_type paragraph as such because stack has no =for's\n";
 
@@ -1191,6 +1270,10 @@ sub _ponder_paragraph_buffer {
             } else {
               DEBUG and print STDERR "Treating $para_type paragraph as such because the containing =for ($fors[-1][1]{'target'}) is a resolver\n";
             }
+          } elsif( my $action = $fors[-1][1]{'~image'} ) {
+            DEBUG and print STDERR "Treating $para_type paragraph as Image\n";
+            $para->[0] = $para_type = 'Image';
+            $para->[1]-> {image}-> {action} = $action;
           } else {
             DEBUG and print STDERR "Treating $para_type paragraph as Data because the containing =for ($fors[-1][1]{'target'}) is a non-resolver\n";
             $para->[0] = $para_type = 'Data';
@@ -1205,6 +1288,10 @@ sub _ponder_paragraph_buffer {
         $self->_ponder_Verbatim($para);
       } elsif($para_type eq 'Data') {
         $self->_ponder_Data($para);
+      } elsif($para_type eq 'Image') {
+        DEBUG and print STDERR "\n", pretty($para), "\n";
+        $self->_ponder_Image($para);
+        next;
       } else {
         die "\$para type is $para_type -- how did that happen?";
         # Shouldn't happen.
@@ -1300,6 +1387,7 @@ sub _ponder_begin {
   $to_resolve = 1 if $content =~ s/^://s;
 
   my $dont_ignore; # whether this target matches us
+  my $image_wanted;
 
   foreach my $target_name (
     split(',', $content, -1),
@@ -1315,6 +1403,8 @@ sub _ponder_begin {
       if $self->{'accept_targets'}{$target_name} eq 'force_resolve';
     $dont_ignore = 1;
     $para->[1]{'target_matching'} = $target_name;
+
+    $image_wanted = $self-> _ponder_image_directive('=begin', $target_name);
     last; # stop looking at other target names
   }
 
@@ -1334,6 +1424,7 @@ sub _ponder_begin {
   $para->[1]{'~really'} ||= '=begin';
   $para->[1]{'~ignore'}   = (! $dont_ignore) || 0;
   $para->[1]{'~resolve'}  = $to_resolve || 0;
+  $para->[1]{'~image'}    = $image_wanted if $image_wanted;
 
   DEBUG > 1 and print STDERR " Making note to ", $dont_ignore ? 'not ' : '',
     "ignore contents of this region\n";
@@ -1354,6 +1445,7 @@ sub _ponder_begin {
 
 sub _ponder_end {
   my ($self,$para,$curr_open,$paras) = @_;
+
   my $content = join ' ', splice @$para, 2;
   $content =~ s/^\s+//s;
   $content =~ s/\s+$//s;
@@ -1403,6 +1495,10 @@ sub _ponder_end {
     DEBUG and print STDERR "Ignoring mistargetted =end $content at line $para->[1]{'start_line'}\n";
     return 1;
   }
+
+  # normal =end is immediate from the source, this one is synthetic from =for
+  $self->_ponder_image_directive('=end', $curr_open->[-1][1]{target})
+    if ($para->[1]->{'~really'} || '') eq '=for';
 
   # Else it's okay to close...
   if(grep $_->[1]{'~ignore'}, @$curr_open) {
@@ -1833,8 +1929,58 @@ sub _ponder_Data {
   return;
 }
 
+# action is one of: text,title,title-cut,plain
+sub _ponder_Image {
+  my ($self,$para) = @_;
+  my $action = $para->[1]->{image}->{action};
+  DEBUG and print STDERR " parsing image $action...\n";
+  my $scratch;
 
+  if ( $action eq 'title-cut') {
+    $self-> _handle_element_end($scratch = 'ImageTitle');
+    $self-> _handle_element_end($scratch = 'Image');
+    return;
+  } elsif ( $action eq 'text-cut' ) {
+    $self-> _handle_element_end($scratch = 'ImageText');
+    $self-> _handle_element_end($scratch = 'Image');
+    return;
+  }
 
+  my $yaml = Pod::Simple::YAML->new(
+    array_allowed => 0,
+    line          => $para->[1]{'start_line'}
+  );
+  my $parsed = $yaml->parse(join("\n", splice( @$para, 2 )));
+  $self->whine( @$_ ) for $yaml->warnings;
+  unless (defined $parsed) {
+    DEBUG > 1 and print STDERR "Image parse error: ", $yaml->error, "\n";
+    $self->whine($yaml->line, $yaml->error);
+    return;
+  }
+
+  $self->whine($self->{line_count}, "image does not contain src: tag")
+    unless defined $parsed->{src}; # src: is required
+
+  $para->[1]->{image} = $parsed;
+  $self-> _handle_element_start($scratch = 'Image', $para->[1]);
+
+  if ( $action =~ /^(text|plain)$/) {
+    if (defined $parsed->{title} ) {
+      my %p = %{ $para->[1] };
+      my @p = ('Para', \%p, $parsed->{title});
+      $self-> _handle_element_start($scratch = 'ImageTitle', $para->[1] );
+      $self-> _ponder_Plain(\@p);
+      $self-> _traverse_treelet_bit(@p);
+      $self-> _handle_element_end($scratch = 'ImageTitle');
+    }
+    $self-> _handle_element_end($scratch = 'Image')
+      if $action eq 'plain';
+  }
+  $self-> _handle_element_start($scratch = 'ImageTitle', $para->[1] )
+    if $action eq 'title';
+  $self-> _handle_element_start($scratch = 'ImageText', $para->[1] )
+    if $action eq 'text';
+}
 
 ###########################################################################
 

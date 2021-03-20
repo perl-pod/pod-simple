@@ -260,7 +260,8 @@ sub new {
 
   $new->{'__region_targets'}  = [];
   $new->{'__literal_targets'} = {};
-  $new->accept_targets_as_html( 'html', 'HTML' );
+  $new->accept_targets_as_html( 'html', 'HTML');
+  $new->accept_image;
 
   return $new;
 }
@@ -339,6 +340,18 @@ sub accept_targets_as_html {
     my ($self, @targets) = @_;
     $self->accept_targets(@targets);
     $self->{__literal_targets}{$_} = 1 for @targets;
+}
+
+sub __skip_target {
+    return unless @{ $_[0]{__region_targets} };
+    my $target = $_[0]{__region_targets}[-1];
+    return $_[0]{__skip_targets}{ $target };
+}
+
+sub skip_targets {
+    my ($self, @targets) = @_;
+    $self->skip_targets(@targets);
+    $self->{__skip_targets}{$_} = 1 for @targets;
 }
 
 sub handle_text {
@@ -669,12 +682,37 @@ sub end_L   { $_[0]{'scratch'} .= '</a>' }
 sub start_S { $_[0]{'scratch'} .= '<span style="white-space: nowrap;">' }
 sub end_S   { $_[0]{'scratch'} .= '</span>' }
 
+sub start_Image
+{
+  my $self = $_[0];
+  my $c = $_[1]->{image};
+  my $s = \ $_[0]->{scratch};
+  my %prop = ( src => $self->encode_entities($c->{src}) );
+  $prop{alt} = $self-> encode_entities($c->{alt})
+    if defined $c->{alt};
+
+  $$s .= '<figure><img';
+  for my $k ( sort keys %prop ) {
+    $$s .= " $k='$prop{$k}'";
+  }
+  $$s .= ">\n";
+  $self->emit;
+}
+
+sub start_ImageText  { $_[0]->emit; $_[0]->{pause} = 1 }
+sub end_ImageText    { delete $_[0]->{pause}; $_[0]->{scratch} = ''; }
+sub start_ImageTitle { $_[0]->{scratch} .= "<figcaption>"  ; $_[0]->emit }
+sub end_ImageTitle   { $_[0]->{scratch} .= "</figcaption>" ; $_[0]->emit }
+sub end_Image        { $_[0]->{scratch} .= "</figure>"     ; $_[0]->emit }
+
 sub emit {
   my($self) = @_;
-  if ($self->index) {
-      push @{ $self->{'output'} }, $self->{'scratch'};
-  } else {
-      print {$self->{'output_fh'}} $self->{'scratch'}, "\n\n";
+  unless ( $self->{pause}) {
+    if ($self->index) {
+        push @{ $self->{'output'} }, $self->{'scratch'};
+    } else {
+        print {$self->{'output_fh'}} $self->{'scratch'}, "\n\n";
+    }
   }
   $self->{'scratch'} = '';
   return;

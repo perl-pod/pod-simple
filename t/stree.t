@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use Test;
-BEGIN { plan tests => 33 };
+BEGIN { plan tests => 37 };
 
 #use Pod::Simple::Debug (6);
 
@@ -19,6 +19,13 @@ my $x = 'Pod::Simple::SimpleTree';
 sub x {
  my $p = $x->new;
  $p->merge_text(1);
+ $p->parse_string_document( shift )->root;
+}
+
+sub xi {
+ my $p = $x->new;
+ $p->merge_text(1);
+ $p->accept_image;
  $p->parse_string_document( shift )->root;
 }
 
@@ -111,6 +118,39 @@ $hashes_dont_matter = 1;
         ],
         '!'
       ]
+    ]
+  ]
+));
+
+&ok( deq( x("=for image src: foo.png"),
+  [ "Document", { start_line => 1} ]
+));
+
+&ok( deq( xi("=for image src: foo.png"),
+  [ "Document", {},
+    [ "for", {"start_line"=>1, "target"=>"image", "target_matching"=>"image", "~ignore"=>0, "~image"=>'plain', "~really"=>"=for", "~resolve"=>0},
+      [ "Image", {"image"=>{"src"=>"foo.png"}, "start_line"=>1} ]
+    ]
+  ]
+));
+
+
+&ok( deq( xi("=begin image-title\n\nsrc: foo.png\n\n=end image-title\n\ntitle\n\n=for image-cut"),
+  [ "Document", {},
+    [ "for", {"start_line"=>5, "target"=>"image-title", "target_matching"=>"image-title", "~ignore"=>0, "~image"=>'title', "~really"=>"=for", "~resolve"=>0},
+      [ "Image", {"image"=>{"src"=>"foo.png"}, "start_line"=>3}, 
+        [ 'ImageTitle', {"image"=>{"src"=>"foo.png"}, "start_line"=>3} ],
+        [ 'Para', {"start_line"=>7}, "title" ],
+        [ "for", {"start_line"=>9, "target"=>"image-cut", "target_matching"=>"image-cut", "~ignore"=>0, "~image"=>'title-cut', "~really"=>"=for", "~resolve"=>0}],
+      ]
+    ]
+  ]
+));
+
+&ok( deq( xi("=begin image-text\n\nsrc: foo.png\n\n=end image-text\n\nskip\n\n=for image-cut"),
+  [ "Document", {},
+    [ "for", {"start_line"=>1, "target"=>"image", "target_matching"=>"image", "~ignore"=>0, "~image"=>'plain', "~really"=>"=for", "~resolve"=>0},
+      [ "Image", {"image"=>{"src"=>"foo.png"}, "start_line"=>1} ]
     ]
   ]
 ));

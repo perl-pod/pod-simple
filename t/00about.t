@@ -29,7 +29,7 @@ Pod::Simple::PullParserEndToken	Pod::Simple::PullParserStartToken
 Pod::Simple::PullParserTextToken	Pod::Simple::PullParserToken
 Pod::Simple::RTF	Pod::Simple::Search	Pod::Simple::SimpleTree
 Pod::Simple::Text	Pod::Simple::TextContent	Pod::Simple::TiedOutFH
-Pod::Simple::Transcode	Pod::Simple::XMLOutStream
+Pod::Simple::Transcode	Pod::Simple::XMLOutStream Pod::Simple::YAML
 
   );
   plan tests => 2 + @modules;
