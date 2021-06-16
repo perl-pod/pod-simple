@@ -1,14 +1,15 @@
-=head1 Pod::Simple
+Pod::Simple
 
 Pod::Simple is a Perl library for parsing text in the Pod ("plain old
 documentation") markup language that is typically used for writing
 documentation for Perl and for Perl modules. The Pod format is explained
-L<perlpod>; the most common formatter is called C<perldoc>.
+in the <perlpod> file shipped with Perl5; the most common formatter is called
+<perldoc>.
 
 Pod formatters can use Pod::Simple to parse Pod documents and render them into
 plain text, HTML, or any number of other formats.
 
-=head2 Installation
+Installation
 
 To install this module, type the following:
 
@@ -17,20 +18,20 @@ To install this module, type the following:
     make test
     make install
 
-=head2 Support
+Support
 
 Questions or discussion about POD and Pod::Simple should be sent to the
 pod-people@perl.org mail list. Send an empty email to
 pod-people-subscribe@perl.org to subscribe.
 
 This module is managed in an open GitHub repository,
-L<https://github.com/perl-pod/pod-simple/>. Feel free to fork and contribute, or
-to clone L<https://github.com/perl-pod/pod-simple.git> and send patches!
+<https://github.com/perl-pod/pod-simple/>. Feel free to fork and contribute, or
+to clone it and send patches!
 
 Patches against Pod::Simple are welcome. Please send bug reports to
 <bug-pod-simple@rt.cpan.org>.
 
-=head1 copyright and Disclaimers
+Copyright and Disclaimers
 
 Copyright (c) 2002 Sean M. Burke.  All rights reserved.
 
@@ -41,23 +42,17 @@ This program is distributed in the hope that it will be useful, but
 without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.
 
-=head1 Author
+Author
 
 Pod::Simple was created by Sean M. Burke <sburke@cpan.org>.
 But don't bother him, he's retired.
 
 Pod::Simple is maintained by:
 
-=over
+    * Allison Randal <allison@perl.org>
 
-=item * Allison Randal C<allison@perl.org>
+    * Hans Dieter Pearcey <hdp@cpan.org>
 
-=item * Hans Dieter Pearcey C<hdp@cpan.org>
+    * David E. Wheeler <dwheeler@cpan.org>
 
-=item * David E. Wheeler C<dwheeler@cpan.org>
-
-=item * Marc Green C<marcgreen@cpan.org>
-
-=back
-
-=cut
+    * Marc Green <marcgreen@cpan.org>
