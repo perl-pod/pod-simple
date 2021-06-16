@@ -37,7 +37,7 @@ my %WriteMakefileArgs = (
     META_MERGE => {
         "meta-spec" => { version => 2 },
         resources   => {
-            homepage   => 'http://search.cpan.org/dist/Pod-Simple/',
+            homepage   => 'https://metacpan.org/pod/Pod::Simple',
             license    => 'http://dev.perl.org/licenses/',
             repository => {
                 url  => 'git://github.com/perl-pod/pod-simple.git',
