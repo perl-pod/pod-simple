@@ -19,7 +19,7 @@ use vars qw(
 );
 
 @ISA = ('Pod::Simple::BlackBox');
-$VERSION = '3.42';
+$VERSION = '3.43';
 
 @Known_formatting_codes = qw(I B C L E F S X Z); 
 %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
