@@ -6,6 +6,7 @@
 ,v$
 \B\.svn\b
 \B\.git\b
+\B\.github\b
 \B\.gitignore\b
 \b_darcs\b
 \B\.cvsignore$
@@ -58,6 +59,7 @@
 \.out$
 delme
 \.rej$
+\..*\.sw.?$
 ~
 
 ^MYMETA\.yml$
