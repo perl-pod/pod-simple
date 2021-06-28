@@ -3,7 +3,7 @@ use strict;
 use Symbol ('gensym');
 use Carp ();
 use vars qw($VERSION );
-$VERSION = '3.42';
+$VERSION = '3.43';
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

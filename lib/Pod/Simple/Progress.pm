@@ -1,5 +1,5 @@
 package Pod::Simple::Progress;
-$VERSION = '3.42';
+$VERSION = '3.43';
 use strict;
 
 our $VERSION = '3.40';

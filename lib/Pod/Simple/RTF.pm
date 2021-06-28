@@ -7,7 +7,7 @@ use strict;
 
 use strict;
 use vars qw($VERSION @ISA %Escape $WRAP %Tagmap);
-$VERSION = '3.42';
+$VERSION = '3.43';
 use Pod::Simple::PullParser ();
 our @ISA;
 BEGIN {@ISA = ('Pod::Simple::PullParser')}

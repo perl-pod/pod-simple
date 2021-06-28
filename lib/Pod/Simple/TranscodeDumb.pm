@@ -1,7 +1,7 @@
 package Pod::Simple::TranscodeDumb;
 use strict;
 use vars qw($VERSION %Supported);
-$VERSION = '3.42';
+$VERSION = '3.43';
 # This module basically pretends it knows how to transcode, except
 #  only for null-transcodings!  We use this when Encode isn't
 #  available.
