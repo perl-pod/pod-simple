@@ -40,7 +40,7 @@ my %WriteMakefileArgs = (
             homepage   => 'https://metacpan.org/pod/Pod::Simple',
             license    => 'http://dev.perl.org/licenses/',
             repository => {
-                url  => 'git://github.com/perl-pod/pod-simple.git',
+                url  => 'https://github.com/perl-pod/pod-simple.git',
                 web  => 'https://github.com/perl-pod/pod-simple',
                 type => 'git',
             },

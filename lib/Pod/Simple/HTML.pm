@@ -1117,7 +1117,7 @@ pod-people-subscribe@perl.org to subscribe.
 
 This module is managed in an open GitHub repository,
 L<https://github.com/perl-pod/pod-simple/>. Feel free to fork and contribute, or
-to clone L<git://github.com/perl-pod/pod-simple.git> and send patches!
+to clone L<https://github.com/perl-pod/pod-simple.git> and send patches!
 
 Patches against Pod::Simple are welcome. Please send bug reports to
 <bug-pod-simple@rt.cpan.org>.
