@@ -1,871 +1,871 @@
- # ChangeLog for Pod::Simple dist
+# ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 3.40 2019-10-23 Karl Williamson <khw@cpan.org>
-	- Fixed iusse #108, Roy Storey++
-	- Make case sensitivity determination overridable by user, Kenneth
-	  Ölwing++
-	- Add expand_verbatim_tabs() method, which also can turn off
-	  expansion, fixing #110
+    - Fixed iusse #108, Roy Storey++
+    - Make case sensitivity determination overridable by user, Kenneth
+      Ölwing++
+    - Add expand_verbatim_tabs() method, which also can turn off
+      expansion, fixing #110
 3.39 2019-06-30 Karl Williamson <khw@cpan.org>
-	- Fixed JustPod not opening file with :raw.  Spotted by Dave Mitchell.
-	  Fixed by James Keenan
-	- Fixed garbage line looking like pod.  Spotted by Todd Rinaldo.
-	- Finished fixing Issue 95 by adding note that = in column 1 can be
-	  misinterpreted as pod.
+    - Fixed JustPod not opening file with :raw.  Spotted by Dave Mitchell.
+      Fixed by James Keenan
+    - Fixed garbage line looking like pod.  Spotted by Todd Rinaldo.
+    - Finished fixing Issue 95 by adding note that = in column 1 can be
+      misinterpreted as pod.
 
 3.38 2019-05-30 Karl Williamson <khw@cpan.org>
-	- Removed some alien files that somehow got in the tar, including a copy
-	of Pod::Escapes.  Spotted by Petr Pisar++
+    - Removed some alien files that somehow got in the tar, including a copy
+    of Pod::Escapes.  Spotted by Petr Pisar++
 
 3.37 2019-05-30 Karl Williamson <khw@cpan.org>
-	- Suppressed some expected diagnostics under harness
-	- Pod::Simple now depends on the 'if' module
+    - Suppressed some expected diagnostics under harness
+    - Pod::Simple now depends on the 'if' module
 
 3.36 2019-05-15 Karl Williamson <khw@cpan.org>
-	- Added Pod::Simple::JustPod to extract the pod lines from a file
-	- Improved detection of input encoding CP1252 vs UTF-8
-	- Fixed github issue #79, =cut event out of order
-	- Fixed github issue #85, verbatim_indent doesn't work on HTML
-	- Fixed github issue #89, css files refer to themselves
-	- Fixed github issue #92, broken RTF with Unicode inputs 
-	- Extended RTF to handle Unicode code points above 0xFFFF
-	- Nested L<> is now flagged as an error
-	- Turned off negative repeat count does nothing warnings
-	- Fixed/improved some docs about this distribution
+    - Added Pod::Simple::JustPod to extract the pod lines from a file
+    - Improved detection of input encoding CP1252 vs UTF-8
+    - Fixed github issue #79, =cut event out of order
+    - Fixed github issue #85, verbatim_indent doesn't work on HTML
+    - Fixed github issue #89, css files refer to themselves
+    - Fixed github issue #92, broken RTF with Unicode inputs
+    - Extended RTF to handle Unicode code points above 0xFFFF
+    - Nested L<> is now flagged as an error
+    - Turned off negative repeat count does nothing warnings
+    - Fixed/improved some docs about this distribution
 
 3.35 2016-11-29  Karl Williamson <khw@cpan.org>
-	- Needed to 'make manifest' before uploading to CPAN.  No changes beyond
-	version bump
+    - Needed to 'make manifest' before uploading to CPAN.  No changes beyond
+    version bump
 
 3.34 2016-11-29  Karl Williamson <khw@cpan.org>
-	- Stabilize t/search50.t.  Thanks to rurban for the patch!
-	- Turn off utf8 warnings when trying to see if a file is UTF-8 or not.
+    - Stabilize t/search50.t.  Thanks to rurban for the patch!
+    - Turn off utf8 warnings when trying to see if a file is UTF-8 or not.
 
 3.32 2015-11-02   Marc Green <marcgreen@cpan.org>
-	- Fixed failing tests on Windows. Thanks to A. Sinan Unur for the
-	patch!
+    - Fixed failing tests on Windows. Thanks to A. Sinan Unur for the
+    patch!
 
-	- Switched debugging output from STDOUT to STDERR. Should rarely be
-	used, but modules that do depend on debugging output might need to
-	change how they handle it. Patch from Karl Williamson (GitHub Pull
-	Request #76).
+    - Switched debugging output from STDOUT to STDERR. Should rarely be
+    used, but modules that do depend on debugging output might need to
+    change how they handle it. Patch from Karl Williamson (GitHub Pull
+    Request #76).
 
-	- Added errata_seen() to make POD errors easily accessible. Thanks to
-	Sean Zellmer for the pull request!
+    - Added errata_seen() to make POD errors easily accessible. Thanks to
+    Sean Zellmer for the pull request!
 
 3.31 2015-08-23   Marc Green <marcgreen@cpan.org>
-	- No changes since 3.30_1.
+    - No changes since 3.30_1.
 
 3.30_1 2015-07-19   Marc Green <marcgreen@cpan.org>
-	- Simplified the detection of case-insensitivity in Pod::Simple::Search.
+    - Simplified the detection of case-insensitivity in Pod::Simple::Search.
 
-	- Fixed "Use of uninitialized value $1 in lc" warning in
-	Pod::Simple::Search.
+    - Fixed "Use of uninitialized value $1 in lc" warning in
+    Pod::Simple::Search.
 
-	- If @INC includes the current directory symbol, '.', the survey()
-	method of Pod::Simple::Search no longer excludes it from its list
-	of directories to search. Instead, The survey() and find() methods
-	now both exclude duplicate directories from @INC (RT #102344).
+    - If @INC includes the current directory symbol, '.', the survey()
+    method of Pod::Simple::Search no longer excludes it from its list
+    of directories to search. Instead, The survey() and find() methods
+    now both exclude duplicate directories from @INC (RT #102344).
 
-	- Moved source repository and updated links to new perl-pod GitHub
-	organization: https://github.com/perl-pod/pod-simple.
+    - Moved source repository and updated links to new perl-pod GitHub
+    organization: https://github.com/perl-pod/pod-simple.
 
-	- Improved repository links and added GitHub issue tracking link to
-	the distribution metadata.
+    - Improved repository links and added GitHub issue tracking link to
+    the distribution metadata.
 
-	- Switched from File::Spec's catdir to catfile for path names, to
-	fix failures on VMS. Also now use Unix path semantics where
-	they're not required to be platform-specific. Thanks to Craig A.
-	Berry for the patch (RT #105511).
+    - Switched from File::Spec's catdir to catfile for path names, to
+    fix failures on VMS. Also now use Unix path semantics where
+    they're not required to be platform-specific. Thanks to Craig A.
+    Berry for the patch (RT #105511).
 
-	- Improved the example use of the 'html_encode_chars()' method in
-	the Pod::Simple::XHTML documentation. Patch from Randy Stauner.
+    - Improved the example use of the 'html_encode_chars()' method in
+    the Pod::Simple::XHTML documentation. Patch from Randy Stauner.
 
 3.30 2015-02-23   David E. Wheeler <david@justatheory.org>
-	- No changes since 3.29_6.
+    - No changes since 3.29_6.
 
 3.29_6 2015-02-19   David E. Wheeler <david@justatheory.org>
-	- The survey() method in Pod::Simple::Search now ignores duplicate
-	files with varying lettercasing on case-insensitive file systems.
-	This allows
+    - The survey() method in Pod::Simple::Search now ignores duplicate
+    files with varying lettercasing on case-insensitive file systems.
+    This allows
 
-	- When pondering files in a given directory, the survey() method in
-	Pod::Simple::Search now prefers files with extensions in the
-	following order: no extension, .pod, .pm, .plx, .pl.
+    - When pondering files in a given directory, the survey() method in
+    Pod::Simple::Search now prefers files with extensions in the
+    following order: no extension, .pod, .pm, .plx, .pl.
 
-	- The find() method in Pod::Simple::Search now records the './pod'
-	subdirectory of each directory it considers in such a way as to
-	preserve its case on the file system.
+    - The find() method in Pod::Simple::Search now records the './pod'
+    subdirectory of each directory it considers in such a way as to
+    preserve its case on the file system.
 
-	- The find() method in Pod::Simple::Search now tries harder to find
-	the proper file on case-insensitive file systems when searching
-	for modules starting with "Pod". For example, when searching for
-	'Pod::Perldoc' it now returns a file ending in 'Pod/Perldoc.pm'
-	instead of 'Pod/perldoc.pod', as the latter is actually the
-	documention for the 'perldoc' program.
+    - The find() method in Pod::Simple::Search now tries harder to find
+    the proper file on case-insensitive file systems when searching
+    for modules starting with "Pod". For example, when searching for
+    'Pod::Perldoc' it now returns a file ending in 'Pod/Perldoc.pm'
+    instead of 'Pod/perldoc.pod', as the latter is actually the
+    documention for the 'perldoc' program.
 
 3.29_5 2015-02-17   David E. Wheeler <david@justatheory.org>
-	- No changes except that the release tarball should no longer be empty.
+    - No changes except that the release tarball should no longer be empty.
 
 3.29_4 2015-02-16   David E. Wheeler <david@justatheory.org>
-	- Removed "Caveats" from the docs. Pod::Simple has been out of beta
-	for years.
+    - Removed "Caveats" from the docs. Pod::Simple has been out of beta
+    for years.
 
-	- The survey() method in Pod::Simple::Search no longer assumes that
-	files ending in '.pod' are actually Pod. Like .pm and .pl files,
-	.pod files must contains at least one valid POD command, as
-	documented. This brings the behavior in line with find(), which
-	already required that .pod files contain Pod.
+    - The survey() method in Pod::Simple::Search no longer assumes that
+    files ending in '.pod' are actually Pod. Like .pm and .pl files,
+    .pod files must contains at least one valid POD command, as
+    documented. This brings the behavior in line with find(), which
+    already required that .pod files contain Pod.
 
-	- The survey() method in Pod::Simple::Search now prefers files
-	ending in .pod over those ending in .pm, and .pm over those ending
-	in .pl, when it finds duplicate pod files for a given name.
+    - The survey() method in Pod::Simple::Search now prefers files
+    ending in .pod over those ending in .pm, and .pm over those ending
+    in .pl, when it finds duplicate pod files for a given name.
 
 3.29_3 2015-02-11   David E. Wheeler <david@justatheory.org>
-	- Tightened up the first pass at recognizing a Pod command so that
-	fewer invalid Pod lines will be recognized. Suggested by Randy
-	Stauner.
+    - Tightened up the first pass at recognizing a Pod command so that
+    fewer invalid Pod lines will be recognized. Suggested by Randy
+    Stauner.
 
-	- Fixed bug where Pod::Simple would attempt to call
-	utf8::unicode_to_native on Perl 5.6, where that function does not
-	exist.
+    - Fixed bug where Pod::Simple would attempt to call
+    utf8::unicode_to_native on Perl 5.6, where that function does not
+    exist.
 
-	- Typos and minor wordsmithing changes in Pod::Simple::Subclassing,
-	thanks to Randy Stauner.
+    - Typos and minor wordsmithing changes in Pod::Simple::Subclassing,
+    thanks to Randy Stauner.
 
-	- The Pod::Simple::Search survey() and find() methods now use the same
-	code for determining @INC directories to search. The only difference
-	is that find() also includes $Config::Config{'scriptdir'}.
+    - The Pod::Simple::Search survey() and find() methods now use the same
+    code for determining @INC directories to search. The only difference
+    is that find() also includes $Config::Config{'scriptdir'}.
 
 3.29 2015-01-13   David E. Wheeler <david@justatheory.org>
-	- NOTE: This will be the last release of Pod::Simple to support versions
-	of Perl earlier than 5.6.
+    - NOTE: This will be the last release of Pod::Simple to support versions
+    of Perl earlier than 5.6.
 
-	- Fixed test failure for unsupported encoding on Perl 5.6.
+    - Fixed test failure for unsupported encoding on Perl 5.6.
 
-	- Removed unnecessary dependency on constant. Reported by Petr Pisar
-	(RT #85578).
+    - Removed unnecessary dependency on constant. Reported by Petr Pisar
+    (RT #85578).
 
-	- Many documentation and comment typos fixed by David Steinbrunner.
+    - Many documentation and comment typos fixed by David Steinbrunner.
 
-	- Fixed issue when an encoding is declared via an '=encoding' directive
-	*after* Pod::Simple has already detected an encoding. Thanks to
-	Graham Knop for the patch and Patrice Dumas for the tests.
+    - Fixed issue when an encoding is declared via an '=encoding' directive
+    *after* Pod::Simple has already detected an encoding. Thanks to
+    Graham Knop for the patch and Patrice Dumas for the tests.
 
-	- Added '>&STDERR' as an output to better emulate
-	Pod::Parser::parse_from_file(). Florent Angly.
+    - Added '>&STDERR' as an output to better emulate
+    Pod::Parser::parse_from_file(). Florent Angly.
 
-	- Tidied the description of the different Pod::Simple interfaces,
-	with greater emphasis on the four different steps to subclassing.
-	Florent Angly.
+    - Tidied the description of the different Pod::Simple interfaces,
+    with greater emphasis on the four different steps to subclassing.
+    Florent Angly.
 
-	- Added the 'top_anchor' attribue to Pod::Simple::HTML, to allow
-	specification of a custom top anchor format. Gabor Szabo.
+    - Added the 'top_anchor' attribue to Pod::Simple::HTML, to allow
+    specification of a custom top anchor format. Gabor Szabo.
 
-	- Fixed the text formatter to properly set the Text::Wrap overflow policy.
-	Thanks to Nigel Metheringham for the fix!
+    - Fixed the text formatter to properly set the Text::Wrap overflow policy.
+    Thanks to Nigel Metheringham for the fix!
 
-	- Fixed mis-matched quotation marks when adding JavaScript elements
-	to the XHTML output. Patch from jonathancast.
+    - Fixed mis-matched quotation marks when adding JavaScript elements
+    to the XHTML output. Patch from jonathancast.
 
-	- Fixed issues on EBCDIC. Patch from Karl Williamson (GitHub Pull
-	Request #58).
+    - Fixed issues on EBCDIC. Patch from Karl Williamson (GitHub Pull
+    Request #58).
 
-	- Fixed bug where the value passed to Pod::Simple::XHTML's
-	html_css() method would be output twice. Thanks to Andrew Johnson
-	for the report (RT #99303).
+    - Fixed bug where the value passed to Pod::Simple::XHTML's
+    html_css() method would be output twice. Thanks to Andrew Johnson
+    for the report (RT #99303).
 
-	- Documented the 'recurse' attribute of Pod::Simple::Search.
-	Thanks to Jim Keenan for the report (RT #91886).
+    - Documented the 'recurse' attribute of Pod::Simple::Search.
+    Thanks to Jim Keenan for the report (RT #91886).
 
-	- An error is no longer thrown when '=encoding' directives are found
-	on subsequent lines. Instead, we now log a an error message,
-	"Cannot have multiple =encoding directives" (RT #91757).
+    - An error is no longer thrown when '=encoding' directives are found
+    on subsequent lines. Instead, we now log a an error message,
+    "Cannot have multiple =encoding directives" (RT #91757).
 
-	- The HTML and XHTML formatters now do a better job of preserving
-	lines in 'begin html' blocks. Fixes a bug that dates from 2002
-	(Perl RT#9385, CPAN RT #91851).
+    - The HTML and XHTML formatters now do a better job of preserving
+    lines in 'begin html' blocks. Fixes a bug that dates from 2002
+    (Perl RT#9385, CPAN RT #91851).
 
 3.28 2013-05-04   David E. Wheeler <david@justatheory.org>
-	- Removed use of 'done_testing' in t/white.t, which was added in
-	v3.27. Thanks to Paul Howarth for the catch.
+    - Removed use of 'done_testing' in t/white.t, which was added in
+    v3.27. Thanks to Paul Howarth for the catch.
 
-	- Fixed inproperly calculated number of skipped tests in t/xhtml01.t
-	when HTML::Entities is not intalled.
+    - Fixed inproperly calculated number of skipped tests in t/xhtml01.t
+    when HTML::Entities is not intalled.
 
 3.27 2013-05-03   David E. Wheeler <david@justatheory.org>
-	- Added new warnings as defined by Pod::Checker, thanks to RJBS:
-		+ "=over" without "=back"
-		+ "L<>" starts or ends with whitespace
-		+ raw "|" or "/" in "L<text|link>" text
+    - Added new warnings as defined by Pod::Checker, thanks to RJBS:
+        + "=over" without "=back"
+        + "L<>" starts or ends with whitespace
+        + raw "|" or "/" in "L<text|link>" text
 
-	- Added ->keep_encoding_directive, which is false by default, to
-	prevent formatters from emitting a document's '=encoding'
-	directive in most cases. That they emitted the encoding was a bug
-	introduced in v3.26 (RT #84093). Now, only the DumpAsText and
-	DumpAsXML formats set it to true. Patch from Patrice Dumas.
+    - Added ->keep_encoding_directive, which is false by default, to
+    prevent formatters from emitting a document's '=encoding'
+    directive in most cases. That they emitted the encoding was a bug
+    introduced in v3.26 (RT #84093). Now, only the DumpAsText and
+    DumpAsXML formats set it to true. Patch from Patrice Dumas.
 
 3.26 2013-02-27   David E. Wheeler <david@justatheory.org>
-	- Fixed another test script to skip all tests when Encode is not
-	installed.
+    - Fixed another test script to skip all tests when Encode is not
+    installed.
 
-	- Added 'encoding()' and 'detected_encoding()' to return the current
-	encoding and the encoding actually to decode the input file. The
-	value from "=encoding" is also now kept in the output tree. Patch
-	from Patrice Dumas (RT #74390).
+    - Added 'encoding()' and 'detected_encoding()' to return the current
+    encoding and the encoding actually to decode the input file. The
+    value from "=encoding" is also now kept in the output tree. Patch
+    from Patrice Dumas (RT #74390).
 
 3.25 2013-02-16   David E. Wheeler <david@justatheory.org>
-	- Improved the warning when "=item" types mismatch within one
-	"=over"/"=back" block.
+    - Improved the warning when "=item" types mismatch within one
+    "=over"/"=back" block.
 
 3.24 2013-02-14   David E. Wheeler <david@justatheory.org>
-	- Fixed corner case bug for unlikely scenario in which non-UTF-8
-	text could be parsed as UTF-8. Grant McLean.
+    - Fixed corner case bug for unlikely scenario in which non-UTF-8
+    text could be parsed as UTF-8. Grant McLean.
 
-	- XHTML IDs can no longer end with punctuation. Thanks to Smylers
-	for the patch.
+    - XHTML IDs can no longer end with punctuation. Thanks to Smylers
+    for the patch.
 
-	- Fixed test failure on Perl 5.6.2.
+    - Fixed test failure on Perl 5.6.2.
 
-	- Changed the default installation location from "perl" to "site" on
-	5.12 and higher, since as of that version of Perl, dual-life
-	modules no longer need to be installed in "perl" to replace
-	in-core versions. Patch from tzccinct.
+    - Changed the default installation location from "perl" to "site" on
+    5.12 and higher, since as of that version of Perl, dual-life
+    modules no longer need to be installed in "perl" to replace
+    in-core versions. Patch from tzccinct.
 
-	- Fixed hash order dependency test failures on Perl 5.17. Thanks to
-	Yves Orton for the patch.
+    - Fixed hash order dependency test failures on Perl 5.17. Thanks to
+    Yves Orton for the patch.
 
-	- Inlined the code that tries to guess a Pod file's encoding. This
-	reduces the time Pod::Simple takes to build the core Perl
-	documentation by 15-20%. Thanks to Dagfinn Ilmari Mannsåker for
-	the patch!
+    - Inlined the code that tries to guess a Pod file's encoding. This
+    reduces the time Pod::Simple takes to build the core Perl
+    documentation by 15-20%. Thanks to Dagfinn Ilmari Mannsåker for
+    the patch!
 
-	- Added a warning when "=item" types mismatch within one
-	"=over"/"=back" block. Marc Green/Google Summer of Code, with
-	assist from RJBS.
+    - Added a warning when "=item" types mismatch within one
+    "=over"/"=back" block. Marc Green/Google Summer of Code, with
+    assist from RJBS.
 
-	- Fixed regression introduced in 3.22 in which "C< >" tags were
-	incorrectly treated as verbatim text in table of contents items
-	emitted by Pod::Simple::XHTML. Thanks to Randy Stauner for the
-	report and to Thomas Sibley for the fix!
+    - Fixed regression introduced in 3.22 in which "C< >" tags were
+    incorrectly treated as verbatim text in table of contents items
+    emitted by Pod::Simple::XHTML. Thanks to Randy Stauner for the
+    report and to Thomas Sibley for the fix!
 
-	- Loosened up the matching of "L< >" tags for man pages so that they
-	allow names with dots, underscores, and any other chararacters
-	other than "/", just so long as they end in '[(][-a-zA-Z0-9]+[)]'.
-	Thanks to Dave Rolsky and Kevin Ryde for the reports (RT #82975 &
-	RT #82972).
+    - Loosened up the matching of "L< >" tags for man pages so that they
+    allow names with dots, underscores, and any other chararacters
+    other than "/", just so long as they end in '[(][-a-zA-Z0-9]+[)]'.
+    Thanks to Dave Rolsky and Kevin Ryde for the reports (RT #82975 &
+    RT #82972).
 
-	- Fixed inverted mapping of "keyboard" to "kbd" in
-	Pod::Simple::HTML. Thanks to Robert Boisvert for the bug report
-	(RT #79201).
+    - Fixed inverted mapping of "keyboard" to "kbd" in
+    Pod::Simple::HTML. Thanks to Robert Boisvert for the bug report
+    (RT #79201).
 
-	- Added two new Tagmap entries to Pod::Simple::HTML: "preformat"
-	maps to "pre", and "teletype" maps to "tt". Suggested by Robert
-	Boisvert (RT #79201).
+    - Added two new Tagmap entries to Pod::Simple::HTML: "preformat"
+    maps to "pre", and "teletype" maps to "tt". Suggested by Robert
+    Boisvert (RT #79201).
 
-	- "X< >" tags are now ignored by the pull parser when it searches
-	for titles, as is any trailing whitespace. Thanks to Patrice Dumas
-	for the report (RT #74389).
+    - "X< >" tags are now ignored by the pull parser when it searches
+    for titles, as is any trailing whitespace. Thanks to Patrice Dumas
+    for the report (RT #74389).
 
 3.23 2012-08-14   David E. Wheeler <david@justatheory.org>
-	- Eliminated nested elements in table of contents (index) items
-	output of Pod::Simple::XHTML. This was especially problematic for
-	headers that included links, as the TOC then got nested anchor
-	elements, which simply would not work. Thanks to Ben Bullock for
-	the report and test case (RT #77686).
+    - Eliminated nested elements in table of contents (index) items
+    output of Pod::Simple::XHTML. This was especially problematic for
+    headers that included links, as the TOC then got nested anchor
+    elements, which simply would not work. Thanks to Ben Bullock for
+    the report and test case (RT #77686).
 
-	- Fixed semantically invalid nested XHTML generated by
-	Pod::Simple::XHTML since v3.21. Gisle Aas.
+    - Fixed semantically invalid nested XHTML generated by
+    Pod::Simple::XHTML since v3.21. Gisle Aas.
 
-	- Improved support for nested "C< >" tags in Pod::Simple::XHTML.
-	Gisle Aas.
+    - Improved support for nested "C< >" tags in Pod::Simple::XHTML.
+    Gisle Aas.
 
-	- No longer tries to decode a string with the "utf8" flag set, as
-	the double-decoding only triggered an error. Grant McLean.
+    - No longer tries to decode a string with the "utf8" flag set, as
+    the double-decoding only triggered an error. Grant McLean.
 
-	- Added documentation note that the API expects encoded text
-	(octets). Grant McLean.
+    - Added documentation note that the API expects encoded text
+    (octets). Grant McLean.
 
-	- Added "parse_characters()" option to specify that strings to are
-	already decoded from octets into characters. Grant McLean.
+    - Added "parse_characters()" option to specify that strings to are
+    already decoded from octets into characters. Grant McLean.
 
 3.22 2012-05-27   David E. Wheeler <david@justatheory.org>
-	- Fix but where Pod::Simple would whine about non-ASCII bytes in
-	code or comments. Now only does so for Pod (in the absence of an
-	"=encoding" tag. Broken in 3.21. Grant McLean.
+    - Fix but where Pod::Simple would whine about non-ASCII bytes in
+    code or comments. Now only does so for Pod (in the absence of an
+    "=encoding" tag. Broken in 3.21. Grant McLean.
 
 3.21 2012-05-23   David E. Wheeler <david@justatheory.org>
-	- NOTE: COMPATABILITY CHANGE: The 'codes_in_verbatim' option in
-	Pod::Simple::XHTML is no longer enabled by default. This brings it
-	agreement with the other formatting classes, and eliminates
-	unexpected behavior in XHTML-formatted Pod. Users who depended on
-	this functionality can still get it by enabling
-	'codes_in_verbatim' in their code.
+    - NOTE: COMPATABILITY CHANGE: The 'codes_in_verbatim' option in
+    Pod::Simple::XHTML is no longer enabled by default. This brings it
+    agreement with the other formatting classes, and eliminates
+    unexpected behavior in XHTML-formatted Pod. Users who depended on
+    this functionality can still get it by enabling
+    'codes_in_verbatim' in their code.
 
-	- Fixed some typos in the documentation. Thanks to Jonathan Yu via
-	the Debian packagers via Florian Ragwitz (RT #75532).
+    - Fixed some typos in the documentation. Thanks to Jonathan Yu via
+    the Debian packagers via Florian Ragwitz (RT #75532).
 
-	- Now emit a warning the first time a non-ASCII byte is encountered
-	when no "=encoding" has been seen. Grant McLean.
+    - Now emit a warning the first time a non-ASCII byte is encountered
+    when no "=encoding" has been seen. Grant McLean.
 
-	- When a non-ASCII byte is encounted before an "=encoding" line has
-	been seen, a heuristic (as described in perlpodspec) is applied to
-	select UTF-8 encoding if the non-ASCII bytes form a valid UTF-8
-	byte sequence, or Latin-1 otherwise. Grant McLean.
+    - When a non-ASCII byte is encounted before an "=encoding" line has
+    been seen, a heuristic (as described in perlpodspec) is applied to
+    select UTF-8 encoding if the non-ASCII bytes form a valid UTF-8
+    byte sequence, or Latin-1 otherwise. Grant McLean.
 
-	- Added 'handle_code' method to Pod::Simple::XHTML. This allows
-	subclasses to override the handling of verbatim blocks, and makes
-	for a more cohesive interface, to boot. Gisle Aas.
+    - Added 'handle_code' method to Pod::Simple::XHTML. This allows
+    subclasses to override the handling of verbatim blocks, and makes
+    for a more cohesive interface, to boot. Gisle Aas.
 
-	- Subsequent text segments are now joined together and passed as a
-	single unit to text handling code. This makes it easier for custom
-	handlers to process complete blocks of text in a single call to
-	'handle_text', rather than in dribs and drabs. Gisle Aas.
+    - Subsequent text segments are now joined together and passed as a
+    single unit to text handling code. This makes it easier for custom
+    handlers to process complete blocks of text in a single call to
+    'handle_text', rather than in dribs and drabs. Gisle Aas.
 
-	- Replaced naive text wrapping code in Pod::Simple::DumpAsXML with
-	Text::Wrap, which was already used for similar purposes elsewhere
-	in Pod::Simple. Gisle Aas.
+    - Replaced naive text wrapping code in Pod::Simple::DumpAsXML with
+    Text::Wrap, which was already used for similar purposes elsewhere
+    in Pod::Simple. Gisle Aas.
 
 3.20 2012-03-01   David E. Wheeler <david@justatheory.org>
-	- Removed use of 'done_testing' in t/xhtml15.t, which was added in
-	v3.19. Thanks to Paul Howarth for the catch.
+    - Removed use of 'done_testing' in t/xhtml15.t, which was added in
+    v3.19. Thanks to Paul Howarth for the catch.
 
-	- Fixed quoting of links in a regular expression Pod::Simple::Text.
-	Reported by Father Chrysostomos.
+    - Fixed quoting of links in a regular expression Pod::Simple::Text.
+    Reported by Father Chrysostomos.
 
-	- Fix test failure on case-insensitive, non-case-preserving file systems
-	(VMS I'm looking at *you*). Patch from Craig A. Berry.
+    - Fix test failure on case-insensitive, non-case-preserving file systems
+    (VMS I'm looking at *you*). Patch from Craig A. Berry.
 
-	- Pod::Simple::HTML no longer emits "href='#___top'" if a TOC
-	(index) is not output. Patch from Rick Myers.
+    - Pod::Simple::HTML no longer emits "href='#___top'" if a TOC
+    (index) is not output. Patch from Rick Myers.
 
-	- Fixed links in the TOC of XHTML output to use IDs derived from encoded
-	text, rather than raw Pod, so that it will link to the ID actually
-	generated for the section. Thanks to Randy Stauner for the report
-	(with test case!) (RT #72544).
+    - Fixed links in the TOC of XHTML output to use IDs derived from encoded
+    text, rather than raw Pod, so that it will link to the ID actually
+    generated for the section. Thanks to Randy Stauner for the report
+    (with test case!) (RT #72544).
 
-	- PullParser now throws an exception on an attempt to set a source
-	more than once. Necessary because data from the previous source
-	will be cached, so the new source would be ignored anyway. Create a
-	new PullParser, instead. Thanks to Paul Boldra for the report (RT
-	#74265).
+    - PullParser now throws an exception on an attempt to set a source
+    more than once. Necessary because data from the previous source
+    will be cached, so the new source would be ignored anyway. Create a
+    new PullParser, instead. Thanks to Paul Boldra for the report (RT
+    #74265).
 
 3.19 2011-08-23   David E. Wheeler <david@justatheory.org>
-	- Fixed occasional test failure when tests are run in parallel
-	(HARNESS_OPTIONS=j6:c). Thanks to Alexei Znamensky for the report and
-	Marc Green for the fix.
+    - Fixed occasional test failure when tests are run in parallel
+    (HARNESS_OPTIONS=j6:c). Thanks to Alexei Znamensky for the report and
+    Marc Green for the fix.
 
-	- Added "pod_handler" option. This is a callback that can be used to
-	inspect the content on a "=pod" line. Marc Green/Google Summer of
-	Code.
+    - Added "pod_handler" option. This is a callback that can be used to
+    inspect the content on a "=pod" line. Marc Green/Google Summer of
+    Code.
 
-	- Added tests for proper line-ending parsing from the previous
-	release. The tests were in the repository, but didn't make it into
-	the MANIFEST or, therefore, the release. Reported by Marc Green.
+    - Added tests for proper line-ending parsing from the previous
+    release. The tests were in the repository, but didn't make it into
+    the MANIFEST or, therefore, the release. Reported by Marc Green.
 
-	- Added the "parse_empty_lists" option. When enabled, Pod::Simple
-	will recognize empty lists (that is, a blocks with '=over' and
-	'=back' but nothing in between). Disabled by default. Marc
-	Green/Google Summer of Code.
+    - Added the "parse_empty_lists" option. When enabled, Pod::Simple
+    will recognize empty lists (that is, a blocks with '=over' and
+    '=back' but nothing in between). Disabled by default. Marc
+    Green/Google Summer of Code.
 
-	- Added the "whiteline_handler" attribute. It's much like
-	"code_handler", "cut_handler", and "pod_handler", except it's
-	triggered on lines that contain only whitespace characters. Marc
-	Green/Google Summer of Code.
+    - Added the "whiteline_handler" attribute. It's much like
+    "code_handler", "cut_handler", and "pod_handler", except it's
+    triggered on lines that contain only whitespace characters. Marc
+    Green/Google Summer of Code.
 
-	- Added "raw" attribute to L<> treelet that contains the L<>'s raw
-	contents. Marc Green/Google Summer of Code.
+    - Added "raw" attribute to L<> treelet that contains the L<>'s raw
+    contents. Marc Green/Google Summer of Code.
 
-	- Pod directives autoclosed by Pod::Simple are now denoted as such
-	by the new "fake_closer" attribue. Marc Green/Google Summer of
-	Code.
+    - Pod directives autoclosed by Pod::Simple are now denoted as such
+    by the new "fake_closer" attribue. Marc Green/Google Summer of
+    Code.
 
-	- Fixed incompatibility with Pod::Simple::HTMLBatch in
-	Pod::Simple::XHTML. Patch by Eric Johnson.
+    - Fixed incompatibility with Pod::Simple::HTMLBatch in
+    Pod::Simple::XHTML. Patch by Eric Johnson.
 
 3.18 2011-07-16   David E. Wheeler <david@justatheory.org>
-	- Pod::Simple now properly parses Pod files using Mac OS Classic line-
-	endings (\r). Marc Green/Google Summer of Code.
+    - Pod::Simple now properly parses Pod files using Mac OS Classic line-
+    endings (\r). Marc Green/Google Summer of Code.
 
-	- Fixed test failure in 't/search50.t when the test finds a .pod but
-	the module is in a .pm. Thanks to the cpan-testers who reported
-	this when the test searched for Capture::Tiny.
+    - Fixed test failure in 't/search50.t when the test finds a .pod but
+    the module is in a .pm. Thanks to the cpan-testers who reported
+    this when the test searched for Capture::Tiny.
 
 3.17 2011-07-09   David E. Wheeler <david@justatheory.org>
-	- Documented tertiary methods. Patch from Shawn H Corey.
+    - Documented tertiary methods. Patch from Shawn H Corey.
 
-	- Added "backlink" option to Pod::Simple::XHTML. Thanks to Marc
-	Green/Google Summer of Code for the pull request.
+    - Added "backlink" option to Pod::Simple::XHTML. Thanks to Marc
+    Green/Google Summer of Code for the pull request.
 
-	- Typos fixed in Pod::Simple::HTMLBatch. Reported by Shawn H Corey.
+    - Typos fixed in Pod::Simple::HTMLBatch. Reported by Shawn H Corey.
 
-	- Fixed quoting of value returned by a "strip_verbatim_indent()"
-	code reference so that regex meta characters are properly escaped.
+    - Fixed quoting of value returned by a "strip_verbatim_indent()"
+    code reference so that regex meta characters are properly escaped.
 
-	- Added "anchor_items" option to Pod::Simple::XHMTL. This allows
-	text items (which are output as <dt> elements) to have IDs that
-	can be referenced in the "#" part of a URL. Marc Green/Google
-	Summer of Code.
+    - Added "anchor_items" option to Pod::Simple::XHMTL. This allows
+    text items (which are output as <dt> elements) to have IDs that
+    can be referenced in the "#" part of a URL. Marc Green/Google
+    Summer of Code.
 
-	- Added "recurse" option to Pod::Simple::Search. It's enabled by
-	default; disable it to turn off recursion into subdirectories.
-	Marc Green/Google Summer of Code.
+    - Added "recurse" option to Pod::Simple::Search. It's enabled by
+    default; disable it to turn off recursion into subdirectories.
+    Marc Green/Google Summer of Code.
 
-	- Added documentation to clarify the behavior of the "content_seen"
-	method. Thanks to Olaf Alders for the pull request.
+    - Added documentation to clarify the behavior of the "content_seen"
+    method. Thanks to Olaf Alders for the pull request.
 
 3.16 2011-03-14   David E. Wheeler <david@justatheory.org>
-	- Fixed invalid HTML generated for nested lists by Pod::Simple::XHTML
-	(Fitz Elliott).
+    - Fixed invalid HTML generated for nested lists by Pod::Simple::XHTML
+    (Fitz Elliott).
 
-	- Replaced the invalid "<nobr>" tag -- created for "S<>" -- with
-	'<span style="white-space: nowrap;">' (Fitz Elliott).
+    - Replaced the invalid "<nobr>" tag -- created for "S<>" -- with
+    '<span style="white-space: nowrap;">' (Fitz Elliott).
 
-	- Fixed some nerbles in our own Pod (Michael Stevens)
+    - Fixed some nerbles in our own Pod (Michael Stevens)
 
-	- Improved the "Minimal code" example in Pod::Simple::HTML. The key
-	is to use pase_file(), not parse_from_file() (which should
-	otherwise be undocumented, and is just there for Pod::Parser
-	compatibility. Thanks to prodding from Ævar Arnfjörð Bjarmason (RT
-	#65428).
+    - Improved the "Minimal code" example in Pod::Simple::HTML. The key
+    is to use pase_file(), not parse_from_file() (which should
+    otherwise be undocumented, and is just there for Pod::Parser
+    compatibility. Thanks to prodding from Ævar Arnfjörð Bjarmason (RT
+    #65428).
 
-	- Added the html_charset() and html_encode_chars() attributes to
-	Pod::Simple::XHTML. Inspired by a bug report from Agent Zhang
-	(章亦春) (RT #29587).
+    - Added the html_charset() and html_encode_chars() attributes to
+    Pod::Simple::XHTML. Inspired by a bug report from Agent Zhang
+    (章亦春) (RT #29587).
 
-	- Added "Minimal code" example to the Pod::Simple::XHTML documentation.
+    - Added "Minimal code" example to the Pod::Simple::XHTML documentation.
 
-	- Fixed mispelling of the "=encoding" markup in the parser (it was
-	spelled "=encode"). Thanks to "TTY" for the patch. (RT #24820).
+    - Fixed mispelling of the "=encoding" markup in the parser (it was
+    spelled "=encode"). Thanks to "TTY" for the patch. (RT #24820).
 
 3.15 2010-11-11   David E. Wheeler <david@justatheory.org>
-	- Removed "perlpod.pod" and "perlpodspec.pod". These now just live
-	in the Perl core.
+    - Removed "perlpod.pod" and "perlpodspec.pod". These now just live
+    in the Perl core.
 
-	- Fixed stylesheet names output by HTMLBatch to match the names of
-	the actual stylesheet files (broken in 3.09). Thanks to Kevin Ryde
-	for the report (RT #56725).
+    - Fixed stylesheet names output by HTMLBatch to match the names of
+    the actual stylesheet files (broken in 3.09). Thanks to Kevin Ryde
+    for the report (RT #56725).
 
-	- Added missing closing slash to the CSS links in the XHTML output.
-	Thanks to HarleyPig for the patch!
+    - Added missing closing slash to the CSS links in the XHTML output.
+    Thanks to HarleyPig for the patch!
 
-	- Added parens around bar "qw(...)" in t/xhtml05.t. Thanks to Jerry
-	D. Hedden for the patch.
+    - Added parens around bar "qw(...)" in t/xhtml05.t. Thanks to Jerry
+    D. Hedden for the patch.
 
-	- Improved the Pod::Simple::HTML docs. Thanks to Gabor Szabo for the
-	patch.
+    - Improved the Pod::Simple::HTML docs. Thanks to Gabor Szabo for the
+    patch.
 
-	- Pod::Simple::XHTML now properly encodes entities in URLs in the
-	anchor tag. Thanks to John McNamara for the report (RT-60249).
+    - Pod::Simple::XHTML now properly encodes entities in URLs in the
+    anchor tag. Thanks to John McNamara for the report (RT-60249).
 
-	- Pod::Simple::HTML and XHTML now strip whitespace from the end of
-	section names that appear as anchor names for headers (in HTML)
-	and IDs (in XHTML). Such whitespace appeared when "X<>" entities
-	were stripped out but not the space between them (RT-56572).
+    - Pod::Simple::HTML and XHTML now strip whitespace from the end of
+    section names that appear as anchor names for headers (in HTML)
+    and IDs (in XHTML). Such whitespace appeared when "X<>" entities
+    were stripped out but not the space between them (RT-56572).
 
-	- Make test "t/search50.t" always pass on case-insensitive file
-	systems rather than just skip VMS.
+    - Make test "t/search50.t" always pass on case-insensitive file
+    systems rather than just skip VMS.
 
 3.14 2009-04-27
-	- Removed explicit loading of UNIVERSAL. RJBS.
+    - Removed explicit loading of UNIVERSAL. RJBS.
 
-	- Reversed the change applied in release 3.09 to fix RT #12239. POD
-	tag found inside a complex POD tag (e.g., "C<<< I<foo> >>>") is
-	again parsed as a tag embedded in a tag instead of text and
-	entities. The previous interpretation of `perldoc perlpod` was
-	mistaken. (RT #55602 from Christopher J. Madsen).
+    - Reversed the change applied in release 3.09 to fix RT #12239. POD
+    tag found inside a complex POD tag (e.g., "C<<< I<foo> >>>") is
+    again parsed as a tag embedded in a tag instead of text and
+    entities. The previous interpretation of `perldoc perlpod` was
+    mistaken. (RT #55602 from Christopher J. Madsen).
 
 3.13 2009-12-17   David E. Wheeler <david@justatheory.org>
-	- Removed deleted test file from MANIFEST.
+    - Removed deleted test file from MANIFEST.
 
 3.12 2009-12-17   David E. Wheeler <david@justatheory.org>
-	- Removed "All rights reserved" from all files.
+    - Removed "All rights reserved" from all files.
 
-	- Added acknowledgements to man.he.net and search.cpan.org for
-	permission to link man pages and Perl module links to their sites
-	in the output of Pod::Simple::HTML and Pod::Simple::XHTML.
+    - Added acknowledgements to man.he.net and search.cpan.org for
+    permission to link man pages and Perl module links to their sites
+    in the output of Pod::Simple::HTML and Pod::Simple::XHTML.
 
-	- Add "html_h_level" option to Pod::Simple::XHTML and ::HTML to allow
-	a =head1 to become an <h2> and so on. RJBS.
+    - Add "html_h_level" option to Pod::Simple::XHTML and ::HTML to allow
+    a =head1 to become an <h2> and so on. RJBS.
 
-	- Add batch_mode_page_object_init() method to Pod::Simple::XHTML.
-	This allows it to be used by Pod::Simple::HTMLBatch.
+    - Add batch_mode_page_object_init() method to Pod::Simple::XHTML.
+    This allows it to be used by Pod::Simple::HTMLBatch.
 
-	- Fixed a regression in Pod::Simple::XHTML where '=begin html' blocks
-	were incorrectly escaped rather than simply passed through unmolested.
-	RJBS.
+    - Fixed a regression in Pod::Simple::XHTML where '=begin html' blocks
+    were incorrectly escaped rather than simply passed through unmolested.
+    RJBS.
 
-	- Removed the undocumented "fullstop_space_harden" attribute, which
-	apparently was only used by Pod::Text a very long time ago.
+    - Removed the undocumented "fullstop_space_harden" attribute, which
+    apparently was only used by Pod::Text a very long time ago.
 
 3.11 2009-12-09   David E. Wheeler <david@justatheory.org>
-	- Restored code to HTMLBatch that allows the TOC (index) to be created
-	in batch jobs (RT #52324 from Martin J. Evans).
+    - Restored code to HTMLBatch that allows the TOC (index) to be created
+    in batch jobs (RT #52324 from Martin J. Evans).
 
-	- Added resources to META.yml, including bug tracker, license, and
-	repository.
+    - Added resources to META.yml, including bug tracker, license, and
+    repository.
 
-	- Turned man page links into links to man.he.net in Pod::Simple::HTML
-	and Pod::Simple::XHTML output. Subclass and override
-	resolve_man_page_link() to use a different URL.
+    - Turned man page links into links to man.he.net in Pod::Simple::HTML
+    and Pod::Simple::XHTML output. Subclass and override
+    resolve_man_page_link() to use a different URL.
 
-	- Added the resolve_pod_page_link() and resolve_man_page_link() methods
-	to Pod::Simple::XHTML to make it easier for subclasses to change the
-	URLs created for POD and man page links.
+    - Added the resolve_pod_page_link() and resolve_man_page_link() methods
+    to Pod::Simple::XHTML to make it easier for subclasses to change the
+    URLs created for POD and man page links.
 
-	- Fixed the output of entities in L<> tags by Pod::Simple::XHTML.
+    - Fixed the output of entities in L<> tags by Pod::Simple::XHTML.
 
-	- Fixed the output of POD links from Pod::Simple::XHTML so that the
-	section part (/foo) is turned into a proper fragment identifier (#foo)
-	in the resulting search.cpan.org link.
+    - Fixed the output of POD links from Pod::Simple::XHTML so that the
+    section part (/foo) is turned into a proper fragment identifier (#foo)
+    in the resulting search.cpan.org link.
 
-	- Pod::Simple::Text now outputs URLs for links created in the
-	L<text|URL> format. For example, L<Perl|http://perl.org> is now
-	output as "Perl <http://perl.org>" rather than just as "Perl".
+    - Pod::Simple::Text now outputs URLs for links created in the
+    L<text|URL> format. For example, L<Perl|http://perl.org> is now
+    output as "Perl <http://perl.org>" rather than just as "Perl".
 
-	- Updated perlpod.pod and perlpodspec.pod to sync up with Perl core
-	(and to be released in Perl 5.12). Changes include:
-		* Removing the prohibition against L<text|href>
-		* Deprecation of L<section> and L<"section">
-		* Legalization of "=begin formatname parameter"
+    - Updated perlpod.pod and perlpodspec.pod to sync up with Perl core
+    (and to be released in Perl 5.12). Changes include:
+        * Removing the prohibition against L<text|href>
+        * Deprecation of L<section> and L<"section">
+        * Legalization of "=begin formatname parameter"
 
-	- A couple of bug fixes in Pod::Simple::HTML from Graham Barr.
+    - A couple of bug fixes in Pod::Simple::HTML from Graham Barr.
 
-	- Added the do_section() method to Pod::Simple::HTML. Graham Barr.
+    - Added the do_section() method to Pod::Simple::HTML. Graham Barr.
 
-	- Word-smithed the "DESCRIPTION" a bit and wrote the README.
+    - Word-smithed the "DESCRIPTION" a bit and wrote the README.
 
-	- Synced up all module version numbers to 3.11 except for
-	Pod::Simple::HTMLLegacy, which is at 5.01 and should not have its
-	version number lowered.
+    - Synced up all module version numbers to 3.11 except for
+    Pod::Simple::HTMLLegacy, which is at 5.01 and should not have its
+    version number lowered.
 
 3.10 2009-11-12   David E. Wheeler <david@justatheory.org>
-	- Converted test files that had DOS endings to have Unix endings
-	(RT #50922 from Steve Hay).
+    - Converted test files that had DOS endings to have Unix endings
+    (RT #50922 from Steve Hay).
 
-	- Skip tests on VMS where the lack of filename case preservation can
-	wreak havoc (RT #51184 from Craig A. Berry).
+    - Skip tests on VMS where the lack of filename case preservation can
+    wreak havoc (RT #51184 from Craig A. Berry).
 
-	- Fix nested definition list format in the XHTML output
-	(RT #51187 from Lars Dɪᴇᴄᴋᴏᴡ).
+    - Fix nested definition list format in the XHTML output
+    (RT #51187 from Lars Dɪᴇᴄᴋᴏᴡ).
 
-	- Added some files missing from the MANIFEST (and therefore the
-	distribution) in the last two releases.
+    - Added some files missing from the MANIFEST (and therefore the
+    distribution) in the last two releases.
 
 3.09 2009-10-27   Allison Randal <allison@perl.org>
-	- Add support for an index (TOC) in the XHTML output from David E.
-	Wheeler.
+    - Add support for an index (TOC) in the XHTML output from David E.
+    Wheeler.
 
-	- Add strip_verbatim_indent() from David E. Wheeler.
+    - Add strip_verbatim_indent() from David E. Wheeler.
 
-	- Added the "nocase" option to PullParser's get_title(),
-	get_version(), get_description(), and get_author() methods. This
-	allows one to fetch the contents of those sections regardless of
-	the case of the labels (e.g., "NAME" and "Name" and "name" are all
-	valid). Graham Barr.
+    - Added the "nocase" option to PullParser's get_title(),
+    get_version(), get_description(), and get_author() methods. This
+    allows one to fetch the contents of those sections regardless of
+    the case of the labels (e.g., "NAME" and "Name" and "name" are all
+    valid). Graham Barr.
 
-	- Added the search_class() accessor to Pod::Simple::HTMLBatch.
-	David E. Wheeler.
+    - Added the search_class() accessor to Pod::Simple::HTMLBatch.
+    David E. Wheeler.
 
-	- XHTML output now properly encodes entities in all places, not just
-	in verbatim blocks and code spans. David E. Wheeler.
+    - XHTML output now properly encodes entities in all places, not just
+    in verbatim blocks and code spans. David E. Wheeler.
 
-	- Fixed XHTML to output definition lists when it should, rather than
-	(broken) unordered lists. David E. Wheeler.
+    - Fixed XHTML to output definition lists when it should, rather than
+    (broken) unordered lists. David E. Wheeler.
 
-	- Fixed XHTML so that multiparagraph list items work correctly.
-	David E. Wheeler.
+    - Fixed XHTML so that multiparagraph list items work correctly.
+    David E. Wheeler.
 
-	- Fixed XHTML ordered list output so that it does not include the
-	number specified in the POD in the output. This is on a par with
-	out the HTML output works. David E. Wheeler.
+    - Fixed XHTML ordered list output so that it does not include the
+    number specified in the POD in the output. This is on a par with
+    out the HTML output works. David E. Wheeler.
 
-	- Applied URL patch from Leon Brocard for The Perl Journal archives.
+    - Applied URL patch from Leon Brocard for The Perl Journal archives.
 
-	- Fixed test failures with older versions of HTML::Entities (RT #43903
-	from Salvador Tercia).
+    - Fixed test failures with older versions of HTML::Entities (RT #43903
+    from Salvador Tercia).
 
-	- Changed CSS files generated by HTMLBatch to be no more than 8.3
-	characters long. (RT #40450 from Renee Baecker)
+    - Changed CSS files generated by HTMLBatch to be no more than 8.3
+    characters long. (RT #40450 from Renee Baecker)
 
-	- Added entity handling for E<sol> and E<verbar> to Pod::Simple::XHTML.
-	(RT #49615 from Chas Owens.)
+    - Added entity handling for E<sol> and E<verbar> to Pod::Simple::XHTML.
+    (RT #49615 from Chas Owens.)
 
-	- Fixed a bug in Pod::Simple::HTML where a definition term item with
-	no corresponding definition item would be output with no closing
-	</a></dt>. (RT # 37107 from Kevin Ryde).
+    - Fixed a bug in Pod::Simple::HTML where a definition term item with
+    no corresponding definition item would be output with no closing
+    </a></dt>. (RT # 37107 from Kevin Ryde).
 
-	- Added entity handling for numeric entities to Pod::Simple::XHTML,
-	following perlpod specification.
+    - Added entity handling for numeric entities to Pod::Simple::XHTML,
+    following perlpod specification.
 
-	- A POD tag found inside a complex POD tag (e.g., "C<<< C<foo> >>>")
-	is now properly parsed as text and entities instead of a tag
-	embedded in a tag. This is in compliance with `perldoc perlpod`
-	(RT #12239 from Michael Schwern).
+    - A POD tag found inside a complex POD tag (e.g., "C<<< C<foo> >>>")
+    is now properly parsed as text and entities instead of a tag
+    embedded in a tag. This is in compliance with `perldoc perlpod`
+    (RT #12239 from Michael Schwern).
 
-	- Thanks to David E. Wheeler for applying patches, resolving bugs,
-	and generally getting ready for the release.
+    - Thanks to David E. Wheeler for applying patches, resolving bugs,
+    and generally getting ready for the release.
 
 3.08 2009-07-16   Allison Randal <allison@perl.org>
-	- Fix installdirs for Perl versions where Pod::Simple was core;
-	RT#36446 & RT#39709, thanks to Jerry Hedden.
+    - Fix installdirs for Perl versions where Pod::Simple was core;
+    RT#36446 & RT#39709, thanks to Jerry Hedden.
 
-	- Fix encoding handling for code in paragraphs; RT#45829, thanks
-	to David Wheeler.
+    - Fix encoding handling for code in paragraphs; RT#45829, thanks
+    to David Wheeler.
 
 3.07 2008-06-04   Allison Randal <allison@perl.org>
-	- Fix module dependencies, make HTML::Entities optional and require
-	Test::More.
+    - Fix module dependencies, make HTML::Entities optional and require
+    Test::More.
 
 3.06 2008-06-03   Allison Randal <allison@perl.org>
-	- Fix bugs related to passing $1 to File::Spec, reported by Andrew Hamlin and
-	John McNamara.
+    - Fix bugs related to passing $1 to File::Spec, reported by Andrew Hamlin and
+    John McNamara.
 
-	- Applied a suggested fix from Kevin Ryde to return a successful exit
-	code when Pod::Simple::HTML is run from the command line.
+    - Applied a suggested fix from Kevin Ryde to return a successful exit
+    code when Pod::Simple::HTML is run from the command line.
 
-	- Fix handling of complex L<URL> entries, thanks to tests supplied in RT#4896.
+    - Fix handling of complex L<URL> entries, thanks to tests supplied in RT#4896.
 
-	- Fix incorrect handling of S<> entries made up of entirely whitespace, thanks
-	to test case from Andreas Koenig.
+    - Fix incorrect handling of S<> entries made up of entirely whitespace, thanks
+    to test case from Andreas Koenig.
 
-	- Launch Pod::Simple::XHTML, an XHTML compliant, more easily extensible
-	HTML formatter.
+    - Launch Pod::Simple::XHTML, an XHTML compliant, more easily extensible
+    HTML formatter.
 
-	- Add feature to parse additional text after =begin target as a block
-	title, requested by Adam Kennedy.
+    - Add feature to parse additional text after =begin target as a block
+    title, requested by Adam Kennedy.
 
-	- Thanks to Hans Dieter Pearcey for applying patches, resolving bugs,
-	and generally getting ready for the release.
+    - Thanks to Hans Dieter Pearcey for applying patches, resolving bugs,
+    and generally getting ready for the release.
 
 3.05 2007-03-03   Allison Randal <allison@perl.org>
-	- Standardized all test files on 8.3 naming scheme for Perl core.
+    - Standardized all test files on 8.3 naming scheme for Perl core.
 
-	- Applied test patches from Jerry Hedden for Perl core when
-	Encode not installed.
+    - Applied test patches from Jerry Hedden for Perl core when
+    Encode not installed.
 
-	- Applied test patch from Ken Williams for 5.005_04 compatibility.
+    - Applied test patch from Ken Williams for 5.005_04 compatibility.
 
-	- Applied a patch from Christopher Madsen to fix architecture
-	directory searches on Gentoo.
+    - Applied a patch from Christopher Madsen to fix architecture
+    directory searches on Gentoo.
 
-	- Fixed a failing search test on Debian-based distributions caused
-	by Debian stripping Pod documentation out of core modules.
-	(Three cheers to the CPAN testers and James Ponza for sending
-	enough reports that I could work out the pattern.)
+    - Fixed a failing search test on Debian-based distributions caused
+    by Debian stripping Pod documentation out of core modules.
+    (Three cheers to the CPAN testers and James Ponza for sending
+    enough reports that I could work out the pattern.)
 
 3.04 2006-01-18   Allison Randal <allison@perl.org>
-	- Applied test patches for Perl core integration from Steve Peters.
+    - Applied test patches for Perl core integration from Steve Peters.
 
-	- Added a 'reinit' method to Pod::Simple::BlackBox for Russ Allbery
-	so Pod::Man can provide backward compatibility to existing users
-	(such as Module::Build and ExtUtils::MakeMaker).
+    - Added a 'reinit' method to Pod::Simple::BlackBox for Russ Allbery
+    so Pod::Man can provide backward compatibility to existing users
+    (such as Module::Build and ExtUtils::MakeMaker).
 
-	- Applied patch for extracting case-preserved package names on VMS
-	from Craig Berry.
+    - Applied patch for extracting case-preserved package names on VMS
+    from Craig Berry.
 
 3.03 2005-11-21   Allison Randal <allison@perl.org>
-	- Applied whitespace patches for Pod::Man and Pod::Text from 
-	Russ Allbery.
+    - Applied whitespace patches for Pod::Man and Pod::Text from
+    Russ Allbery.
 
-	- Applied validation patches to Pod::Simple::HTML from Graham Barr.
+    - Applied validation patches to Pod::Simple::HTML from Graham Barr.
 
 3.02 2004-05-24   Sean M. Burke <sburke@cpan.org>
-	- Just fixing some typos in the CSS generated by Pod::Simple:HTMLBatch.
+    - Just fixing some typos in the CSS generated by Pod::Simple:HTMLBatch.
 
 3.01 2004-05-24   Sean M. Burke <sburke@cpan.org>
-	- No big changes to the main modules, but there's many changes to
-	the important Pod::Simple::HTML module.
+    - No big changes to the main modules, but there's many changes to
+    the important Pod::Simple::HTML module.
 
-	- Also, new modules:
-	  - Pod::Simple::HTMLBatch
-	  - Pod::Simple::HTMLLegacy
-	  - Pod::Simple::Progress
-	  - Pod::Simple::Search
-	- and tests for these (well, most).
+    - Also, new modules:
+      - Pod::Simple::HTMLBatch
+      - Pod::Simple::HTMLLegacy
+      - Pod::Simple::Progress
+      - Pod::Simple::Search
+    - and tests for these (well, most).
 
-	- Some prettying up of the Makefile.PL.
+    - Some prettying up of the Makefile.PL.
 
-	- The test 00about.t is a bit more careful and verbose now.
+    - The test 00about.t is a bit more careful and verbose now.
 
-	- The docs are still incomplete, esp. for Pod::Simple::HTML and
-	Pod::Simple::HTMLBatch, which I hope to improve quite soon.
-	
-	
-	
+    - The docs are still incomplete, esp. for Pod::Simple::HTML and
+    Pod::Simple::HTMLBatch, which I hope to improve quite soon.
+
+
+
 2.06 2004-05-07   Sean M. Burke <sburke@cpan.org>
-	- Allison Randal brilliantly refactors a huge monolithic sub in
-	Blackbox.pm.  Code is now actually sanely readable!
+    - Allison Randal brilliantly refactors a huge monolithic sub in
+    Blackbox.pm.  Code is now actually sanely readable!
 
-	- I add the new option-attributes fullstop_space_harden and
-	codes_in_verbatim, and the two methods abandon_output_string and
+    - I add the new option-attributes fullstop_space_harden and
+    codes_in_verbatim, and the two methods abandon_output_string and
         abandon_output_fh.  Not yet documented.
 
-	- New test fullstop_spaces.t and new corpus document
-	greek_iso_8859_7.pod.
-	
-	- Another version should be forthcoming in a few days that has the
-	new Pod::Simple::HTML stuff in it.
+    - New test fullstop_spaces.t and new corpus document
+    greek_iso_8859_7.pod.
 
-	- Note to self: document =extend and =encoding in perlpodspec ASAP!
+    - Another version should be forthcoming in a few days that has the
+    new Pod::Simple::HTML stuff in it.
 
-	
+    - Note to self: document =extend and =encoding in perlpodspec ASAP!
+
+
 2.05 2003-11-04  Sean M. Burke <sburke@cpan.org> -- bugfix version
-	- In an attempt to stop Perl 5.6 versions from going completely
-	crazy, I've tried to basically turn off all Unicode/utf8 support
-	under 5.6. Under 5.8 and above, Unicode should work fine, and
-	under 5.6, all Unicode characters should be replaced with a little
-	"can't render" symbol, either a "¤" or a "?".
-	Many many thanks to Jarkko Hietaniemi for helping out.
+    - In an attempt to stop Perl 5.6 versions from going completely
+    crazy, I've tried to basically turn off all Unicode/utf8 support
+    under 5.6. Under 5.8 and above, Unicode should work fine, and
+    under 5.6, all Unicode characters should be replaced with a little
+    "can't render" symbol, either a "¤" or a "?".
+    Many many thanks to Jarkko Hietaniemi for helping out.
 
-	- (Works under 5.005 now too?)
-	
+    - (Works under 5.005 now too?)
+
 2.04 2003-10-10  Sean M. Burke <sburke@cpan.org> -- minor bugfix version
-	* Added some code to insulate Pod::Simple to runtime changes in
-	the value of $/.  Thanks to Iain Truskett for catching this.
-	* Added FILENO method to TiedOutFH.pm, to work quietly under some
-	perls.  Thanks to Jochen Stenzel for catching this.
-	* Fixed some tests that erroneously failed under some 5.6's
-	because of chdir()s in *.t files messing up @INC  Thanks to many
-	who caught this, including Rocco Caputo.
-	
+    * Added some code to insulate Pod::Simple to runtime changes in
+    the value of $/.  Thanks to Iain Truskett for catching this.
+    * Added FILENO method to TiedOutFH.pm, to work quietly under some
+    perls.  Thanks to Jochen Stenzel for catching this.
+    * Fixed some tests that erroneously failed under some 5.6's
+    because of chdir()s in *.t files messing up @INC  Thanks to many
+    who caught this, including Rocco Caputo.
+
 2.03 2003-09-07  Sean M. Burke <sburke@cpan.org> -- minor upgrade
-	* A =head[1234] command now closes any currently open =over, and
-	warns.
-	* Fixing a few obscure bugs, including one to do with the
-	Makefile.
-	* Added some tests for those bugs.
-	
+    * A =head[1234] command now closes any currently open =over, and
+    warns.
+    * Fixing a few obscure bugs, including one to do with the
+    Makefile.
+    * Added some tests for those bugs.
+
 2.02 2003-09-02  Sean M. Burke <sburke@cpan.org> -- fixing a testing bug
-	* Autrijus Tang found a silly bug of mine in corpustest.t's
-	testing of corpus/t/nonesuch.txt.  Fixed,
-	* I add encoding_nonesuch.t to test corpus/t/nonesuch.txt better.
+    * Autrijus Tang found a silly bug of mine in corpustest.t's
+    testing of corpus/t/nonesuch.txt.  Fixed,
+    * I add encoding_nonesuch.t to test corpus/t/nonesuch.txt better.
 
-	
+
 2.01 2003-09-01  Sean M. Burke <sburke@cpan.org>
-	* Moved all version numbers up to 2.01 for reasons of Tibetan
-	numerology.
+    * Moved all version numbers up to 2.01 for reasons of Tibetan
+    numerology.
 
-	* Implemented =encoding.  Thanks a million to Jarkko, Autrijus,
-	Dan Kogai, and many others for their help, patience, and
-	encouragement.
+    * Implemented =encoding.  Thanks a million to Jarkko, Autrijus,
+    Dan Kogai, and many others for their help, patience, and
+    encouragement.
 
-	* It's not yet documented, but see ./t/corpus/*.txt for examples at
-	least.
+    * It's not yet documented, but see ./t/corpus/*.txt for examples at
+    least.
 
-	* Added 'use utf8' to all the modules.  Byebye perl-5.005
-	compatibility, hello decent perl-5.6 compatibility.
-	
+    * Added 'use utf8' to all the modules.  Byebye perl-5.005
+    compatibility, hello decent perl-5.6 compatibility.
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	
+
 0.98 2003-09-01  Sean M. Burke <sburke@cpan.org>
-	* At Michael Schwern's suggestion, a list that begins with a
-	"=item [number]" line where number isn't a 1, is no longer
-	treated as an error, but instead is silently coerced into being a
-	text-item list, just as if it were "=item wubble" or whatever.
-	
+    * At Michael Schwern's suggestion, a list that begins with a
+    "=item [number]" line where number isn't a 1, is no longer
+    treated as an error, but instead is silently coerced into being a
+    text-item list, just as if it were "=item wubble" or whatever.
+
 0.97 2003-08-12  Sean M. Burke <sburke@cpan.org>
-	* Loooking goooooood.  Not smelling so much like beta anymore!
-	* I think this might be the last version before I go
-	putting "use utf8" all over the place.
+    * Loooking goooooood.  Not smelling so much like beta anymore!
+    * I think this might be the last version before I go
+    putting "use utf8" all over the place.
 
-	* Added placefolders for "=encoding" support.  If you use
-	"=encoding", you'll get an error about "not yet implemented"
-	instead of "unknown directive".
+    * Added placefolders for "=encoding" support.  If you use
+    "=encoding", you'll get an error about "not yet implemented"
+    instead of "unknown directive".
 
-	* Rewrote Pod::Simple::Pullparser's get_title, and added
-	get_version, get_author, and get_description.  Documented them.
-	Thanks to Graham Barr for contributing an initial get_title and
-	then being patient while I seemed to do nothing with it for months
-	on end!
-	
-	* More tests.
-	
-	* Otherwise just minor changes since last version:
-		* Fixed error in Pod::Simple::RTF.
-		* Added new but undocumented methods to Pod::Simple:
-	           unaccept_directive(s) unaccept_target(s) unaccept_code(s)
-		* Corrected '=back without =open' error to '=back without =over'
-		* A little tweaking to the _verbatim_format code.
-		* Dump routines may use \x{NN} instead of \xNN format.
-		* Pod::Simple::HTML now uses VerbatimFormatted
-		* A few changes ot DEBUG messages -- nothing you'd normally see.
-	
+    * Rewrote Pod::Simple::Pullparser's get_title, and added
+    get_version, get_author, and get_description.  Documented them.
+    Thanks to Graham Barr for contributing an initial get_title and
+    then being patient while I seemed to do nothing with it for months
+    on end!
+
+    * More tests.
+
+    * Otherwise just minor changes since last version:
+        * Fixed error in Pod::Simple::RTF.
+        * Added new but undocumented methods to Pod::Simple:
+              unaccept_directive(s) unaccept_target(s) unaccept_code(s)
+        * Corrected '=back without =open' error to '=back without =over'
+        * A little tweaking to the _verbatim_format code.
+        * Dump routines may use \x{NN} instead of \xNN format.
+        * Pod::Simple::HTML now uses VerbatimFormatted
+        * A few changes ot DEBUG messages -- nothing you'd normally see.
+
 0.96 2002-11-19  Sean M. Burke <sburke@cpan.org>
-	* Still kinda sorta beta.
+    * Still kinda sorta beta.
 
-	* Much much more docs in this version.  Only a few feature
-	changes:
+    * Much much more docs in this version.  Only a few feature
+    changes:
 
-	* Added any_errata_seen to Pod::Simple.  Should've been in there
-	ages ago.  Oops!
-	* Fixed some errors in the experimental VerbatimFormatted code.
-	* Added is_tagname / is_tag to Pod::Simple::PullParserStartToken
-	and Pod::Simple::PullParserEndToken
-	* Added RTFDEFLANG stuff to Pod::Simple::RTF.
-	
+    * Added any_errata_seen to Pod::Simple.  Should've been in there
+    ages ago.  Oops!
+    * Fixed some errors in the experimental VerbatimFormatted code.
+    * Added is_tagname / is_tag to Pod::Simple::PullParserStartToken
+    and Pod::Simple::PullParserEndToken
+    * Added RTFDEFLANG stuff to Pod::Simple::RTF.
+
 0.95 2002-11-10  Sean M. Burke <sburke@cpan.org>
-	* Beta release.  Much documentation still to write, many features
-	still to add.  The APIs might change in future versions.
+    * Beta release.  Much documentation still to write, many features
+    still to add.  The APIs might change in future versions.
 
-	* Now including perlpod and perlpodspec in the dist.
+    * Now including perlpod and perlpodspec in the dist.
 
-	* Pod::Simple -- added parse_from_file
-	* Pod::Simple::RTF -- minor style changes, and minor change to the
-	RTF-wrapping logic.
-	* Pod::Simple::BlackBox -- a =cut opening a block is no longer a
-	fatal(ish) error.
-	* Pod::Simple::BlackBox -- added experimental new
-	VerbatimFormatted stuff.
+    * Pod::Simple -- added parse_from_file
+    * Pod::Simple::RTF -- minor style changes, and minor change to the
+    RTF-wrapping logic.
+    * Pod::Simple::BlackBox -- a =cut opening a block is no longer a
+    fatal(ish) error.
+    * Pod::Simple::BlackBox -- added experimental new
+    VerbatimFormatted stuff.
 
-	
+
 0.94 2002-10-16  Sean M. Burke <sburke@cpan.org>
-	* Beta release.  Much documentation still to write, many features
+    * Beta release.  Much documentation still to write, many features
         still to add.  The APIs might change in future versions.
 
-	* Pod::Simple::RTF -- minor style tweaks
-	* Pod::Simple::PullParserEndToken and ::PullParserStartToken --
-	added ->tag as an alias for ->tagname.
-	* Pod::Simple and Pod::Simple::BlackBox -- added tolerance for
-	"=item * Foo" as a variant syntax for "=item *\n\nFoo".  Tests
-	added/changed accordingly.
-	* Pod::Simple::HTML -- added <a name="..."> stuff, and a hack at
-	doing something with X<...>'s.
+    * Pod::Simple::RTF -- minor style tweaks
+    * Pod::Simple::PullParserEndToken and ::PullParserStartToken --
+    added ->tag as an alias for ->tagname.
+    * Pod::Simple and Pod::Simple::BlackBox -- added tolerance for
+    "=item * Foo" as a variant syntax for "=item *\n\nFoo".  Tests
+    added/changed accordingly.
+    * Pod::Simple::HTML -- added <a name="..."> stuff, and a hack at
+    doing something with X<...>'s.
 
-	
+
 0.93 2002-09-29  Sean M. Burke <sburke@cpan.org>
-	* Beta release.  Much documentation still to write, many features
-	still to add.  The APIs might change in future versions.
+    * Beta release.  Much documentation still to write, many features
+    still to add.  The APIs might change in future versions.
 
         * Pod::Simple -- added errors_seen attribute
-	* Pod::Simple::HTML -- added support for =for HTML ... directives,
-	and =extend directives.
-	* Oh, and I added Pod::Simple::RTF in 0.92 but forgot to note it
-	until now.
-	
+    * Pod::Simple::HTML -- added support for =for HTML ... directives,
+    and =extend directives.
+    * Oh, and I added Pod::Simple::RTF in 0.92 but forgot to note it
+    until now.
+
 0.92 2002-09-29  Sean M. Burke <sburke@cpan.org>
-	* Beta release.  Much documentation still to write, many features
-	still to add.  The APIs might change in future versions.
+    * Beta release.  Much documentation still to write, many features
+    still to add.  The APIs might change in future versions.
 
-	* Fixing bungled distribution.
-	
+    * Fixing bungled distribution.
+
 0.91 2002-09-29  Sean M. Burke <sburke@cpan.org>
-	* Beta release.  Much documentation still to write, many features
-	still to add.  The APIs might change in future versions.
+    * Beta release.  Much documentation still to write, many features
+    still to add.  The APIs might change in future versions.
 
-	* Pod::Simple::PullParserTextToken -- added 'text_r'
+    * Pod::Simple::PullParserTextToken -- added 'text_r'
 
-	* Pod::Simple::PullParser -- added 'get_title' and
-	'get_title_short' to 
+    * Pod::Simple::PullParser -- added 'get_title' and
+    'get_title_short' to
 
-	* Pod::Simple -- corrected wording of "Format for second =extend
-	parameter" error message.
+    * Pod::Simple -- corrected wording of "Format for second =extend
+    parameter" error message.
 
-	* Pod::PullParser -- made its filter() run as intended, like
-	Pod::Simple's filter.
+    * Pod::PullParser -- made its filter() run as intended, like
+    Pod::Simple's filter.
 
-	* Pod::Subclassing -- more docs
+    * Pod::Subclassing -- more docs
 
 0.90 2002-09-11  Sean M. Burke <sburke@cpan.org>
-	* Beta release.  Much documentation still to write, many features
-	still to add.  The APIs might change in future versions.
+    * Beta release.  Much documentation still to write, many features
+    still to add.  The APIs might change in future versions.

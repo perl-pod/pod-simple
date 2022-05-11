@@ -34,7 +34,7 @@ sub nowhine {
 
 local $Pod::Simple::XMLOutStream::SORT_ATTRS = 1;
 &ok(f(
-	\&nowhine,
+    \&nowhine,
 "=begin :foo\n\n=begin :bar\n\nZaz\n\n",
 "=begin :foo\n\n=begin :bar\n\nZaz\n\n=end :bar\n\n=end :foo\n\n",
 ));
