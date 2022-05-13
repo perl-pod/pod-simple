@@ -13,7 +13,6 @@ BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
 our $FREAKYMODE;
 
 use Text::Wrap 98.112902 ();
-$Text::Wrap::huge = 'overflow';
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -81,6 +80,7 @@ sub emit_par {
    # Yes, 'STRING' x NEGATIVE gives '', same as 'STRING' x 0
 
   $self->{'Thispara'} =~ s/$Pod::Simple::shy//g;
+  local $Text::Wrap::huge = 'overflow';
   my $out = Text::Wrap::wrap($indent, $indent, $self->{'Thispara'} .= "\n");
   $out =~ s/$Pod::Simple::nbsp/ /g;
   print {$self->{'output_fh'}} $out, "\n";

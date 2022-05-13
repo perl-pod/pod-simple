@@ -15,7 +15,6 @@ BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
       }
 
 use Text::Wrap 98.112902 (); # was 2001.0131, but I don't think we need that
-$Text::Wrap::wrap = 'overflow';
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub any_errata_seen {  # read-only accessor
@@ -92,6 +91,7 @@ sub emit_par {
    # 'Negative repeat count does nothing' since 5.22
 
   $self->{'Thispara'} =~ s/$Pod::Simple::shy//g;
+  local $Text::Wrap::wrap = 'overflow';
   my $out = Text::Wrap::wrap($indent, $indent, $self->{'Thispara'} .= "\n");
   $out =~ s/$Pod::Simple::nbsp/ /g;
   print {$self->{'output_fh'}} $out,
