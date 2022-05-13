@@ -1,5 +1,6 @@
 package Pod::Simple::HTMLBatch;
 use strict;
+use warnings;
 our $VERSION = '3.40';
 our @ISA = ();  # Yup, we're NOT a subclass of Pod::Simple::HTML!
 

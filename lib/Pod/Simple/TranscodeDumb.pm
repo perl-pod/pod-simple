@@ -1,5 +1,6 @@
 package Pod::Simple::TranscodeDumb;
 use strict;
+use warnings;
 our $VERSION = '3.40';
 # This module basically pretends it knows how to transcode, except
 #  only for null-transcodings!  We use this when Encode isn't

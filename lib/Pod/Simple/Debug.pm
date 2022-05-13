@@ -1,5 +1,6 @@
 package Pod::Simple::Debug;
 use strict;
+use warnings;
 our $VERSION = '3.40';
 
 sub import {

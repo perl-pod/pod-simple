@@ -1,5 +1,6 @@
 package Pod::Simple;
 use strict;
+use warnings;
 use Carp ();
 BEGIN           { *DEBUG = sub () {0} unless defined &DEBUG }
 use integer;

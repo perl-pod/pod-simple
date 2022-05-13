@@ -1,5 +1,6 @@
 package Pod::Simple::HTMLLegacy;
 use strict;
+use warnings;
 
 use Getopt::Long;
 
