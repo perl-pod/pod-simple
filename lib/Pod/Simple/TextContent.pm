@@ -1,6 +1,3 @@
-
-
-require 5;
 package Pod::Simple::TextContent;
 use strict;
 use Carp ();

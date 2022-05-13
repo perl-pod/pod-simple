@@ -1,4 +1,3 @@
-require 5;
 package Pod::Simple::PullParser;
 $VERSION = '3.40';
 use Pod::Simple ();

@@ -1,5 +1,3 @@
-
-require 5;
 package Pod::Simple::LinkSection;
   # Based somewhat dimly on Array::Autojoin
 

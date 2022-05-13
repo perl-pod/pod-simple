@@ -1,5 +1,3 @@
-
-require 5;
 package Pod::Simple::PullParserTextToken;
 use Pod::Simple::PullParserToken ();
 use strict;

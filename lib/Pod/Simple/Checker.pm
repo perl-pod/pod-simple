@@ -2,7 +2,6 @@
 # A quite dimwitted pod2plaintext that need only know how to format whatever
 # text comes out of Pod::BlackBox's _gen_errata
 
-require 5;
 package Pod::Simple::Checker;
 use strict;
 use Carp ();

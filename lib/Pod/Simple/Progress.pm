@@ -1,5 +1,3 @@
-
-require 5;
 package Pod::Simple::Progress;
 $VERSION = '3.40';
 use strict;

@@ -1,5 +1,3 @@
-
-require 5;
 package Pod::Simple::XMLOutStream;
 use strict;
 use Carp ();

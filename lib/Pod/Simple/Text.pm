@@ -1,5 +1,3 @@
-
-require 5;
 package Pod::Simple::Text;
 use strict;
 use Carp ();

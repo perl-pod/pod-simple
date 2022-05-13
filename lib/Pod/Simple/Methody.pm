@@ -1,5 +1,3 @@
-
-require 5;
 package Pod::Simple::Methody;
 use strict;
 use Pod::Simple ();

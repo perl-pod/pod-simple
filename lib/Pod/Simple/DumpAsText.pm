@@ -1,5 +1,3 @@
-
-require 5;
 package Pod::Simple::DumpAsText;
 $VERSION = '3.40';
 use Pod::Simple ();
