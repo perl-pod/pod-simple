@@ -1,9 +1,8 @@
 package Pod::Simple::DumpAsXML;
-$VERSION = '3.40';
-use Pod::Simple ();
-BEGIN {@ISA = ('Pod::Simple')}
-
 use strict;
+our $VERSION = '3.40';
+use Pod::Simple ();
+BEGIN {our @ISA = ('Pod::Simple')}
 
 use Carp ();
 use Text::Wrap qw(wrap);

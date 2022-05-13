@@ -1,10 +1,9 @@
 package Pod::Simple::HTMLLegacy;
 use strict;
 
-use vars qw($VERSION);
 use Getopt::Long;
 
-$VERSION = "5.01";
+our $VERSION = "5.01";
 
 #--------------------------------------------------------------------------
 #

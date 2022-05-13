@@ -7,9 +7,8 @@ use strict;
 use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
-use vars qw( @ISA $VERSION );
-$VERSION = '3.40';
-@ISA = ('Pod::Simple::Methody');
+our $VERSION = '3.40';
+our @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG
           : sub() {0}

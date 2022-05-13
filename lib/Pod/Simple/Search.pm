@@ -1,16 +1,16 @@
 package Pod::Simple::Search;
 use strict;
 
-use vars qw($VERSION $MAX_VERSION_WITHIN $SLEEPY);
-$VERSION = '3.40';   ## Current version of this package
+our $VERSION = '3.40';   ## Current version of this package
 
 BEGIN { *DEBUG = sub () {0} unless defined &DEBUG; }   # set DEBUG level
 use Carp ();
 
+our $SLEEPY;
 $SLEEPY = 1 if !defined $SLEEPY and $^O =~ /mswin|mac/i;
   # flag to occasionally sleep for $SLEEPY - 1 seconds.
 
-$MAX_VERSION_WITHIN ||= 60;
+our $MAX_VERSION_WITHIN ||= 60;
 
 #############################################################################
 

@@ -44,11 +44,11 @@ declare the output character set as UTF-8 before parsing, like so:
 
 package Pod::Simple::XHTML;
 use strict;
-use vars qw( $VERSION @ISA $HAS_HTML_ENTITIES );
-$VERSION = '3.40';
+our $VERSION = '3.40';
 use Pod::Simple::Methody ();
-@ISA = ('Pod::Simple::Methody');
+our @ISA = ('Pod::Simple::Methody');
 
+our $HAS_HTML_ENTITIES;
 BEGIN {
   $HAS_HTML_ENTITIES = eval "require HTML::Entities; 1";
 }

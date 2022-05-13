@@ -1,45 +1,47 @@
 package Pod::Simple::HTML;
 use strict;
 use Pod::Simple::PullParser ();
-use vars qw(
-  @ISA %Tagmap $Computerese $LamePad $Linearization_Limit $VERSION
-  $Perldoc_URL_Prefix $Perldoc_URL_Postfix $Man_URL_Prefix $Man_URL_Postfix
-  $Title_Prefix $Title_Postfix $HTML_EXTENSION %ToIndex
-  $Doctype_decl  $Content_decl
-);
-@ISA = ('Pod::Simple::PullParser');
-$VERSION = '3.40';
+our @ISA = ('Pod::Simple::PullParser');
+our $VERSION = '3.40';
 BEGIN {
   if(defined &DEBUG) { } # no-op
   elsif( defined &Pod::Simple::DEBUG ) { *DEBUG = \&Pod::Simple::DEBUG }
   else { *DEBUG = sub () {0}; }
 }
 
-$Doctype_decl ||= '';  # No.  Just No.  Don't even ask me for it.
+our $Doctype_decl ||= '';  # No.  Just No.  Don't even ask me for it.
  # qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  #    "http://www.w3.org/TR/html4/loose.dtd">\n};
 
-$Content_decl ||=
+our $Content_decl ||=
  q{<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" >};
 
+our $HTML_EXTENSION;
 $HTML_EXTENSION = '.html' unless defined $HTML_EXTENSION;
+our $Computerese;
 $Computerese =  "" unless defined $Computerese;
+our $LamePad;
 $LamePad = '' unless defined $LamePad;
 
+our $Linearization_Limit;
 $Linearization_Limit = 120 unless defined $Linearization_Limit;
  # headings/items longer than that won't get an <a name="...">
+our $Perldoc_URL_Prefix;
 $Perldoc_URL_Prefix  = 'https://metacpan.org/pod/'
  unless defined $Perldoc_URL_Prefix;
+our $Perldoc_URL_Postfix;
 $Perldoc_URL_Postfix = ''
  unless defined $Perldoc_URL_Postfix;
 
 
-$Man_URL_Prefix  = 'http://man.he.net/man';
-$Man_URL_Postfix = '';
+our $Man_URL_Prefix  = 'http://man.he.net/man';
+our $Man_URL_Postfix = '';
 
+our $Title_Prefix;
 $Title_Prefix  = '' unless defined $Title_Prefix;
+our $Title_Postfix;
 $Title_Postfix = '' unless defined $Title_Postfix;
-%ToIndex = map {; $_ => 1 } qw(head1 head2 head3 head4 ); # item-text
+our %ToIndex = map {; $_ => 1 } qw(head1 head2 head3 head4 ); # item-text
   # 'item-text' stuff in the index doesn't quite work, and may
   # not be a good idea anyhow.
 
@@ -88,7 +90,7 @@ __PACKAGE__->_accessorize(
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 my @_to_accept;
 
-%Tagmap = (
+our %Tagmap = (
   'Verbatim'  => "\n<pre$Computerese>",
   '/Verbatim' => "</pre>\n",
   'VerbatimFormatted'  => "\n<pre$Computerese>",

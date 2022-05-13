@@ -1,13 +1,13 @@
 package Pod::Simple::RTF;
+use strict;
 
 #sub DEBUG () {4};
 #sub Pod::Simple::DEBUG () {4};
 #sub Pod::Simple::PullParser::DEBUG () {4};
 
-use strict;
-use vars qw($VERSION @ISA %Escape $WRAP %Tagmap);
-$VERSION = '3.40';
+our $VERSION = '3.40';
 use Pod::Simple::PullParser ();
+our @ISA;
 BEGIN {@ISA = ('Pod::Simple::PullParser')}
 
 use Carp ();
@@ -27,8 +27,9 @@ sub to_uni ($) {    # Convert native code point to Unicode
 # We also escape '\', '{', '}', and '_'
 my $map_to_self = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEGHIJKLMNOPQRSTUVWXYZ[]^`abcdefghijklmnopqrstuvwxyz|~';
 
+our $WRAP;
 $WRAP = 1 unless defined $WRAP;
-%Escape = (
+our %Escape = (
 
   # Start with every character mapping to its hex equivalent
   map( (chr($_) => sprintf("\\'%02x", $_)), 0 .. 0xFF),
@@ -79,7 +80,7 @@ sub _openclose {
 
 my @_to_accept;
 
-%Tagmap = (
+our %Tagmap = (
  # 'foo=bar' means ('foo' => '{\bar'."\n", '/foo' => '}')
  _openclose(
   'B=cs18\b',

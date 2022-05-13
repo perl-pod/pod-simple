@@ -1,10 +1,7 @@
 package Pod::Simple::HTMLBatch;
 use strict;
-use vars qw( $VERSION $HTML_RENDER_CLASS $HTML_EXTENSION
- $CSS $JAVASCRIPT $SLEEPY $SEARCH_CLASS @ISA
-);
-$VERSION = '3.40';
-@ISA = ();  # Yup, we're NOT a subclass of Pod::Simple::HTML!
+our $VERSION = '3.40';
+our @ISA = ();  # Yup, we're NOT a subclass of Pod::Simple::HTML!
 
 # TODO: nocontents stylesheets. Strike some of the color variations?
 
@@ -13,7 +10,7 @@ BEGIN {*esc = \&Pod::Simple::HTML::esc }
 use File::Spec ();
 
 use Pod::Simple::Search;
-$SEARCH_CLASS ||= 'Pod::Simple::Search';
+our $SEARCH_CLASS ||= 'Pod::Simple::Search';
 
 BEGIN {
   if(defined &DEBUG) { } # no-op
@@ -21,10 +18,12 @@ BEGIN {
   else { *DEBUG = sub () {0}; }
 }
 
+our $SLEEPY;
 $SLEEPY = 1 if !defined $SLEEPY and $^O =~ /mswin|mac/i;
 # flag to occasionally sleep for $SLEEPY - 1 seconds.
 
-$HTML_RENDER_CLASS ||= "Pod::Simple::HTML";
+our $HTML_RENDER_CLASS ||= "Pod::Simple::HTML";
+our $HTML_EXTENSION;
 
 #
 # Methods beginning with "_" are particularly internal and possibly ugly.
@@ -819,10 +818,7 @@ sub _javascript_wad_to_markup {
 
 #===========================================================================
 
-sub _css_template { return $CSS }
-sub _javascript   { return $JAVASCRIPT }
-
-$CSS = <<'EOCSS';
+our $CSS = <<'EOCSS';
 /* For accessibility reasons, never specify text sizes in px/pt/pc/in/cm/mm */
 
 @media all { .hide { display: none; } }
@@ -961,7 +957,7 @@ EOCSS
 
 #==========================================================================
 
-$JAVASCRIPT = <<'EOJAVASCRIPT';
+our $JAVASCRIPT = <<'EOJAVASCRIPT';
 
 // From http://www.alistapart.com/articles/alternate/
 
@@ -1036,6 +1032,9 @@ setActiveStyleSheet(title);
 // The End
 
 EOJAVASCRIPT
+
+sub _css_template { return $CSS }
+sub _javascript   { return $JAVASCRIPT }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 1;

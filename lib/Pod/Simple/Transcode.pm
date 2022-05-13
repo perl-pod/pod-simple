@@ -1,7 +1,6 @@
 package Pod::Simple::Transcode;
 use strict;
-use vars qw($VERSION @ISA);
-$VERSION = '3.40';
+our $VERSION = '3.40';
 
 BEGIN {
   if(defined &DEBUG) {;} # Okay
@@ -9,6 +8,7 @@ BEGIN {
   else { *DEBUG = sub () {0}; }
 }
 
+our @ISA;
 foreach my $class (
   'Pod::Simple::TranscodeSmart',
   'Pod::Simple::TranscodeDumb',

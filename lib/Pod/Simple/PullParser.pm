@@ -1,9 +1,9 @@
 package Pod::Simple::PullParser;
-$VERSION = '3.40';
-use Pod::Simple ();
-BEGIN {@ISA = ('Pod::Simple')}
-
 use strict;
+our $VERSION = '3.40';
+use Pod::Simple ();
+BEGIN {our @ISA = ('Pod::Simple')}
+
 use Carp ();
 
 use Pod::Simple::PullParserStartToken;
