@@ -159,3 +159,4 @@ Pod::Simple is maintained by:
 =back
 
 =cut
+use warnings;

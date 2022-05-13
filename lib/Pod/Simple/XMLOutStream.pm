@@ -1,5 +1,6 @@
 package Pod::Simple::XMLOutStream;
 use strict;
+use warnings;
 use Carp ();
 use Pod::Simple ();
 our $VERSION = '3.44';

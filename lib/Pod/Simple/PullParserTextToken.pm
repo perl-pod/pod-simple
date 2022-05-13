@@ -1,5 +1,6 @@
 package Pod::Simple::PullParserTextToken;
 use strict;
+use warnings;
 use Pod::Simple::PullParserToken ();
 our @ISA = ('Pod::Simple::PullParserToken');
 our $VERSION = '3.44';

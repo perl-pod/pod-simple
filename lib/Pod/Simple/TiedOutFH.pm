@@ -1,5 +1,6 @@
 package Pod::Simple::TiedOutFH;
 use strict;
+use warnings;
 use Symbol ('gensym');
 use Carp ();
 our $VERSION = '3.44';

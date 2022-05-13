@@ -1,5 +1,6 @@
 package Pod::Simple::Search;
 use strict;
+use warnings;
 
 our $VERSION = '3.44';   ## Current version of this package
 

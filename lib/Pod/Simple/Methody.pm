@@ -1,5 +1,6 @@
 package Pod::Simple::Methody;
 use strict;
+use warnings;
 use Pod::Simple ();
 our $VERSION = '3.44';
 our @ISA = ('Pod::Simple');

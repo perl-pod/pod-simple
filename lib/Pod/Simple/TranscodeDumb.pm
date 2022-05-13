@@ -79,3 +79,4 @@ sub make_transcoder {
 1;
 
 
+use warnings;

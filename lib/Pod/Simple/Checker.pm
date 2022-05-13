@@ -4,6 +4,7 @@
 
 package Pod::Simple::Checker;
 use strict;
+use warnings;
 use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
