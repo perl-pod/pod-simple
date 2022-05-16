@@ -16,18 +16,23 @@ my %WriteMakefileArgs = (
     VERSION_FROM  => 'lib/Pod/Simple.pm',
     ABSTRACT_FROM => 'lib/Pod/Simple.pod',
     TEST_REQUIRES => {
-        # RT#29439
-        'Test' => 1.25,
+        'Test'        => '1.25', # RT#29439
+        'Test::More'  => '0.88'
     },
     PREREQ_PM => {
-        'Text::Wrap'   => '98.112902',
-        'Pod::Escapes' => '1.04',
-
-        # And finally, things I don't have any particular version in mind for:
-        map { ; $_ => 0 } qw[
-            File::Spec File::Basename Cwd Config Carp overload Symbol strict
-            if integer File::Find Test::More
-            ]
+        'Carp'            => 0,
+        'Config'          => 0,
+        'Cwd'             => 0,
+        'File::Basename'  => 0,
+        'File::Find'      => 0,
+        'File::Spec'      => 0,
+        'Pod::Escapes'    => '1.04',
+        'Symbol'          => 0,
+        'Text::Wrap'      => '98.112902',
+        'if'              => 0,
+        'integer'         => 0,
+        'overload'        => 0,
+        'strict'          => 0,
     },
 
     INSTALLDIRS => $] >= 5.009003 && $] <= 5.011000 ? 'perl' : 'site',
@@ -54,7 +59,7 @@ my %WriteMakefileArgs = (
             runtime => {
                 recommends => {
                     'Encode' =>
-                        2.78,  # Pod::Simple's new default code page (1252) is
+                        '2.78',  # Pod::Simple's new default code page (1252) is
                         # pre-compiled in 2.78, which improves performance.
                 },
             },
