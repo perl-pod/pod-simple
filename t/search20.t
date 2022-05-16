@@ -1,10 +1,3 @@
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 use strict;
 use warnings;
 use Pod::Simple::Search;
@@ -25,29 +18,14 @@ $x->callback(sub {
 });
 
 use File::Spec;
-use Cwd;
-my $cwd = cwd();
-print "# CWD: $cwd\n";
+use Cwd ();
+use File::Basename ();
 
-sub source_path {
-    my $file = shift;
-    if ($ENV{PERL_CORE}) {
-        return "../lib/Pod/Simple/t/$file";
-    } else {
-        return $file;
-    }
-}
+my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 
-my($here1, $here2);
-if(        -e ($here1 = source_path('testlib1'))) {
-  die "But where's $here2?"
-    unless -e ($here2 = source_path('testlib2'));
-} elsif(   -e ($here1 = File::Spec->catdir($cwd, 't', 'testlib1'      ))) {
-  die "But where's $here2?"
-    unless -e ($here2 = File::Spec->catdir($cwd, 't', 'testlib2'));
-} else {
-  die "Can't find the test corpora";
-}
+my $here1 = File::Spec->catdir($t_dir, 'testlib1');
+my $here2 = File::Spec->catdir($t_dir, 'testlib2');
+
 print "# OK, found the test corpora\n#  as $here1\n# and $here2\n";
 ok 1;
 
@@ -66,16 +44,7 @@ $p =~ s/, +/,\n/g;
 $p =~ s/^/#  /mg;
 print $p;
 
-my $ascii_order;
-if(     -e ($ascii_order = source_path('ascii_order.pl'))) {
-  #
-} elsif(-e ($ascii_order = File::Spec->catfile($cwd, 't', 'ascii_order.pl'))) {
-  #
-} else {
-  die "Can't find ascii_order.pl";
-}
-
-require $ascii_order;
+require File::Spec->catfile($t_dir, 'ascii_order.pl');
 
 {
 my $names = join "|", sort ascii_order values %$where2name;

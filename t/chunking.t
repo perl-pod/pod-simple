@@ -1,10 +1,3 @@
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 #use Pod::Simple::Debug (2);
 
 use strict;
@@ -15,9 +8,8 @@ BEGIN { plan tests => 11 };
 BEGIN {
   require FindBin;
   unshift @INC, $FindBin::Bin . '/lib';
-  require helpers;
-  helpers->import;
 }
+use helpers;
 
 ok 1;
 

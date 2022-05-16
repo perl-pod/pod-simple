@@ -2,13 +2,6 @@
 # implementation will usually treat CP1252 (aka "Win-Latin-1") as CP1252 but
 # can be fooled into seeing it as UTF8.
 
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 use strict;
 use warnings;
 use Test;

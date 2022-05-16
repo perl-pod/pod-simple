@@ -1,10 +1,3 @@
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 use strict;
 use warnings;
 use Test;
@@ -23,9 +16,8 @@ print "# Pod::Simple version $Pod::Simple::VERSION\n";
 BEGIN {
   require FindBin;
   unshift @INC, $FindBin::Bin . '/lib';
-  require helpers;
-  helpers->import;
 }
+use helpers;
 
 my $x = 'Pod::Simple::XMLOutStream';
 $Pod::Simple::XMLOutStream::ATTR_PAD   = ' ';

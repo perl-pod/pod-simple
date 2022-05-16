@@ -1,10 +1,3 @@
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 use strict;
 use warnings;
 use Pod::Simple::Search;
@@ -21,32 +14,14 @@ $x->inc(0);
 $x->is_case_insensitive(0);
 
 use File::Spec;
-use Cwd;
-my $cwd = cwd();
-print "# CWD: $cwd\n";
+use Cwd ();
+use File::Basename ();
 
-sub source_path {
-    my $file = shift;
-    if ($ENV{PERL_CORE}) {
-        my $updir = File::Spec->updir;
-        my $dir = File::Spec->catdir($updir, 'lib', 'Pod', 'Simple', 't');
-        return File::Spec->catdir ($dir, $file);
-    } else {
-        return $file;
-    }
-}
+my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 
-my($A, $B);
+my $A = File::Spec->catdir($t_dir, 'search60', 'A');
+my $B = File::Spec->catdir($t_dir, 'search60', 'B');
 
-if(        -e ($A = source_path(  'search60/A'      ))) {
-  die "But where's $B?"
-    unless -e ($B = source_path(  'search60/B'));
-} elsif(   -e ($A = File::Spec->catdir($cwd, 't', 'search60', 'A'      ))) {
-  die "But where's $B?"
-    unless -e ($B = File::Spec->catdir($cwd, 't', 'search60', 'B'));
-} else {
-  die "Can't find the test corpora";
-}
 print "# OK, found the test corpora\n#  as $A\n# and $B\n#\n";
 ok 1;
 

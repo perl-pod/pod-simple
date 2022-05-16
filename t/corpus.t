@@ -1,10 +1,8 @@
 # Testing a corpus of Pod files
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
+use strict;
+use warnings;
 
+BEGIN {
     use Config;
     if ($Config::Config{'extensions'} !~ /\bEncode\b/) {
       print "1..0 # Skip: Encode was not built\n";
@@ -20,48 +18,17 @@ BEGIN {
 use Test qw(plan ok skip);
 
 use File::Spec;
-#use utf8;
-use strict;
-use warnings;
+use Cwd ();
+use File::Basename ();
+
 my(@testfiles, %xmlfiles, %wouldxml);
 #use Pod::Simple::Debug (10);
 BEGIN {
-
-sub source_path {
-    my $file = shift;
-    if ($ENV{PERL_CORE}) {
-        require File::Spec;
-        my $updir = File::Spec->updir;
-        my $dir = File::Spec->catdir($updir, 'lib', 'Pod', 'Simple', 't');
-        return File::Spec->catdir ($dir, $file);
-    } else {
-        return $file;
-    }
-}
-  my @bits;
-  if(-e( File::Spec::->catdir( @bits =
-    source_path('corpus') ) ) )
-   {
-    # OK
-    print "# 1Bits: @bits\n";
-  } elsif( -e (File::Spec::->catdir( @bits =
-    (File::Spec::->curdir, 'corpus') ) )
-  ) {
-    # OK
-    print "# 2Bits: @bits\n";
-  } elsif ( -e (File::Spec::->catdir( @bits =
-    (File::Spec::->curdir, 't', 'corpus') ) )
-  ) {
-    # OK
-    print "# 3Bits: @bits\n";
-  } else {
-    die "Can't find the corpusdir";
-  }
-  my $corpusdir = File::Spec::->catdir( @bits);
+  my $corpusdir = File::Spec->catdir(File::Basename::dirname(Cwd::abs_path(__FILE__)), 'corpus');
   print "#Corpusdir: $corpusdir\n";
 
   opendir(INDIR, $corpusdir) or die "Can't opendir corpusdir : $!";
-  my @f = map File::Spec::->catfile(@bits, $_), readdir(INDIR);
+  my @f = map File::Spec::->catfile($corpusdir, $_), readdir(INDIR);
   closedir(INDIR);
   my %f;
   @f{@f} = ();
