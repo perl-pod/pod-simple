@@ -12,8 +12,6 @@ print "# ", __FILE__,
 my $x = Pod::Simple::Search->new;
 die "Couldn't make an object!?" unless ok defined $x;
 
-print "# Testing the surveying of a single docroot...\n";
-
 $x->inc(0);
 
 use File::Spec;
