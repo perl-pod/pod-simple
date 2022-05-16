@@ -1,8 +1,7 @@
 # head ends over
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 7 };
+use Test::More tests => 7;
 
 BEGIN {
   require FindBin;
@@ -23,37 +22,37 @@ sub nowhine {
   $_[0]->{'no_whining'} = 1;
 }
 
-&ok(f(
+&is(f(
 \&nowhine,
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head1 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head1 SVUP\n\nMyup.",
 ));
 
-&ok(f(
+&is(f(
 \&nowhine,
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head2 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head2 SVUP\n\nMyup.",
 ));
 
-&ok(f(
+&is(f(
 \&nowhine,
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head3 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head3 SVUP\n\nMyup.",
 ));
 
-&ok(f(
+&is(f(
 \&nowhine,
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head4 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head4 SVUP\n\nMyup.",
 ));
 
-&ok(f(
+&is(f(
 \&nowhine,
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head5 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head5 SVUP\n\nMyup.",
 ));
 
-&ok(f(
+&is(f(
 \&nowhine,
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head6 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head6 SVUP\n\nMyup.",

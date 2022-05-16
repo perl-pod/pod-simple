@@ -1,8 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test;
-BEGIN { plan tests => 4 }
+use Test::More tests => 4;
 
 print "# ", __FILE__,
  ": Testing limit_glob ...\n";
@@ -47,7 +46,7 @@ require File::Spec->catfile($t_dir, 'ascii_order.pl');
 
 {
 my $names = join "|", sort ascii_order values %$where2name;
-ok $names, "Zonk::Pronk|perlzuk|zikzik";
+is $names, "Zonk::Pronk|perlzuk|zikzik";
 }
 
 

@@ -2,8 +2,7 @@
 
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 7};
+use Test::More tests => 7;
 
 #use Pod::Simple::Debug (10);
 use Pod::Simple::HTML;
@@ -26,7 +25,7 @@ my @pairs = (
 
 foreach( @pairs ) {
   print "# Testing pod source $$_[0] ...\n" unless $_->[0] =~ m/\n/;
-  ok( x($_->[0]), $_->[1] )
+  is( x($_->[0]), $_->[1] )
 }
 print "# And one for the road...\n";
 ok 1;

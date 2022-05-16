@@ -1,7 +1,7 @@
 use strict;
-use Test::More;
+use warnings;
+use Test::More tests => 9;
 use Data::Dumper;
-BEGIN { plan tests => 9 };
 
 ok 1;
 

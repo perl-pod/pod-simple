@@ -1,7 +1,6 @@
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 5 };
+use Test::More tests => 5;
 
 ok 1;
 
@@ -41,19 +40,19 @@ POD
 
 print "# Testing default behavior (parse_empty_lists( FALSE )) ...\n";
 
-ok( $x->_out($pod),
+is( $x->_out($pod),
   '<Document><over-block indent="4"><over-block indent="4"><over-block indent="4"></over-block></over-block></over-block></Document>'
 );
 
 print "# Testing explicit parse_empty_lists( FALSE ) ...\n";
 
-ok( $x->_out(\&off, $pod),
+is( $x->_out(\&off, $pod),
   '<Document><over-block indent="4"><over-block indent="4"><over-block indent="4"></over-block></over-block></over-block></Document>'
 );
 
 print "# Testing parse_empty_lists( TRUE ) ...\n";
 
-ok( $x->_out(\&on, $pod),
+is( $x->_out(\&on, $pod),
   '<Document><over-block indent="4"><over-block indent="4"><over-block indent="4"><over-empty indent="4"></over-empty><over-empty indent="4"></over-empty></over-block></over-block></over-block></Document>'
 );
 

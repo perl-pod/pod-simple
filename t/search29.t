@@ -1,8 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test;
-BEGIN { plan tests => 4 }
+use Test::More tests => 4;
 
 print "# ", __FILE__,
  ": Testing limit_glob ...\n";
@@ -45,7 +44,7 @@ print $p;
 
 {
 my $names = join "|", sort values %$where2name;
-ok $names, "perlzuk|zikzik";
+is $names, "perlzuk|zikzik";
 }
 
 

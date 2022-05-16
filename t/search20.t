@@ -1,8 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test;
-BEGIN { plan tests => 11 }
+use Test::More tests => 11;
 
 print "# ", __FILE__,
  ": Testing the scanning of several (well, two) docroots...\n";
@@ -46,23 +45,26 @@ print $p;
 
 require File::Spec->catfile($t_dir, 'ascii_order.pl');
 
-{
-my $names = join "|", sort ascii_order values %$where2name;
-skip $^O eq 'VMS' ? '-- case may or may not be preserved' : 0,
-     $names,
-     "Blorm|Suzzle|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|perlzoned|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Wowo|zikzik";
+SKIP: {
+    skip '-- case may or may not be preserved', 2
+        if $^O eq 'VMS';
+
+    {
+        my $names = join "|", sort ascii_order values %$where2name;
+        is $names,
+            "Blorm|Suzzle|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|perlzoned|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Wowo|zikzik";
+    }
+
+    {
+        my $names = join "|", sort ascii_order keys %$name2where;
+        is $names,
+            "Blorm|Suzzle|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|perlzoned|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Wowo|zikzik";
+    }
 }
 
-{
-my $names = join "|", sort ascii_order keys %$name2where;
-skip $^O eq 'VMS' ? '-- case may or may not be preserved' : 0,
-     $names,
-     "Blorm|Suzzle|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|perlzoned|perlzuk|squaa|squaa::Glunk|squaa::Vliff|squaa::Wowo|zikzik";
-}
+like( ($name2where->{'squaa'} || 'huh???'), qr/squaa\.pm$/);
 
-ok( ($name2where->{'squaa'} || 'huh???'), '/squaa\.pm$/');
-
-ok grep( m/squaa\.pm/, keys %$where2name ), 1;
+is grep( m/squaa\.pm/, keys %$where2name ), 1;
 
 ###### Now with recurse(0)
 
@@ -77,23 +79,26 @@ $p =~ s/, +/,\n/g;
 $p =~ s/^/#  /mg;
 print $p;
 
-{
-my $names = join "|", sort ascii_order values %$where2name;
-skip $^O eq 'VMS' ? '-- case may or may not be preserved' : 0,
-     $names,
-     "Blorm|Suzzle|squaa|zikzik";
+SKIP: {
+    skip '-- case may or may not be preserved', 2
+        if $^O eq 'VMS';
+
+    {
+        my $names = join "|", sort ascii_order values %$where2name;
+        is $names,
+            "Blorm|Suzzle|squaa|zikzik";
+    }
+
+    {
+        my $names = join "|", sort ascii_order keys %$name2where;
+        is $names,
+            "Blorm|Suzzle|squaa|zikzik";
+    }
 }
 
-{
-my $names = join "|", sort ascii_order keys %$name2where;
-skip $^O eq 'VMS' ? '-- case may or may not be preserved' : 0,
-     $names,
-     "Blorm|Suzzle|squaa|zikzik";
-}
+like( ($name2where->{'squaa'} || 'huh???'), qr/squaa\.pm$/);
 
-ok( ($name2where->{'squaa'} || 'huh???'), '/squaa\.pm$/');
-
-ok grep( m/squaa\.pm/, keys %$where2name ), 1;
+is grep( m/squaa\.pm/, keys %$where2name ), 1;
 
 ok 1;
 

@@ -1,7 +1,6 @@
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 6 };
+use Test::More tests => 6;
 
 BEGIN {
   require FindBin;

@@ -16,7 +16,6 @@ my %WriteMakefileArgs = (
     VERSION_FROM  => 'lib/Pod/Simple.pm',
     ABSTRACT_FROM => 'lib/Pod/Simple.pod',
     TEST_REQUIRES => {
-        'Test'        => '1.25', # RT#29439
         'Test::More'  => '0.88'
     },
     PREREQ_PM => {

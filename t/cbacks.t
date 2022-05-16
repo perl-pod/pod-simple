@@ -1,7 +1,6 @@
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 8 };
+use Test::More tests => 8;
 
 my $d;
 #use Pod::Simple::Debug (\$d, 0);
@@ -32,7 +31,7 @@ while(@from) {
   print "#Testing via class $x, version ", $x->VERSION(), "\n";
   my $p = $x->new;
   my($got, $exp);
-  ok scalar($got = $x->_out(
+  is scalar($got = $x->_out(
     # Mutor:
     sub {
      $_[0]->code_handler(sub { $more .= $_[1] . ":" . $_[0] . "\n"       } );
@@ -64,7 +63,7 @@ while(@from) {
      "\n# ",Pod::Simple::BlackBox::pretty($exp),"\n";
   }
 
-  ok scalar($got = $more), scalar($exp = join "\n" =>
+  is scalar($got = $more), scalar($exp = join "\n" =>
    "1: ",
    "2:\t# This is handy...",
    "=4:\t",

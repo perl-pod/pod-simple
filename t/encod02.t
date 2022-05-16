@@ -1,8 +1,8 @@
 # encoding not error
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 4 };
+
+use Test::More tests => 4;
 
 #use Pod::Simple::Debug (5);
 

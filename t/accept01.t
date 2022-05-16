@@ -1,8 +1,7 @@
 # Testing accept_codes
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 13 };
+use Test::More tests => 13;
 
 #use Pod::Simple::Debug (6);
 
@@ -22,32 +21,32 @@ my $x = 'Pod::Simple::XMLOutStream';
 sub accept_N { $_[0]->accept_codes('N') }
 
 print "# Some sanity tests...\n";
-ok( $x->_out( "=pod\n\nI like pie.\n"), # without acceptor
+is( $x->_out( "=pod\n\nI like pie.\n"), # without acceptor
   '<Document><Para>I like pie.</Para></Document>'
 );
-ok( $x->_out( \&accept_N, "=pod\n\nI like pie.\n"),
+is( $x->_out( \&accept_N, "=pod\n\nI like pie.\n"),
   '<Document><Para>I like pie.</Para></Document>'
 );
-ok( $x->_out( "=pod\n\nB<foo\t>\n"), # without acceptor
+is( $x->_out( "=pod\n\nB<foo\t>\n"), # without acceptor
   '<Document><Para><B>foo </B></Para></Document>'
 );
-ok( $x->_out( \&accept_N,  "=pod\n\nB<foo\t>\n"),
+is( $x->_out( \&accept_N,  "=pod\n\nB<foo\t>\n"),
   '<Document><Para><B>foo </B></Para></Document>'
 );
 
 print "# Some real tests...\n";
 
-ok( $x->_out( \&accept_N,  "=pod\n\nN<foo\t>\n"),
+is( $x->_out( \&accept_N,  "=pod\n\nN<foo\t>\n"),
   '<Document><Para><N>foo </N></Para></Document>'
 );
-ok( $x->_out( \&accept_N,  "=pod\n\nB<N<foo\t>>\n"),
+is( $x->_out( \&accept_N,  "=pod\n\nB<N<foo\t>>\n"),
   '<Document><Para><B><N>foo </N></B></Para></Document>'
 );
-ok( $x->_out( "=pod\n\nB<N<foo\t>>\n") # without the mutor
-  ne '<Document><Para><B><N>foo </N></B></Para></Document>'
+isnt( $x->_out( "=pod\n\nB<N<foo\t>>\n"), # without the mutor
+  '<Document><Para><B><N>foo </N></B></Para></Document>'
   # make sure it DOESN'T pass thru the N<...> when not accepted
 );
-ok( $x->_out( \&accept_N,  "=pod\n\nB<pieF<zorch>N<foo>I<pling>>\n"),
+is( $x->_out( \&accept_N,  "=pod\n\nB<pieF<zorch>N<foo>I<pling>>\n"),
   '<Document><Para><B>pie<F>zorch</F><N>foo</N><I>pling</I></B></Para></Document>'
 );
 

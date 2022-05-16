@@ -2,8 +2,7 @@
 use strict;
 use warnings;
 
-use Test;
-BEGIN { plan tests => 6 }
+use Test::More tests => 6;
 use File::Spec;
 
 #use Pod::Simple::Debug (10);
@@ -33,7 +32,7 @@ my $outstring;
 ok 1 ; # make sure it parsed at all
 ok( $outstring && length($outstring) ); # make sure it parsed to something.
 #print $outstring;
-ok( $outstring =~ m/Blorp/ );
-ok( $outstring =~ m/errata/ );
-ok( $outstring =~ m/unsupported/ );
+like( $outstring, qr/Blorp/ );
+like( $outstring, qr/errata/ );
+like( $outstring, qr/unsupported/ );
 ok 1;

@@ -1,12 +1,12 @@
 # Testing HTMLBatch
 use strict;
 use warnings;
-my $DEBUG = 0;
+
+use Test::More tests => 17;
 
 #sub Pod::Simple::HTMLBatch::DEBUG () {5};
 
-use Test;
-BEGIN { plan tests => 17 }
+my $DEBUG = 0;
 
 require Pod::Simple::HTMLBatch;;
 
@@ -59,7 +59,7 @@ find( sub {
           open HTML, $_ or die "Cannot open $_: $!\n";
           my $html = do { local $/; <HTML> };
           close HTML;
-          ok $html =~ /<div class='indexgroup'>/;
+          like $html, qr/<div class='indexgroup'>/;
       }
       return;
 }, $outdir );
