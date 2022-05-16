@@ -1,4 +1,3 @@
-use 5;
 package Pod::Simple::JustPod;
 # ABSTRACT: Pod::Simple formatter that extracts POD from a file containing
 #           other things as well

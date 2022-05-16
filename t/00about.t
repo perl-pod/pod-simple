@@ -20,16 +20,31 @@ BEGIN {
 
 Pod::Escapes
 
-Pod::Simple	
-Pod::Simple::BlackBox	Pod::Simple::Checker	Pod::Simple::DumpAsText
-Pod::Simple::DumpAsXML	Pod::Simple::HTML	Pod::Simple::HTMLBatch
-Pod::Simple::HTMLLegacy	Pod::Simple::LinkSection	Pod::Simple::Methody
-Pod::Simple::JustPod	Pod::Simple::Progress	Pod::Simple::PullParser
-Pod::Simple::PullParserEndToken	Pod::Simple::PullParserStartToken
-Pod::Simple::PullParserTextToken	Pod::Simple::PullParserToken
-Pod::Simple::RTF	Pod::Simple::Search	Pod::Simple::SimpleTree
-Pod::Simple::Text	Pod::Simple::TextContent	Pod::Simple::TiedOutFH
-Pod::Simple::Transcode	Pod::Simple::XMLOutStream
+Pod::Simple
+Pod::Simple::BlackBox
+Pod::Simple::Checker
+Pod::Simple::DumpAsText
+Pod::Simple::DumpAsXML
+Pod::Simple::HTML
+Pod::Simple::HTMLBatch
+Pod::Simple::HTMLLegacy
+Pod::Simple::LinkSection
+Pod::Simple::Methody
+Pod::Simple::JustPod
+Pod::Simple::Progress
+Pod::Simple::PullParser
+Pod::Simple::PullParserEndToken
+Pod::Simple::PullParserStartToken
+Pod::Simple::PullParserTextToken
+Pod::Simple::PullParserToken
+Pod::Simple::RTF
+Pod::Simple::Search
+Pod::Simple::SimpleTree
+Pod::Simple::Text
+Pod::Simple::TextContent
+Pod::Simple::TiedOutFH
+Pod::Simple::Transcode
+Pod::Simple::XMLOutStream
 
   );
   plan tests => 2 + @modules;
@@ -89,7 +104,7 @@ foreach my $m (@modules) {
       # It's probably an unpopulated package.
       ## $v{$this} = '...';
     }
-    
+
     $pref = length($this) ? "$this\::" : '';
     push @stack, map m/^(.+)::$/ ? "$pref$1" : (),
         do { no strict 'refs'; keys %{$this . '::'} };

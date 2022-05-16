@@ -1,5 +1,3 @@
-
-require 5;
 use 5.008;
 ## Anything before 5.8.0 is GIMPY!
 ## This module is to be use()'d only by Pod::Simple::Transcode
@@ -7,9 +5,8 @@ use 5.008;
 package Pod::Simple::TranscodeSmart;
 use strict;
 use Pod::Simple;
-require Encode;
-use vars qw($VERSION );
-$VERSION = '3.40';
+use Encode;
+our $VERSION = '3.40';
 
 sub is_dumb  {0}
 sub is_smart {1}

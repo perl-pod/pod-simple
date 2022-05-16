@@ -1,13 +1,9 @@
-
-
-require 5;
 package Pod::Simple::TextContent;
 use strict;
 use Carp ();
 use Pod::Simple ();
-use vars qw( @ISA $VERSION );
-$VERSION = '3.40';
-@ISA = ('Pod::Simple');
+our $VERSION = '3.40';
+our @ISA = ('Pod::Simple');
 
 sub new {
   my $self = shift;

@@ -11,19 +11,19 @@ BEGIN {
     use base 'Pod::Simple::XHTML';
 
     sub handle_code {
-	my($self, $code, $kind) = @_;
-	$code = $kind . "[$code]";
-	$self->SUPER::handle_code($code);
+        my($self, $code, $kind) = @_;
+        $code = $kind . "[$code]";
+        $self->SUPER::handle_code($code);
     }
 
     sub start_code {
-	my($self, $kind) = @_;
-	$self->{scratch} .= "<code class=\"$kind\">";
+        my($self, $kind) = @_;
+        $self->{scratch} .= "<code class=\"$kind\">";
     }
 
     sub end_code {
-	my($self, $kind) = @_;
-	$self->{scratch} .= "</code><!-- $kind -->";
+        my($self, $kind) = @_;
+        $self->{scratch} .= "</code><!-- $kind -->";
     }
 }
 

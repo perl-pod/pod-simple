@@ -2,22 +2,19 @@
 # A quite dimwitted pod2plaintext that need only know how to format whatever
 # text comes out of Pod::BlackBox's _gen_errata
 
-require 5;
 package Pod::Simple::Checker;
 use strict;
 use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
-use vars qw( @ISA $VERSION );
-$VERSION = '3.40';
-@ISA = ('Pod::Simple::Methody');
+our $VERSION = '3.40';
+our @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG
           : sub() {0}
       }
 
 use Text::Wrap 98.112902 (); # was 2001.0131, but I don't think we need that
-$Text::Wrap::wrap = 'overflow';
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 sub any_errata_seen {  # read-only accessor
@@ -94,13 +91,14 @@ sub emit_par {
    # 'Negative repeat count does nothing' since 5.22
 
   $self->{'Thispara'} =~ s/$Pod::Simple::shy//g;
+  local $Text::Wrap::wrap = 'overflow';
   my $out = Text::Wrap::wrap($indent, $indent, $self->{'Thispara'} .= "\n");
   $out =~ s/$Pod::Simple::nbsp/ /g;
   print {$self->{'output_fh'}} $out,
     #"\n"
   ;
   $self->{'Thispara'} = '';
-  
+
   return;
 }
 
@@ -113,10 +111,10 @@ sub end_Verbatim  {
   $self->{'Thispara'} =~ s/$Pod::Simple::shy//g;
 
   my $i = ' ' x ( 2 * $self->{'Indent'} + 4);
-  
+
   $self->{'Thispara'} =~ s/^/$i/mg;
-  
-  print { $self->{'output_fh'} }   '', 
+
+  print { $self->{'output_fh'} }   '',
     $self->{'Thispara'},
     "\n\n"
   ;

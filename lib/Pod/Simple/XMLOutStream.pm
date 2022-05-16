@@ -1,19 +1,18 @@
-
-require 5;
 package Pod::Simple::XMLOutStream;
 use strict;
 use Carp ();
 use Pod::Simple ();
-use vars qw( $ATTR_PAD @ISA $VERSION $SORT_ATTRS);
-$VERSION = '3.40';
+our $VERSION = '3.40';
 BEGIN {
-  @ISA = ('Pod::Simple');
+  our @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;
 }
 
+our $ATTR_PAD;
 $ATTR_PAD = "\n" unless defined $ATTR_PAD;
  # Don't mess with this unless you know what you're doing.
 
+our $SORT_ATTRS;
 $SORT_ATTRS = 0 unless defined $SORT_ATTRS;
 
 sub new {
