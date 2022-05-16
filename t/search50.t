@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use Test::More;
-BEGIN { plan 'no_plan' }
 
 #sub Pod::Simple::Search::DEBUG () {5};
 
@@ -81,3 +80,5 @@ while (my ($testmod, $testpath) = each %{ $name2where }) {
       " find('$testmod') should match survey's name2where{$testmod}");
   }
 }
+
+done_testing;
