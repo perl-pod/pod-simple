@@ -1,8 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test;
-BEGIN { plan tests => 16 }
+use Test::More tests => 16;
 
 print "# Some basic sanity tests...\n";
 

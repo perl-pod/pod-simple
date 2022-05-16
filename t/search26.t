@@ -1,9 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test;
-BEGIN { plan tests => 5 }
-
+use Test::More tests => 5;
 
 #
 #  "kleene" rhymes with "zany".  It's a fact!
@@ -53,12 +51,12 @@ require File::Spec->catfile($t_dir, 'ascii_order.pl');
 
 {
 my $names = join "|", sort ascii_order keys %$name2where;
-ok $names, "Zonk::Pronk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
+is $names, "Zonk::Pronk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
 }
 
 {
 my $names = join "|", sort ascii_order values %$where2name;
-ok $names, "Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
+is $names, "Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
 }
 
 print "# OK, bye from ", __FILE__, "\n";

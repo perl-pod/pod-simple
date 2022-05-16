@@ -15,7 +15,7 @@ BEGIN {
 }
 
 #use Pod::Simple::Debug (10);
-use Test qw(plan ok skip);
+use Test::More;
 
 use File::Spec;
 use Cwd ();

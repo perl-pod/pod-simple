@@ -1,9 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More;
-
-BEGIN { plan tests => 1 }
+use Test::More tests => 1;
 
 use Pod::Simple::JustPod;
 

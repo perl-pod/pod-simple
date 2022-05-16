@@ -1,7 +1,6 @@
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 3 };
+use Test::More tests => 3;
 
 BEGIN {
   require FindBin;
@@ -25,7 +24,7 @@ sub nowhine {
 }
 
 local $Pod::Simple::XMLOutStream::SORT_ATTRS = 1;
-&ok(f(
+&is(f(
     \&nowhine,
 "=begin :foo\n\n=begin :bar\n\nZaz\n\n",
 "=begin :foo\n\n=begin :bar\n\nZaz\n\n=end :bar\n\n=end :foo\n\n",

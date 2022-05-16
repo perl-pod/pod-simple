@@ -1,7 +1,6 @@
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 5 };
+use Test::More tests => 5;
 
 use File::Spec;
 use Cwd ();

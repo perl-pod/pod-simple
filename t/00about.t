@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test;
+use Test::More;
 my @modules;
 BEGIN {
   @modules = qw(

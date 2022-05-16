@@ -13,8 +13,7 @@ BEGIN {
     }
 }
 
-use Test;
-BEGIN { plan tests => 5 };
+use Test::More tests => 5;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -73,7 +72,7 @@ Confirm that the parser detects multiple encodings and complains.
 });
 
 # Should have an error.
-ok($output =~ /POD ERRORS/);
-ok($output =~ /Cannot have multiple =encoding directives/);
+like($output, qr/POD ERRORS/);
+like($output, qr/Cannot have multiple =encoding directives/);
 
 exit;

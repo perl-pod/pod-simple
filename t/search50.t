@@ -1,11 +1,12 @@
 use strict;
 use warnings;
 
+use Test::More;
+BEGIN { plan 'no_plan' }
+
 #sub Pod::Simple::Search::DEBUG () {5};
 
 use Pod::Simple::Search;
-use Test::More;
-BEGIN { plan 'no_plan' }
 
 # print "#  Test the scanning of the whole of \@INC ...\n";
 
@@ -45,7 +46,7 @@ ok $found;
 my $nopod = not exists ($name2where->{'strict'});
 SKIP: {
   skip 'No Pod for strict.pm', 3 if $nopod;
-  like $name2where->{'strict'}, '/strict\.(pod|pm)$/';
+  like $name2where->{'strict'}, qr/strict\.(pod|pm)$/;
   ok grep( m/strict\.(pod|pm)/, keys %$where2name);
 
   ok my $strictpath = $name2where->{'strict'}, 'Should have strict path';

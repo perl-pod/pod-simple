@@ -1,7 +1,6 @@
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 26 };
+use Test::More tests => 26;
 use Pod::Simple::TextContent;
 use Pod::Simple::Text;
 

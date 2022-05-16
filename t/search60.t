@@ -1,8 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test;
-BEGIN { plan tests => 4 }
+use Test::More tests => 4;
 
 print "# ", __FILE__,
  ": Testing forced case sensitivity ...\n";
@@ -26,7 +25,6 @@ print "# OK, found the test corpora\n#  as $A\n# and $B\n#\n";
 ok 1;
 
 my($name2where, $where2name) = $x->survey($A, $B);
+like ($name2where->{x}, qr{^\Q$A\E[\\/]x\.pod$});
 
-ok ($name2where->{x} =~ m{^\Q$A\E[\\/]x\.pod$});
-
-ok ($name2where->{X} =~ m{^\Q$B\E[\\/]X\.pod$});
+like ($name2where->{X}, qr{^\Q$B\E[\\/]X\.pod$});

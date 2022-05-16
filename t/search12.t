@@ -1,8 +1,8 @@
 use strict;
 use warnings;
+use Test::More tests => 11;
+
 use Pod::Simple::Search;
-use Test;
-BEGIN { plan tests => 11 }
 
 print "# ", __FILE__,
  ": Testing the surveying of the current directory...\n";
@@ -40,17 +40,17 @@ require File::Spec->catfile($t_dir, 'ascii_order.pl');
 
 {
 my $names = join "|", sort ascii_order values %$where2name;
-ok $names, "Blorm|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|squaa|squaa::Glunk|squaa::Vliff|zikzik";
+is $names, "Blorm|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|squaa|squaa::Glunk|squaa::Vliff|zikzik";
 }
 
 {
 my $names = join "|", sort ascii_order keys %$name2where;
-ok $names, "Blorm|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|squaa|squaa::Glunk|squaa::Vliff|zikzik";
+is $names, "Blorm|Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Vliff|perlflif|perlthng|squaa|squaa::Glunk|squaa::Vliff|zikzik";
 }
 
-ok( ($name2where->{'squaa'} || 'huh???'), '/squaa\.pm$/');
+like( ($name2where->{'squaa'} || 'huh???'), qr/squaa\.pm$/);
 
-ok grep( m/squaa\.pm/, keys %$where2name ), 1;
+is grep( m/squaa\.pm/, keys %$where2name ), 1;
 
 ###### Now with recurse(0)
 
@@ -67,17 +67,17 @@ print $p;
 
 {
 my $names = lc join "|", sort ascii_order values %$where2name;
-ok $names, "suzzle";
+is $names, "suzzle";
 }
 
 {
 my $names = lc join "|", sort ascii_order keys %$name2where;
-ok $names, "suzzle";
+is $names, "suzzle";
 }
 
-ok( ($name2where->{'Vliff'} || 'huh???'), 'huh???');
+is( ($name2where->{'Vliff'} || 'huh???'), 'huh???');
 
-ok grep( m/Vliff\.pm/, keys %$where2name ), 0;
+is grep( m/Vliff\.pm/, keys %$where2name ), 0;
 
 ok 1;
 

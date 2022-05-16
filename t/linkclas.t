@@ -3,8 +3,7 @@
 
 use strict;
 use warnings;
-use Test;
-BEGIN { plan tests => 8 };
+use Test::More tests => 8;
 
 #use Pod::Simple::Debug (6);
 
@@ -26,13 +25,13 @@ my $treelet = Pod::Simple::LinkSection->new($bare_treelet);
 
 # Make sure they're not the same
 
-ok ref($bare_treelet), 'ARRAY';
-ok ref($treelet), 'Pod::Simple::LinkSection';
+is ref($bare_treelet), 'ARRAY';
+is ref($treelet), 'Pod::Simple::LinkSection';
 
 print "# Testing stringification...\n";
 
-ok $treelet->stringify, 'abc';  # explicit
-ok join('', $treelet),  'abc';  # implicit
+is $treelet->stringify, 'abc';  # explicit
+is join('', $treelet),  'abc';  # implicit
 
 
 print "# Testing non-coreferentiality...\n";
@@ -54,8 +53,8 @@ print "# Testing non-coreferentiality...\n";
   # These will fail if $treelet and $bare_treelet are coreferential,
   # since we just conspicuously nuked $bare_treelet
 
-  ok $treelet->stringify, 'abc';  # explicit
-  ok join('', $treelet),  'abc';  # implicit
+  is $treelet->stringify, 'abc';  # explicit
+  is join('', $treelet),  'abc';  # implicit
 }
 
 
