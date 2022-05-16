@@ -74,5 +74,3 @@ Confirm that the parser detects multiple encodings and complains.
 # Should have an error.
 like($output, qr/POD ERRORS/);
 like($output, qr/Cannot have multiple =encoding directives/);
-
-exit;

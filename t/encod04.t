@@ -4,11 +4,9 @@
 
 use strict;
 use warnings;
-use Test::More tests => 6;
+use Test::More tests => 5;
 
 # fail with the supplied diagnostic
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -177,6 +175,3 @@ else {
         fail "parser failed to detect non-ASCII bytes in input";
     }
 }
-
-
-exit;

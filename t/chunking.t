@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 9;
 
 #use Pod::Simple::Debug (2);
 
@@ -9,8 +9,6 @@ BEGIN {
   unshift @INC, $FindBin::Bin . '/lib';
 }
 use helpers;
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -39,8 +37,3 @@ is( Pod::Simple::XMLOutStream->_out("\n=head1 =head1\n\n"),
 &is(e "\n=pod\n\nCha cha cha\n\n" , "\n=pod\n\nCha cha cha\n\n");
 &is(e "\n=pod\n\nCha\tcha  cha\n\n" , "\n=pod\n\nCha cha cha\n\n");
 &is(e "\n=pod\n\nCha\ncha  cha\n\n" , "\n=pod\n\nCha cha cha\n\n");
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

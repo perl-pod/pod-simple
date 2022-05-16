@@ -1,11 +1,9 @@
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 6;
 
 my $d;
 #use Pod::Simple::Debug (\$d, 0);
-
-ok 1;
 
 use Pod::Simple::XMLOutStream;
 use Pod::Simple::DumpAsXML;
@@ -84,9 +82,3 @@ while(@from) {
     "\n# ",Pod::Simple::BlackBox::pretty($exp),"\n";
   }
 }
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

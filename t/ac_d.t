@@ -1,12 +1,11 @@
 use strict;
 use warnings;
-use Test::More tests => 14;
+use Test::More tests => 12;
 
 #use Pod::Simple::Debug (6);
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
-print "# Pod::Simple version $Pod::Simple::VERSION\n";
 
 $Pod::Simple::XMLOutStream::ATTR_PAD   = ' ';
 $Pod::Simple::XMLOutStream::SORT_ATTRS = 1; # for predictably testable output
@@ -15,8 +14,6 @@ $Pod::Simple::XMLOutStream::ATTR_PAD   = ' ';
 $Pod::Simple::XMLOutStream::SORT_ATTRS = 1; # for predictably testable output
 
 my $x = 'Pod::Simple::XMLOutStream';
-
-ok 1;
 
 print "# Testing exceptions being thrown...\n";
 
@@ -71,14 +68,3 @@ is( $x->_out(\&Pd, "\n=head1 NAME\n\nPie Consortium -- me gustan pasteles\n\n=fr
 is( $x->_out(\&Pv, "\n=head1 NAME\n\nPie Consortium -- me gustan pasteles\n\n=freepies Mmmmpie \n\tI<is good>!  \n\nGoody!"),
  qq{<Document><head1>NAME</head1><Para>Pie Consortium -- me gustan pasteles</Para><freepies xml:space="preserve">Mmmmpie \n        I&#60;is good&#62;!  </freepies><Para>Goody!</Para></Document>}
 );
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-
-__END__
-

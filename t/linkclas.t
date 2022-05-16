@@ -3,11 +3,9 @@
 
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 6;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 use Pod::Simple::LinkSection;
 use Pod::Simple::BlackBox; # for its pretty()
@@ -56,9 +54,3 @@ print "# Testing non-coreferentiality...\n";
   is $treelet->stringify, 'abc';  # explicit
   is join('', $treelet),  'abc';  # implicit
 }
-
-
-print "# Byebye...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

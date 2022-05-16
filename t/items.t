@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 24;
+use Test::More tests => 22;
 
 BEGIN {
   require FindBin;
@@ -10,8 +10,6 @@ use helpers;
 
 my $d;
 #use Pod::Simple::Debug (\$d,0);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -221,10 +219,3 @@ is( $x->_out(
 
 
 # TODO: more checking of coercion in nesting?
-
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

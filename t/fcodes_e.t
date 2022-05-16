@@ -1,7 +1,7 @@
 # fcodes E
 use strict;
 use warnings;
-use Test::More tests => 20;
+use Test::More tests => 18;
 
 BEGIN {
   require FindBin;
@@ -10,8 +10,6 @@ BEGIN {
 use helpers;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -85,11 +83,3 @@ print "# Testing numeric E sequences...\n";
 &is( Pod::Simple::XMLOutStream->_out("=pod\n\n1E<0x41>2\n"),
      Pod::Simple::XMLOutStream->_out("=pod\n\n1A2")
 );
-
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-

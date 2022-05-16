@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 21;
+use Test::More tests => 19;
 
 #use Pod::Simple::Debug (5);
 BEGIN {
@@ -8,8 +8,6 @@ BEGIN {
   unshift @INC, $FindBin::Bin . '/lib';
 }
 use helpers;
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -98,9 +96,3 @@ is( $x->_out( \&any, "=pod\n\nI like pie.\n\n=for !:mojojojo I<stuff>\n\nYup.\n"
 is( $x->_out( \&any, "=pod\n\nI like pie.\n\n=for !:psketti,mojojojo,crunk I<stuff>\n\nYup.\n"),
   '<Document><Para>I like pie.</Para><for target="!:psketti,mojojojo,crunk" target_matching="!"><Para><I>stuff</I></Para></for><Para>Yup.</Para></Document>'
 );
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

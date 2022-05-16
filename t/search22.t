@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 15;
+use Test::More tests => 13;
 
 use Pod::Simple::Search;
 
@@ -24,7 +24,6 @@ my $here2 = File::Spec->catdir($t_dir, 'testlib2');
 my $here3 = File::Spec->catdir($t_dir, 'testlib3');
 
 print "# OK, found the test corpora\n#  as $here1\n# and $here2\n# and $here3\n#\n";
-ok 1;
 
 print $x->_state_as_string;
 #$x->verbose(12);
@@ -98,9 +97,3 @@ SKIP: {
 my $in_pods = $x->find('perlzoned', $here2);
 like $in_pods, qr{^\Q$here2\E};
 like $in_pods, qr{perlzoned.pod$};
-
-print "# OK, bye from ", __FILE__, "\n";
-ok 1;
-
-__END__
-

@@ -1,10 +1,9 @@
 # Testing tied output filehandle
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 6;
 
 use Pod::Simple::TiedOutFH;
-ok 1;
 
 print "# Sanity test of Perl and Pod::Simple::TiedOutFH\n";
 
@@ -42,10 +41,3 @@ print "# Sanity test of Perl and Pod::Simple::TiedOutFH\n";
   is $x1, "abcPuppies\nrrrrruffuff!",              "out1 test";
   is $x2, "xyzKitties\nmmmmmiaooowwlllllllrrr!\n", "out2 test";
 }
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-

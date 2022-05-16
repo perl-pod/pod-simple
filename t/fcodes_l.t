@@ -1,7 +1,7 @@
 # fcodes L
 use strict;
 use warnings;
-use Test::More tests => 101;
+use Test::More tests => 99;
 
 BEGIN {
   require FindBin;
@@ -10,8 +10,6 @@ BEGIN {
 use helpers;
 
 #use Pod::Simple::Debug (10);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -431,11 +429,3 @@ is( $x->_out(qq{=pod\n\nI like L<<< textZ<>|http://text.com >>>.\n}),
 #
 # TODO: S testing.
 #
-
-###########################################################################
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-

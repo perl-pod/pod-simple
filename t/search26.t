@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test::More tests => 5;
+use Test::More tests => 3;
 
 #
 #  "kleene" rhymes with "zany".  It's a fact!
@@ -28,7 +28,6 @@ my $here2 = File::Spec->catdir($t_dir, 'testlib2');
 my $here3 = File::Spec->catdir($t_dir, 'testlib3');
 
 print "# OK, found the test corpora\n#  as $here1\n# and $here2\n# and $here3\n#\n";
-ok 1;
 
 print $x->_state_as_string;
 #$x->verbose(12);
@@ -58,9 +57,3 @@ is $names, "Zonk::Pronk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
 my $names = join "|", sort ascii_order values %$where2name;
 is $names, "Zonk::Pronk|hinkhonk::Glunk|hinkhonk::Glunk|perlzuk|squaa::Glunk|zikzik";
 }
-
-print "# OK, bye from ", __FILE__, "\n";
-ok 1;
-
-__END__
-

@@ -1,11 +1,9 @@
 # Testing accept_codes
 use strict;
 use warnings;
-use Test::More tests => 13;
+use Test::More tests => 11;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -82,12 +80,3 @@ ok( starts_with( $x->_out( "=pod\n\nB<pieF<zorch>N<C<foo>>I<pling>>\n"), # !muto
   '<Document><Para><B>pie<F>zorch</F><C>foo</C><I>pling</I></B></Para>'
   # make sure it DOESN'T pass thru the N<...>, when not accepted
 ));
-
-
-
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

@@ -1,10 +1,8 @@
 use strict;
 use warnings;
-use Test::More tests => 33;
+use Test::More tests => 30;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 use Pod::Simple::SimpleTree;
 print "# Pod::Simple version $Pod::Simple::VERSION\n";
@@ -18,8 +16,6 @@ sub x {
  $p->merge_text(1);
  $p->parse_string_document( shift )->root;
 }
-
-ok 1;
 
 print "# a bit of meta-testing...\n";
 ok( deq( 1,     1     ));
@@ -112,10 +108,6 @@ ok( deq( x("=over\n\n=item B<pieF<zorch>X<foo>I<pling>>!\n\n=back"),
   ]
 ));
 
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
 sub deq { # deep-equals
   #print "# deq ", Pod::Simple::pretty($_[0], $_[1]), "\n";
   return 1 unless defined $_[0] or defined $_[1]; # two undefs = same
@@ -144,5 +136,3 @@ sub deq { # deep-equals
     return 1;
   }
 }
-
-

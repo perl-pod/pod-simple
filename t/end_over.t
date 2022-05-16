@@ -1,7 +1,7 @@
 # head ends over
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 6;
 
 BEGIN {
   require FindBin;
@@ -11,8 +11,6 @@ use helpers qw(f);
 
 my $d;
 #use Pod::Simple::Debug (\$d,0);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -57,8 +55,3 @@ sub nowhine {
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=head6 SVUP\n\nMyup.",
 "=head2 BLOOP\n\nHoopbehwo!\n\n=over\n\n=item Stuff.  Um.\n\nBrop.\n\n=back\n\n=head6 SVUP\n\nMyup.",
 ));
-
-
-__END__
-
-

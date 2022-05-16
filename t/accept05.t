@@ -1,11 +1,9 @@
 # Testing extend and accept_codes
 use strict;
 use warnings;
-use Test::More tests => 24;
+use Test::More tests => 22;
 
 #use Pod::Simple::Debug (2);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -133,10 +131,3 @@ is( $x->_out( \&accept_zing_superduperprok, "=extend N B,I Y,z.i_ng:Prok-12,A,bz
 is( $x->_out( \&accept_zing_superduperprok, "=extend N C,B,I Y,z.i_ng:Prok-12,A,bzroch\n\nI N<like> pie.\n"),
   '<Document><Para>I <z.i_ng:Prok-12>like</z.i_ng:Prok-12> pie.</Para></Document>'
 );
-
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
