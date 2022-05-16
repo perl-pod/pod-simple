@@ -1,11 +1,4 @@
 # fcodes E
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 use strict;
 use warnings;
 use Test;
@@ -14,9 +7,9 @@ BEGIN { plan tests => 20 };
 BEGIN {
   require FindBin;
   unshift @INC, $FindBin::Bin . '/lib';
-  require helpers;
-  helpers->import;
 }
+use helpers;
+
 #use Pod::Simple::Debug (6);
 
 ok 1;

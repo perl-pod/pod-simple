@@ -1,11 +1,4 @@
 # Testing extend and accept_codes
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 use strict;
 use warnings;
 use Test;
@@ -22,9 +15,8 @@ print "# Pod::Simple version $Pod::Simple::VERSION\n";
 BEGIN {
   require FindBin;
   unshift @INC, $FindBin::Bin . '/lib';
-  require helpers;
-  helpers->import;
 }
+use helpers;
 
 my $x = 'Pod::Simple::XMLOutStream';
 sub accept_Q    { $_[0]->accept_codes('Q') }

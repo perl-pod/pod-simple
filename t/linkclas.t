@@ -1,11 +1,4 @@
 # Testing the LinkSection class
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 ### Test the basic sanity of the link-section treelet class
 
 use strict;

@@ -2,12 +2,10 @@
 # =encoding line should be ignored
 # utf8 characters should come through unscathed
 
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
+use strict;
+use warnings;
 
+BEGIN {
     use Config;
     if ($Config::Config{'extensions'} !~ /\bEncode\b/) {
       print "1..0 # Skip: Encode was not built\n";
@@ -15,8 +13,6 @@ BEGIN {
     }
 }
 
-use strict;
-use warnings;
 use Test;
 BEGIN { plan tests => 5 };
 

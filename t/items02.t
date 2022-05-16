@@ -1,11 +1,4 @@
 # Testing the =item directive
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
 use strict;
 use warnings;
 use Test;
@@ -14,9 +7,8 @@ BEGIN { plan tests => 4 };
 BEGIN {
   require FindBin;
   unshift @INC, $FindBin::Bin . '/lib';
-  require helpers;
-  helpers->import;
 }
+use helpers;
 
 my $d;
 #use Pod::Simple::Debug (\$d,0);

@@ -1,12 +1,3 @@
-BEGIN {
-    if($ENV{PERL_CORE}) {
-        chdir 't';
-        @INC = '../lib';
-    }
-}
-
-# Time-stamp: "2004-05-23 22:38:58 ADT"
-
 use strict;
 use warnings;
 
@@ -27,27 +18,13 @@ print "# Testing the surveying of a single docroot...\n";
 $x->inc(0);
 
 use File::Spec;
-use Cwd;
-my $cwd = cwd();
-print "# CWD: $cwd\n";
+use Cwd ();
+use File::Basename ();
 
-sub source_path {
-    my $file = shift;
-    if ($ENV{PERL_CORE}) {
-        return "../lib/Pod/Simple/t/$file";
-    } else {
-        return $file;
-    }
-}
+my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 
-my $here;
-if(     -e ($here = source_path('testlib1'))) {
-  #
-} elsif(-e ($here = File::Spec->catdir($cwd, 't', 'testlib1'))) {
-  #
-} else {
-  die "Can't find the test corpus";
-}
+my $here = File::Spec->catdir($t_dir, 'testlib1');
+
 print "# OK, found the test corpus as $here\n";
 ok 1;
 
@@ -64,17 +41,7 @@ $p =~ s/, +/,\n/g;
 $p =~ s/^/#  /mg;
 print $p;
 
-my $ascii_order;
-if(     -e ($ascii_order = source_path('ascii_order.pl'))) {
-  #
-} elsif(-e ($ascii_order = File::Spec->catfile($cwd, 't', 'ascii_order.pl'))) {
-  #
-} else {
-    print STDERR __FILE__, ": ", __LINE__, ": ascii_order='$ascii_order'; curdir=", $cwd, "; ", File::Spec->catfile($cwd, 't', 'ascii_order.pl'), "\n";
-  die "Can't find ascii_order.pl";
-}
-
-require $ascii_order;
+require File::Spec->catfile($t_dir, 'ascii_order.pl');
 
 {
 my $names = join "|", sort ascii_order values %$where2name;

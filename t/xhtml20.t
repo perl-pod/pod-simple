@@ -1,5 +1,3 @@
-#!/usr/bin/perl -w
-
 # t/xhtml20.t - test subclassing of Pod::Simple::XHTML
 
 use strict;

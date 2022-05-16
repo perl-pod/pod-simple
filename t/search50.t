@@ -1,10 +1,3 @@
-BEGIN {
-    if( $ENV{PERL_CORE} ) {
-        chdir 't';
-        use File::Spec;
-        @INC = (File::Spec->rel2abs('../lib') );
-    }
-}
 use strict;
 use warnings;
 
