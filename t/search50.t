@@ -81,9 +81,3 @@ while (my ($testmod, $testpath) = each %{ $name2where }) {
       " find('$testmod') should match survey's name2where{$testmod}");
   }
 }
-
-pass;
-# print "# Byebye from ", __FILE__, "\n";
-# print "# @INC\n";
-__END__
-

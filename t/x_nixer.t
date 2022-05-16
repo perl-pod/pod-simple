@@ -1,11 +1,9 @@
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 9;
 
 my $d;
 #use Pod::Simple::Debug (\$d, 0);
-
-ok 1;
 
 use Pod::Simple::XMLOutStream;
 use Pod::Simple::DumpAsXML;
@@ -200,12 +198,3 @@ is( Pod::Simple::DumpAsXML->_out( \&nixy_mergy, "=pod\n\nZ<>F<C<Z<>fE<111>L<E<78
   '</Document>',
   '',
 );
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

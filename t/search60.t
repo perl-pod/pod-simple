@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test::More tests => 4;
+use Test::More tests => 3;
 
 print "# ", __FILE__,
  ": Testing forced case sensitivity ...\n";
@@ -22,7 +22,6 @@ my $A = File::Spec->catdir($t_dir, 'search60', 'A');
 my $B = File::Spec->catdir($t_dir, 'search60', 'B');
 
 print "# OK, found the test corpora\n#  as $A\n# and $B\n#\n";
-ok 1;
 
 my($name2where, $where2name) = $x->survey($A, $B);
 like ($name2where->{x}, qr{^\Q$A\E[\\/]x\.pod$});

@@ -2,11 +2,9 @@
 use strict;
 use warnings;
 
-use Test::More tests => 31;
+use Test::More tests => 29;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -357,10 +355,3 @@ a
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # TODO: long-line splitting?
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-

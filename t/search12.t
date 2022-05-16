@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 9;
 
 use Pod::Simple::Search;
 
@@ -21,7 +21,6 @@ my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 my $here = File::Spec->catdir($t_dir, 'testlib1');
 
 print "# OK, found the test corpus as $here\n";
-ok 1;
 
 print $x->_state_as_string;
 #$x->verbose(12);
@@ -78,9 +77,3 @@ is $names, "suzzle";
 is( ($name2where->{'Vliff'} || 'huh???'), 'huh???');
 
 is grep( m/Vliff\.pm/, keys %$where2name ), 0;
-
-ok 1;
-
-__END__
-
-

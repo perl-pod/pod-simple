@@ -1,11 +1,9 @@
 # Testing verbatim formatted sections
 use strict;
 use warnings;
-use Test::More tests => 62;
+use Test::More tests => 60;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -299,11 +297,3 @@ is( Pod::Simple::XMLOutStream->_out(\&with_vf, "\n=pod\n\n foo bar baz\n\n\n\n\n
 is( Pod::Simple::XMLOutStream->_out(\&with_vf, "\n=pod\n\n foo bar baz\n\n\n\n\n\n=cut\n\nsome code here...\n\n\n=head1 Foo\n\n quux\nquum\n"), $it);
 
 }
-
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-

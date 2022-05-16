@@ -47,13 +47,11 @@ BEGIN {
 
   @testfiles = @ARGV if @ARGV and !grep !m/\.txt/, @ARGV;
 
-  plan tests => (2 + 2*@testfiles - 1);
+  plan tests => (2*@testfiles - 1);
 }
 
 my $HACK = 1;
 #@testfiles = ('nonesuch.txt');
-
-ok 1;
 
 my $skippy =  ($] < 5.008) ? "skip because perl ($]) pre-dates v5.8.0" : 0;
 if($skippy) {
@@ -145,11 +143,3 @@ foreach my $f (@testfiles) {
   }
 
 }
-
-
-print "#\n# I've been using Encode v",
-  $Encode::VERSION ? $Encode::VERSION : "(NONE)", "\n";
-print "# Byebye\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

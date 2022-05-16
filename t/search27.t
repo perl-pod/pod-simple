@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Pod::Simple::Search;
-use Test::More tests => 10;
+use Test::More tests => 8;
 
 print "# ", __FILE__,
  ": Testing limit_glob ...\n";
@@ -23,7 +23,6 @@ my $here2 = File::Spec->catdir($t_dir, 'testlib2');
 my $here3 = File::Spec->catdir($t_dir, 'testlib3');
 
 print "# OK, found the test corpora\n#  as $here1\n# and $here2\n# and $here3\n#\n";
-ok 1;
 
 print $x->_state_as_string;
 #$x->verbose(12);
@@ -83,10 +82,3 @@ SKIP: {
     like +($name2where->{'squaa::Wowo'}  || 'huh???'),
         qr/testlib2/;
 }
-
-
-print "# OK, bye from ", __FILE__, "\n";
-ok 1;
-
-__END__
-

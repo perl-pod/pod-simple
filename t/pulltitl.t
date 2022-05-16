@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 117;
+use Test::More tests => 115;
 
 #use Pod::Simple::Debug (5);
 
@@ -9,8 +9,6 @@ use Test::More tests => 117;
 
 
 use Pod::Simple::PullParser;
-
-ok 1;
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ###########################################################################
@@ -408,13 +406,3 @@ $p->set_source( \qq{\n=head1 NAME Foo Bar\nX<Some entry>\n} );
 
 is $p->get_title(), 'NAME Foo Bar';
 }
-
-###########################################################################
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-__END__
-

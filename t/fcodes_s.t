@@ -1,11 +1,9 @@
 # fcodes S
 use strict;
 use warnings;
-use Test::More tests => 80;
+use Test::More tests => 78;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 use Pod::Simple::XMLOutStream;
 print "# Pod::Simple version $Pod::Simple::VERSION\n";
@@ -456,8 +454,3 @@ is(
     o(qq{See L<perl.org|http://www.perl.org>}),
     qq{<p>See <a href="http://www.perl.org">perl.org</a></p>\n\n}
 );
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

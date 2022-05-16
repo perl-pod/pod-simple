@@ -56,4 +56,3 @@ $parser->parse_lines( @$input, undef );
 is($output, $expected_output);
 
 done_testing;
-exit( 0 );

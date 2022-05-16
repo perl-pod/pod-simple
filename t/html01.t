@@ -1,7 +1,7 @@
 # Testing HTML paragraphs
 use strict;
 use warnings;
-use Test::More tests => 16;
+use Test::More tests => 15;
 
 #use Pod::Simple::Debug (10);
 
@@ -150,7 +150,3 @@ is(
     $obj->parse_string_document("=pod\n\n  First line\n  2nd line\n");
     like($output, qr!<pre>First line\n2nd line</pre>!s);
 }
-
-print "# And one for the road...\n";
-ok 1;
-

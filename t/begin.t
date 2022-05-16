@@ -1,12 +1,9 @@
 use strict;
 use warnings;
-use Test::More tests => 62;
+use Test::More tests => 60;
 
 my $d;
 #use Pod::Simple::Debug (\$d, 0);
-
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -451,10 +448,3 @@ print "# Testing matching of begin block titles\n";
 is( $x->_out( \&moj, "=pod\n\nI like pie.\n\n=begin mojojojo Title\n\nstuff\n\n=end mojojojo \n\nYup.\n"),
   '<Document><Para>I like pie.</Para><for target="mojojojo" target_matching="mojojojo" title="Title"><Data xml:space="preserve">stuff</Data></for><Para>Yup.</Para></Document>'
 );
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

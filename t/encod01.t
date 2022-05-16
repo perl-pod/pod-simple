@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 6;
+use Test::More tests => 5;
 use File::Spec;
 
 #use Pod::Simple::Debug (10);
@@ -35,4 +35,3 @@ ok( $outstring && length($outstring) ); # make sure it parsed to something.
 like( $outstring, qr/Blorp/ );
 like( $outstring, qr/errata/ );
 like( $outstring, qr/unsupported/ );
-ok 1;

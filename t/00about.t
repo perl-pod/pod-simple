@@ -36,10 +36,8 @@ Pod::Simple::Transcode
 Pod::Simple::XMLOutStream
 
   );
-  plan tests => 2 + @modules;
+  plan tests => scalar @modules;
 };
-
-ok 1;
 
 #chdir "t" if -e "t";
 foreach my $m (@modules) {
@@ -123,6 +121,4 @@ print "# \%INC:\n";
 foreach my $x (sort {lc($a) cmp lc($b)} keys %INC) {
   print "#   [$x] = [", $INC{$x} || '', "]\n";
 }
-
-ok 1;
 

@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 17;
+use Test::More tests => 15;
 
 #sub Pod::Simple::HTMLBatch::DEBUG () {5};
 
@@ -23,7 +23,6 @@ my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 my $corpus_dir = File::Spec->catdir($t_dir, 'testlib1');
 
 print "# OK, found the test corpus as $corpus_dir\n" if $DEBUG;
-ok 1;
 
 my $outdir;
 while(1) {
@@ -97,6 +96,3 @@ if (my @long = grep { /^[^.]{9,}/ } map { s{^[^/]/}{} } @files) {
 
 # use Pod::Simple;
 # *pretty = \&Pod::Simple::BlackBox::pretty;
-
-print "# Bye from ", __FILE__, "\n" if $DEBUG;
-ok 1;

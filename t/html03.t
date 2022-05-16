@@ -1,7 +1,7 @@
 # Testing HTML titles
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 5;
 
 #use Pod::Simple::Debug (10);
 
@@ -14,13 +14,8 @@ sub x { Pod::Simple::HTML->_out(
 
 # make sure empty file => empty output
 
-ok 1;
 is( x(''),'', "Contentlessness" );
 like( x(qq{=pod\n\nThis is a paragraph}), qr{<title></title>}i );
 like( x(qq{This is a paragraph}), qr{<title></title>}i );
 like( x(qq{=head1 Prok\n\nThis is a paragraph}), qr{<title>Prok</title>}i );
 like( x(qq{=head1 NAME\n\nProk -- stuff\n\nThis}), qr{<title>Prok</title>} );
-
-print "# And one for the road...\n";
-ok 1;
-

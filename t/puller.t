@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 136;
+use Test::More tests => 135;
 
 #use Pod::Simple::Debug (5);
 
@@ -337,15 +337,3 @@ is $t[4]->tagname, 'Document';
 close(IN);
 
 }
-
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-__END__
-

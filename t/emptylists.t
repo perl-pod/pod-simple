@@ -1,8 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
-
-ok 1;
+use Test::More tests => 3;
 
 use Pod::Simple::XMLOutStream;
 print "# Pod::Simple version $Pod::Simple::VERSION\n";
@@ -55,8 +53,3 @@ print "# Testing parse_empty_lists( TRUE ) ...\n";
 is( $x->_out(\&on, $pod),
   '<Document><over-block indent="4"><over-block indent="4"><over-block indent="4"><over-empty indent="4"></over-empty><over-empty indent="4"></over-empty></over-block></over-block></over-block></Document>'
 );
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-

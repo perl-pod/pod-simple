@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 23;
+use Test::More tests => 21;
 
 #use Pod::Simple::Debug (5);
 BEGIN {
@@ -8,8 +8,6 @@ BEGIN {
   unshift @INC, $FindBin::Bin . '/lib';
 }
 use helpers;
-
-ok 1;
 
 use Pod::Simple::DumpAsXML;
 use Pod::Simple::XMLOutStream;
@@ -113,13 +111,3 @@ is( Pod::Simple::XMLOutStream->_out(
 ."And <I>pie is <B>also</B> a happy time</I>. "
 ."And <B><I>I like pie</I>.</B></Para></Document>"
 );
-
-
-
-
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-

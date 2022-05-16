@@ -1,10 +1,8 @@
 use strict;
 use warnings;
-use Test::More tests => 31;
+use Test::More tests => 29;
 
 #use Pod::Simple::Debug (6);
-
-ok 1;
 
 require Pod::Simple::BlackBox;
 ok 1;
@@ -88,9 +86,3 @@ is( Pod::Simple::XMLOutStream->_out("=head1 Chacha\n\nFoo\n"),
 is( Pod::Simple::XMLOutStream->_out("=F\0blah\n\nwhatever\n"),
     qq{<Document\ncontentless="1"></Document>}
 );
-
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-
-

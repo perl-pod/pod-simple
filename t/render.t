@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 26;
+use Test::More tests => 25;
 use Pod::Simple::TextContent;
 use Pod::Simple::Text;
 
@@ -99,12 +99,6 @@ foreach my $file (
   }
 }
 
-print "# Wrapping up... one for the road...\n";
-ok 1;
-print "# --- Done with ", __FILE__, " --- \n";
-exit;
-
-
 sub compare2 {
   my @out = @_;
   if($out[0] eq $out[1]) {
@@ -140,7 +134,3 @@ sub compare2 {
     return 1;
   }
 }
-
-
-__END__
-
