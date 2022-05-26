@@ -1,6 +1,9 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
 3.44 2022-xx-yy Karl Williamson <khw@cpan.org>
+	- Use Test::More and cleanup tests Graham Knop++
+	- reorganize Makefile.PL warnings Graham Knop++
+	- use warnings Graham Knop++
 	- Cleanup of whitespace and for prehistoric perls Graham Knop++
 3.43 2021-06-28 Karl Williamson <khw@cpan.org>
 	- Remove pod markup from README
