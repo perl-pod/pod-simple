@@ -3,9 +3,8 @@ use strict;
 use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
-use vars qw( @ISA $VERSION $FREAKYMODE);
-$VERSION = '3.43';
-@ISA = ('Pod::Simple::Methody');
+our $VERSION = '3.44';
+our @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG
           : sub() {0}
