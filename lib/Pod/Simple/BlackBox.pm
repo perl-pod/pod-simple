@@ -21,7 +21,7 @@ package Pod::Simple::BlackBox;
 use integer; # vroom!
 use strict;
 use Carp ();
-our $VERSION = '3.40';
+our $VERSION = '3.44';
 #use constant DEBUG => 7;
 
 sub my_qr ($$) {

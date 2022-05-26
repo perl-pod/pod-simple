@@ -1,8 +1,8 @@
 package Pod::Simple::PullParserToken;
-use strict;
  # Base class for tokens gotten from Pod::Simple::PullParser's $parser->get_token
 our @ISA = ();
-our $VERSION = '3.40';
+our $VERSION = '3.44';
+use strict;
 
 sub new {  # Class->new('type', stuff...);  ## Overridden in derived classes anyway
   my $class = shift;

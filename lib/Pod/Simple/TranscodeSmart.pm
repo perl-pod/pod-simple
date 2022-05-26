@@ -6,7 +6,7 @@ package Pod::Simple::TranscodeSmart;
 use strict;
 use Pod::Simple;
 use Encode;
-our $VERSION = '3.40';
+our $VERSION = '3.44';
 
 sub is_dumb  {0}
 sub is_smart {1}

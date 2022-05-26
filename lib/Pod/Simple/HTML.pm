@@ -2,7 +2,7 @@ package Pod::Simple::HTML;
 use strict;
 use Pod::Simple::PullParser ();
 our @ISA = ('Pod::Simple::PullParser');
-our $VERSION = '3.40';
+our $VERSION = '3.44';
 BEGIN {
   if(defined &DEBUG) { } # no-op
   elsif( defined &Pod::Simple::DEBUG ) { *DEBUG = \&Pod::Simple::DEBUG }

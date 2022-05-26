@@ -2,7 +2,7 @@ package Pod::Simple::PullParserStartToken;
 use strict;
 use Pod::Simple::PullParserToken ();
 our @ISA = ('Pod::Simple::PullParserToken');
-our $VERSION = '3.40';
+our $VERSION = '3.44';
 
 sub new {  # Class->new(tagname, optional_attrhash);
   my $class = shift;

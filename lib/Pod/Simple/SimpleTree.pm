@@ -2,7 +2,7 @@ package Pod::Simple::SimpleTree;
 use strict;
 use Carp ();
 use Pod::Simple ();
-our $VERSION = '3.40';
+our $VERSION = '3.44';
 BEGIN {
   our @ISA = ('Pod::Simple');
   *DEBUG = \&Pod::Simple::DEBUG unless defined &DEBUG;
