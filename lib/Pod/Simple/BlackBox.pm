@@ -20,6 +20,7 @@ package Pod::Simple::BlackBox;
 
 use integer; # vroom!
 use strict;
+use warnings;
 use Carp ();
 our $VERSION = '3.44';
 #use constant DEBUG => 7;

@@ -1,16 +1,7 @@
-#!/usr/bin/perl -w
-
 # t/xhtml01.t - check basic output from Pod::Simple::XHTML
-
-BEGIN {
-    chdir 't' if -d 't';
-}
-
 use strict;
 use warnings;
-use lib '../lib';
 use Test::More tests => 64;
-#use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
 

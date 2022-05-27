@@ -1,16 +1,7 @@
-#!/usr/bin/perl -w
-
 # t/strip_verbatim_indent.t.t - check verbatim indent stripping feature
-
-BEGIN {
-    chdir 't' if -d 't';
-}
-
 use strict;
 use warnings;
-use lib '../lib';
 use Test::More tests => 103;
-#use Test::More 'no_plan';
 
 use_ok('Pod::Simple::XHTML') or exit;
 use_ok('Pod::Simple::XMLOutStream') or exit;

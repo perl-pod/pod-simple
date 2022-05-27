@@ -2,6 +2,7 @@ package Pod::Simple::LinkSection;
   # Based somewhat dimly on Array::Autojoin
 
 use strict;
+use warnings;
 use Pod::Simple::BlackBox;
 our $VERSION = '3.44';
 

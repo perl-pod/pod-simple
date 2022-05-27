@@ -38,6 +38,7 @@ you can prevent high-bit characters from being encoded as HTML entities and
 declare the output character set as UTF-8 before parsing, like so:
 
   $psx->html_charset('UTF-8');
+use warnings;
   $psx->html_encode_chars(q{&<>'"});
 
 =cut

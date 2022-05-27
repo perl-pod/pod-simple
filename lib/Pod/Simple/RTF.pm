@@ -1,5 +1,6 @@
 package Pod::Simple::RTF;
 use strict;
+use warnings;
 
 #sub DEBUG () {4};
 #sub Pod::Simple::DEBUG () {4};
