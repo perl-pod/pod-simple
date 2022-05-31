@@ -750,7 +750,7 @@ sub resolve_pod_page_link {
     }
 
     return ($self->perldoc_url_prefix || '')
-        . $self->encode_entities($to) . $section
+        . $to . $section
         . ($self->perldoc_url_postfix || '');
 }
 
