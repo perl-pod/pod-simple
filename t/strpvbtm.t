@@ -1,7 +1,7 @@
 # t/strip_verbatim_indent.t.t - check verbatim indent stripping feature
 use strict;
 use warnings;
-use Test::More tests => 103;
+use Test::More tests => 107;
 
 use_ok('Pod::Simple::XHTML') or exit;
 use_ok('Pod::Simple::XMLOutStream') or exit;
@@ -133,6 +133,12 @@ for my $spec (
         1,
         "<pre><code>  foo bar baz</code></pre>\n\n",
         'tabs are xlate to one space each'
+    ],
+    [
+        "\n=pod\n\n\tfoo\tbaar\tbaz\n",
+        4,
+        "<pre><code>    foo baar    baz</code></pre>\n\n",
+        'tabs are xlate to four spaces each, with correct tabstops for inner tabs'
     ],
 ) {
     my ($pod, $tabs, $xhtml, $desc) = @$spec;
