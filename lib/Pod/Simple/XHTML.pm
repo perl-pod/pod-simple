@@ -618,48 +618,57 @@ HTML
   }
 }
 
+sub build_index {
+    my ($self, $to_index) = @_;
+
+    my @out;
+    my $level  = 0;
+    my $indent = -1;
+    my $space  = '';
+    my $id     = ' id="index"';
+
+    for my $h (@{ $to_index }, [0]) {
+        my $target_level = $h->[0];
+        # Get to target_level by opening or closing ULs
+        if ($level == $target_level) {
+            $out[-1] .= '</li>';
+        } elsif ($level > $target_level) {
+            $out[-1] .= '</li>' if $out[-1] =~ /^\s+<li>/;
+            while ($level > $target_level) {
+                --$level;
+                push @out, ('  ' x --$indent) . '</li>' if @out && $out[-1] =~ m{^\s+<\/ul};
+                push @out, ('  ' x --$indent) . '</ul>';
+            }
+            push @out, ('  ' x --$indent) . '</li>' if $level;
+        } else {
+            while ($level < $target_level) {
+                ++$level;
+                push @out, ('  ' x ++$indent) . '<li>' if @out && $out[-1]=~ /^\s*<ul/;
+                push @out, ('  ' x ++$indent) . "<ul$id>";
+                $id = '';
+            }
+            ++$indent;
+        }
+
+        next unless $level;
+        $space = '  '  x $indent;
+        my $fragment = $self->encode_entities($self->encode_url($h->[1]));
+        push @out, sprintf '%s<li><a href="#%s">%s</a>',
+            $space, $fragment, $h->[2];
+    }
+
+    return join "\n", @out;
+}
+
 sub end_Document   {
   my ($self) = @_;
   my $to_index = $self->{'to_index'};
   if ($self->index && @{ $to_index } ) {
-      my @out;
-      my $level  = 0;
-      my $indent = -1;
-      my $space  = '';
-      my $id     = ' id="index"';
+      my $index = $self->build_index($to_index);
 
-      for my $h (@{ $to_index }, [0]) {
-          my $target_level = $h->[0];
-          # Get to target_level by opening or closing ULs
-          if ($level == $target_level) {
-              $out[-1] .= '</li>';
-          } elsif ($level > $target_level) {
-              $out[-1] .= '</li>' if $out[-1] =~ /^\s+<li>/;
-              while ($level > $target_level) {
-                  --$level;
-                  push @out, ('  ' x --$indent) . '</li>' if @out && $out[-1] =~ m{^\s+<\/ul};
-                  push @out, ('  ' x --$indent) . '</ul>';
-              }
-              push @out, ('  ' x --$indent) . '</li>' if $level;
-          } else {
-              while ($level < $target_level) {
-                  ++$level;
-                  push @out, ('  ' x ++$indent) . '<li>' if @out && $out[-1]=~ /^\s*<ul/;
-                  push @out, ('  ' x ++$indent) . "<ul$id>";
-                  $id = '';
-              }
-              ++$indent;
-          }
-
-          next unless $level;
-          $space = '  '  x $indent;
-          my $fragment = $self->encode_entities($self->encode_url($h->[1]));
-          push @out, sprintf '%s<li><a href="#%s">%s</a>',
-              $space, $fragment, $h->[2];
-      }
       # Splice the index in between the HTML headers and the first element.
       my $offset = defined $self->html_header ? $self->html_header eq '' ? 0 : 1 : 1;
-      splice @{ $self->{'output'} }, $offset, 0, join "\n", @out;
+      splice @{ $self->{'output'} }, $offset, 0, $index;
   }
 
   if (defined $self->html_footer) {
