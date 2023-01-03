@@ -25,7 +25,10 @@ BEGIN {
 
   sub wanted {
     push @test_files, $File::Find::name
-      if $File::Find::name =~ /\.pod$/;
+      if $File::Find::name =~ /\.pod$/
+      && $File::Find::name !~ /temp/; # ignore any files named temp,
+                                      # a different test file may have
+                                      # created it
   }
   find(\&wanted , $test_dir );
 
