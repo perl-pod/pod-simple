@@ -207,13 +207,13 @@ is $t[4]->tagname, 'Document';
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-END { unlink "temp.pod" }
+our $temp_pod = "temp_$$.pod";
+END { unlink "$temp_pod" }
 {
 print "# Testing pullparsing from a file\n";
 my $p = Pod::Simple::PullParser->new;
 ok 1;
-open(OUT, ">temp.pod") || die "Can't write-open temp.pod: $!";
+open(OUT, ">$temp_pod") || die "Can't write-open $temp_pod: $!";
 print OUT
  map "$_\n",
   '','Bzorch', '','=pod', '', 'Lala', 'zaza', '', '=cut'
@@ -222,7 +222,7 @@ close(OUT);
 ok 1;
 sleep 1;
 
-$p->set_source("temp.pod");
+$p->set_source("$temp_pod");
 
 my( @t, $t );
 while($t = $p->get_token) {
@@ -251,7 +251,7 @@ is $t[4]->tagname, 'Document';
 print "# Testing pullparsing from a glob\n";
 my $p = Pod::Simple::PullParser->new;
 ok 1;
-open(IN, "<temp.pod") || die "Can't read-open temp.pod: $!";
+open(IN, "<$temp_pod") || die "Can't read-open $temp_pod: $!";
 $p->set_source(*IN);
 
 my( @t, $t );
@@ -282,7 +282,7 @@ close(IN);
 print "# Testing pullparsing from a globref\n";
 my $p = Pod::Simple::PullParser->new;
 ok 1;
-open(IN, "<temp.pod") || die "Can't read-open temp.pod: $!";
+open(IN, "<$temp_pod") || die "Can't read-open $temp_pod: $!";
 $p->set_source(\*IN);
 
 my( @t, $t );
@@ -313,7 +313,7 @@ close(IN);
 print "# Testing pullparsing from a filehandle\n";
 my $p = Pod::Simple::PullParser->new;
 ok 1;
-open(IN, "<temp.pod") || die "Can't read-open temp.pod: $!";
+open(IN, "<$temp_pod") || die "Can't read-open $temp_pod: $!";
 $p->set_source(*IN{IO});
 
 my( @t, $t );
