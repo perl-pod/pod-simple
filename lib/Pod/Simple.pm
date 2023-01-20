@@ -1319,8 +1319,9 @@ sub _treat_Ls {  # Process our dear dear friends, the L<...> sequences
         push @$link_text, '"', @$section_name, '"' if $section_name;
 
         if(@ell_content) {
-          $link_text->[-1] .= ' in ' if $section_name;
+          $link_text->[-1] .= ' (in ' if $section_name;
           push @$link_text, @ell_content;
+          $link_text->[-1] .= ')' if $section_name;
         }
       }
 
