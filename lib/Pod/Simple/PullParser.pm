@@ -53,7 +53,7 @@ sub parse_file {
 
 sub run {
   use Carp ();
-  if( __PACKAGE__ eq ref($_[0]) || $_[0]) { # I'm not being subclassed!
+  if( __PACKAGE__ eq (ref($_[0]) || $_[0])) { # I'm not being subclassed!
     Carp::croak "You can call run() only on subclasses of "
      . __PACKAGE__;
   } else {
