@@ -601,6 +601,158 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+sub _maybe_handle_element_start {
+  my $self = shift;
+  return $self->_handle_element_start(@_)
+    if !$self->{filter};
+
+  my ($element_name, $attr) = @_;
+
+  if ($element_name =~ /\Ahead(\d)\z/) {
+    $self->{_in_head} = {
+      element => $element_name,
+      level   => $1 + 0,
+      events  => [],
+      text    => '',
+    };
+  }
+
+  if (my $head = $self->{_in_head}) {
+    push @{ $head->{events} }, [ '_handle_element_start', @_ ];
+    return;
+  }
+
+  return
+    if !$self->{_filter_allowed};
+
+  $self->_handle_element_start(@_);
+}
+
+sub _maybe_handle_element_end {
+  my $self = shift;
+  return $self->_handle_element_end(@_)
+    if !$self->{filter};
+
+  my ($element_name, $attr) = @_;
+
+  if (my $head = $self->{_in_head}) {
+    if ($element_name ne $head->{element}) {
+      push @{ $head->{events} }, [ '_handle_element_end', @_ ];
+      return;
+    }
+
+    delete $self->{_in_head};
+
+    my $headings = $self->{_current_headings} ||= [];
+    @$headings = (@{$headings}[0 .. $head->{level} - 2], $head->{text});
+
+    my $allowed = $self->{_filter_allowed} = $self->_filter_allows(@$headings);
+
+    if ($allowed) {
+      for my $event (@{ $head->{events} }) {
+        my ($method, @args) = @$event;
+        $self->$method(@args);
+      }
+    }
+  }
+
+  return
+    if !$self->{_filter_allowed};
+
+  $self->_handle_element_end(@_);
+}
+
+sub _maybe_handle_text {
+  my $self = shift;
+  return $self->_handle_text(@_)
+    if !$self->{filter};
+
+  my ($text) = @_;
+
+  if (my $head = $self->{_in_head}) {
+    push @{ $head->{events} }, [ '_handle_text', @_ ];
+    $head->{text} .= $text;
+    return;
+  }
+
+  return
+    if !$self->{_filter_allowed};
+
+  $self->_handle_text(@_);
+}
+
+sub _filter_allows {
+  my $self = shift;
+  my @headings = @_;
+
+  my $filter = $self->{filter}
+    or return 1;
+
+  SPEC: for my $spec ( @$filter ) {
+    for my $i (0 .. $#$spec) {
+      my $regex = $spec->[$i];
+      my $heading = $headings[$i];
+      $heading = ''
+        if !defined $heading;
+      next SPEC
+        if $heading !~ $regex;
+    }
+    return 1;
+  }
+
+  return 0;
+}
+
+sub select {
+  my $self = shift;
+  my (@selections) = @_;
+
+  my $filter = $self->{filter} ||= [];
+  if (@selections && $selections[0] eq '+') {
+    shift @selections;
+  }
+  else {
+    @$filter = ();
+  }
+
+  for my $spec (@selections) {
+    eval {
+      push @$filter, $self->_compile_heading_spec($spec);
+      1;
+    } or do {
+      warn $@;
+      warn qq{Ignoring section spec "$spec"!\n};
+    };
+  }
+}
+
+sub _compile_heading_spec {
+  my $self = shift;
+  my ($spec) = @_;
+
+  my @bad;
+  my @parts = $spec =~ m{(?:\A|\G/)((?:[^/\\]|\\.)*)}g;
+  for my $part (@parts) {
+    $part =~ s{\\(.)}{$1}g;
+    my $negate = $part =~ s{\A!}{};
+    $part = '.*'
+      if !length $part;
+
+    eval {
+      $part = $negate ? qr{^(?!$part$)} : qr{^$part$};
+      1;
+    } or do {
+      push @bad, qq{Bad regular expression /$part/ in "$spec": $@\n};
+    };
+  }
+
+  Carp::croak(join '', @bad)
+    if @bad;
+
+  return \@parts;
+}
+
+
 sub _handle_encoding_line {
   my($self, $line) = @_;
 
@@ -1346,7 +1498,7 @@ sub _ponder_begin {
     DEBUG > 1 and print STDERR "Ignoring ignorable =begin\n";
   } else {
     $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
-    $self->_handle_element_start((my $scratch='for'), $para->[1]);
+    $self->_maybe_handle_element_start((my $scratch='for'), $para->[1]);
   }
 
   return 1;
@@ -1414,7 +1566,7 @@ sub _ponder_end {
       # what's that for?
 
     $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
-    $self->_handle_element_end( my $scratch = 'for', $para->[1]);
+    $self->_maybe_handle_element_end( my $scratch = 'for', $para->[1]);
   }
   DEBUG > 1 and print STDERR "Popping $curr_open->[-1][0] $curr_open->[-1][1]{'target'} because of =end $content\n";
   pop @$curr_open;
@@ -1536,7 +1688,7 @@ sub _ponder_over {
   DEBUG > 1 and print STDERR "=over found of type $list_type\n";
 
   $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
-  $self->_handle_element_start((my $scratch = 'over-' . $list_type), $para->[1]);
+  $self->_maybe_handle_element_start((my $scratch = 'over-' . $list_type), $para->[1]);
 
   return;
 }
@@ -1558,7 +1710,7 @@ sub _ponder_back {
     # Expected case: we're closing the most recently opened thing
     #my $over = pop @$curr_open;
     $self->{'content_seen'} ||= 1 unless $self->{'~tried_gen_errata'};
-    $self->_handle_element_end( my $scratch =
+    $self->_maybe_handle_element_end( my $scratch =
       'over-' . ( (pop @$curr_open)->[1]{'~type'} ), $para->[1]
     );
   } else {
@@ -1843,7 +1995,7 @@ sub _traverse_treelet_bit {  # for use only by the routine above
   my($self, $name) = splice @_,0,2;
 
   my $scratch;
-  $self->_handle_element_start(($scratch=$name), shift @_);
+  $self->_maybe_handle_element_start(($scratch=$name), shift @_);
 
   while (@_) {
     my $x = shift;
@@ -1851,11 +2003,11 @@ sub _traverse_treelet_bit {  # for use only by the routine above
       &_traverse_treelet_bit($self, @$x);
     } else {
       $x .= shift while @_ && !ref($_[0]);
-      $self->_handle_text($x);
+      $self->_maybe_handle_text($x);
     }
   }
 
-  $self->_handle_element_end($scratch=$name);
+  $self->_maybe_handle_element_end($scratch=$name);
   return;
 }
 
@@ -2426,7 +2578,7 @@ sub reinit {
   foreach (qw(source_dead source_filename doc_has_started
 start_of_pod_block content_seen last_was_blank paras curr_open
 line_count pod_para_count in_pod ~tried_gen_errata all_errata errata errors_seen
-Title)) {
+Title _current_headings _in_head _filter_allowed)) {
 
     delete $self->{$_};
   }
