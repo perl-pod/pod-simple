@@ -13,7 +13,7 @@ use Pod::Simple::TiedOutFH;
 our @ISA = ('Pod::Simple::BlackBox');
 our $VERSION = '3.44';
 
-our @Known_formatting_codes = qw(I B C L E F S X Z);
+our @Known_formatting_codes = qw(I B C L E F S U X Z);
 our %Known_formatting_codes = map(($_=>1), @Known_formatting_codes);
 our @Known_directives       = qw(head1 head2 head3 head4 head5 head6 item over back);
 our %Known_directives       = map(($_=>'Plain'), @Known_directives);
@@ -754,7 +754,7 @@ sub _remap_sequences {
         ref($map->{$_}) ? join(",", @{$map->{$_}}) : $map->{$_}
       ),
       sort keys %$map ),
-    ("B~C~E~F~I~L~S~X~Z" eq join '~', sort keys %$map)
+    ("B~C~E~F~I~L~S~U~X~Z" eq join '~', sort keys %$map)
      ? "  (all normal)\n" : "\n"
   ;
 
