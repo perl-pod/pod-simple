@@ -699,6 +699,9 @@ sub end_F   { $_[0]{'scratch'} .= '</i>' }
 sub start_I { $_[0]{'scratch'} .= '<i>' }
 sub end_I   { $_[0]{'scratch'} .= '</i>' }
 
+sub start_U { $_[0]{'scratch'} .= '<u>' }
+sub end_U   { $_[0]{'scratch'} .= '</u>' }
+
 sub start_L {
   my ($self, $flags) = @_;
     my ($type, $to, $section) = @{$flags}{'type', 'to', 'section'};

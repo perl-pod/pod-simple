@@ -125,7 +125,7 @@ our %Tagmap = (
 
   changes(qw(
     Para=p
-    B=b I=i
+    B=b I=i U=u
     over-bullet=ul
     over-number=ol
     over-text=dl
@@ -164,6 +164,7 @@ our %Tagmap = (
 
   'B'      =>  "<b>",                  '/B'     =>  "</b>",
   'I'      =>  "<i>",                  '/I'     =>  "</i>",
+  'U'      =>  "<u>",                  '/U'     =>  "</u>",
   'F'      =>  "<em$Computerese>",     '/F'     =>  "</em>",
   'C'      =>  "<code$Computerese>",   '/C'     =>  "</code>",
   'L'  =>  "<a href='YOU_SHOULD_NEVER_SEE_THIS'>", # ideally never used!
