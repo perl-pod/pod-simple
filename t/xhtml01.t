@@ -643,6 +643,18 @@ is($results, <<"EOHTML", "File name in a paragraph");
 
 EOHTML
 
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=pod
+
+A plain paragraph with U<underlined text>.
+EOPOD
+is($results, <<"EOHTML", "Underlined text in a paragraph");
+<p>A plain paragraph with <u>underlined text</u>.</p>
+
+EOHTML
+
+
 # It's not important that 's (apostrophes) be encoded for XHTML output.
 initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');
