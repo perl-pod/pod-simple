@@ -1,7 +1,7 @@
 # t/xhtml01.t - check basic output from Pod::Simple::XHTML
 use strict;
 use warnings;
-use Test::More tests => 64;
+use Test::More tests => 65;
 
 use_ok('Pod::Simple::XHTML') or exit;
 
@@ -456,6 +456,27 @@ is($results, <<'EOHTML', 'multiparagraph nested lists');
 </dl>
 
 EOHTML
+
+
+initialize($parser, $results);
+$parser->parse_string_document(<<'EOPOD');
+=over
+
+Over section without any =item directives.
+
+=back
+
+EOPOD
+
+is($results, <<'EOHTML', 'multiparagraph nested lists');
+<blockquote>
+
+<p>Over section without any =item directives.</p>
+
+</blockquote>
+
+EOHTML
+
 
 initialize($parser, $results);
 $parser->parse_string_document(<<'EOPOD');

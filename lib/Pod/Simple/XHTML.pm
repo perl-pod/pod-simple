@@ -458,7 +458,7 @@ sub start_item_text   {
 }
 
 sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
-sub start_over_block  { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
+sub start_over_block  { $_[0]{'scratch'} = '<blockquote>'; $_[0]->emit }
 sub start_over_number { $_[0]{'scratch'} = '<ol>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
 sub start_over_text   {
     $_[0]{'scratch'} = '<dl>';
@@ -467,7 +467,7 @@ sub start_over_text   {
     $_[0]->emit
 }
 
-sub end_over_block  { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
+sub end_over_block  { $_[0]{'scratch'} .= '</blockquote>'; $_[0]->emit }
 
 sub end_over_number   {
     $_[0]{'scratch'} = "</li>\n" if ( pop @{$_[0]{'in_li'}} );
