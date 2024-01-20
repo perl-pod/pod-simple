@@ -13,6 +13,7 @@ BEGIN {
 use File::Find;
 use File::Spec;
 use Test::More;
+use File::Basename;
 
 use Pod::Simple::JustPod;
 
@@ -26,7 +27,7 @@ BEGIN {
   sub wanted {
     push @test_files, $File::Find::name
       if $File::Find::name =~ /\.pod$/
-      && $File::Find::name !~ /temp/; # ignore any files named temp,
+      && basename($File::Find::name) !~ /temp/; # ignore any files named temp,
                                       # a different test file may have
                                       # created it
   }
