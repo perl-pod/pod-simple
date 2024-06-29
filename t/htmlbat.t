@@ -2,18 +2,16 @@
 use strict;
 use warnings;
 
-use Test::More tests => 15;
+use Test::More tests => 13;
 
 #sub Pod::Simple::HTMLBatch::DEBUG () {5};
-
-my $DEBUG = 0;
 
 require Pod::Simple::HTMLBatch;;
 
 use File::Spec;
 use Cwd;
 my $cwd = cwd();
-diag "CWD: $cwd" if $DEBUG;
+note "CWD: $cwd";
 
 use File::Spec;
 use Cwd ();
@@ -22,7 +20,7 @@ use File::Basename ();
 my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 my $corpus_dir = File::Spec->catdir($t_dir, 'testlib1');
 
-diag "OK, found the test corpus as $corpus_dir" if $DEBUG;
+note "OK, found the test corpus as $corpus_dir";
 
 my $outdir;
 while(1) {
@@ -36,18 +34,16 @@ END {
     rmtree $outdir, 0, 0;
 }
 
-ok 1;
-diag "Output dir: $outdir" if $DEBUG;
+note "Output dir: $outdir";
 
 mkdir $outdir, 0777 or die "Can't mkdir $outdir: $!";
 
-diag "Converting $corpus_dir => $outdir" if $DEBUG;
+note "Converting $corpus_dir => $outdir";
 my $conv = Pod::Simple::HTMLBatch->new;
 $conv->verbose(0);
 $conv->index(1);
 $conv->batch_convert( [$corpus_dir], $outdir );
-ok 1;
-diag "OK, back from converting." if $DEBUG;
+note "OK, back from converting";
 
 my @files;
 use File::Find;
@@ -73,13 +69,11 @@ find( sub {
   }
 }
 
-if ($DEBUG) {
-    diag "Produced in $outdir ...";
-    foreach my $f (sort @files) {
-        diag "  $f";
-    }
-    diag "(", scalar(@files), " items total)";
+note "Produced in $outdir ...";
+foreach my $f (sort @files) {
+    note "  $f";
 }
+note "(", scalar(@files), " items total)";
 
 # Some minimal sanity checks:
 ok scalar(grep m/\.css/i, @files) > 5;
