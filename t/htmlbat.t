@@ -77,7 +77,7 @@ note "(", scalar(@files), " items total)";
 # Some minimal sanity checks:
 cmp_ok scalar(grep m/\.css\z/i, @files), '>', 5;
 cmp_ok scalar(grep m/\.html?\z/i, @files), '>', 5;
-cmp_ok scalar(grep m{squaa\W+Glunk.html?\z}i, @files), '>', 0;
+cmp_ok scalar(grep m{squaa\W+Glunk\.html?\z}i, @files), '>', 0;
 
 my @long = grep { /^[^.]{9,}/ } map { File::Basename::basename($_) } @files;
 unless (is scalar(@long), 0, "Generated filenames fit in 8.* format") {
