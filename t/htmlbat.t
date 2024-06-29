@@ -8,19 +8,12 @@ use Test::More tests => 13;
 
 require Pod::Simple::HTMLBatch;
 
-use File::Spec;
-use Cwd;
-my $cwd = cwd();
-note "CWD: $cwd";
-
-use File::Spec;
+use File::Spec ();
 use Cwd ();
 use File::Basename ();
 
 my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 my $corpus_dir = File::Spec->catdir($t_dir, 'testlib1');
-
-note "OK, found the test corpus as $corpus_dir";
 
 my $outdir;
 while(1) {
