@@ -48,7 +48,10 @@ BEGIN {
   plan tests => (2*@testfiles - 1);
 }
 
-my $HACK = 1;
+my $HACK = 0;
+# 1: write generated XML dump to *.xml_out files for debugging
+# 2: write generated XML to *.xml files, updating/overwriting test corpus
+
 #@testfiles = ('nonesuch.txt');
 
 {
@@ -115,13 +118,13 @@ foreach my $f (@testfiles) {
   $outstring =~ s/[\n\r]+/\n/g;
   if($xmlsource eq $outstring) {
     diag " (Perfect match to $xml)";
-    unlink $outfilename unless $outfilename =~ m/\.xml$/is;
+    unlink $outfilename if $HACK == 1;
     ok 1;
     next;
   }
 
   diag " $outfilename and $xml don't match!";
-  print STDERR `diff $xml $outfilename`;
+  print STDERR `diff $xml $outfilename` if $HACK;
   ok 0;
 
 }
