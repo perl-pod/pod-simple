@@ -80,12 +80,10 @@ cmp_ok scalar(grep m/\.css\z/i, @files), '>', 5;
 cmp_ok scalar(grep m/\.html?\z/i, @files), '>', 5;
 cmp_ok scalar(grep m{squaa\W+Glunk.html?\z}i, @files), '>', 0;
 
-if (my @long = grep { /^[^.]{9,}/ } map { File::Basename::basename($_) } @files) {
-    ok 0;
+my @long = grep { /^[^.]{9,}/ } map { File::Basename::basename($_) } @files;
+unless (is scalar(@long), 0, "Generated filenames fit in 8.* format") {
     diag "   File names too long:";
     diag "        $_" for @long;
-} else {
-    ok 1;
 }
 
 # use Pod::Simple;
