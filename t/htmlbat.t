@@ -15,10 +15,11 @@ use File::Basename ();
 my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 my $corpus_dir = File::Spec->catdir($t_dir, 'testlib1');
 
+my $temp_dir = File::Spec->tmpdir;
 my $outdir;
 while(1) {
     my $rand = sprintf "%05x", rand( 0x100000 );
-    $outdir = File::Spec->catdir( $t_dir, "delme-$rand-out" );
+    $outdir = File::Spec->catdir( $temp_dir, "delme-$rand-out" );
     last unless -e $outdir;
 }
 
