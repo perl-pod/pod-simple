@@ -85,6 +85,3 @@ unless (is scalar(@long), 0, "Generated filenames fit in 8.* format") {
     diag "   File names too long:";
     diag "        $_" for @long;
 }
-
-# use Pod::Simple;
-# *pretty = \&Pod::Simple::BlackBox::pretty;
