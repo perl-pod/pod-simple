@@ -2,20 +2,18 @@
 use strict;
 use warnings;
 
+use Test::More;
 BEGIN {
     use Config;
-    if ($Config::Config{'extensions'} !~ /\bEncode\b/) {
-      print "1..0 # Skip: Encode was not built\n";
-      exit 0;
+    if ($Config{extensions} !~ /\bEncode\b/) {
+      plan skip_all => "Encode was not built";
     }
     if (ord("A") != 65) {
-      print "1..0 # Skip: Encode not fully working on non-ASCII platforms at this time\n";
-      exit 0;
+      plan skip_all => "Encode not fully working on non-ASCII platforms at this time";
     }
 }
 
 #use Pod::Simple::Debug (10);
-use Test::More;
 
 use File::Spec;
 use Cwd ();
@@ -25,7 +23,7 @@ my(@testfiles, %xmlfiles, %wouldxml);
 #use Pod::Simple::Debug (10);
 BEGIN {
   my $corpusdir = File::Spec->catdir(File::Basename::dirname(Cwd::abs_path(__FILE__)), 'corpus');
-  print "#Corpusdir: $corpusdir\n";
+  diag "Corpusdir: $corpusdir";
 
   opendir(INDIR, $corpusdir) or die "Can't opendir corpusdir : $!";
   my @f = map File::Spec::->catfile($corpusdir, $_), readdir(INDIR);
@@ -53,15 +51,10 @@ BEGIN {
 my $HACK = 1;
 #@testfiles = ('nonesuch.txt');
 
-my $skippy =  ($] < 5.008) ? "skip because perl ($]) pre-dates v5.8.0" : 0;
-if($skippy) {
-  print "# This is just perl v$], so I'm skipping many many tests.\n";
-}
-
 {
   my @x = @testfiles;
-  print "# Files to test:\n";
-  while(@x) {  print "#  ", join(' ', splice @x,0,3), "\n" }
+  diag "Files to test:";
+  while(@x) { diag " ", join(' ', splice @x,0,3); }
 }
 
 require Pod::Simple::DumpAsXML;
@@ -69,10 +62,11 @@ require Pod::Simple::DumpAsXML;
 
 foreach my $f (@testfiles) {
   my $xml = $xmlfiles{$f};
+  diag "";
   if($xml) {
-    print "#\n#To test $f against $xml\n";
+    diag "To test $f against $xml";
   } else {
-    print "#\n# $f has no xml to test it against\n";
+    diag "$f has no xml to test it against";
   }
 
   my $outstring;
@@ -84,16 +78,13 @@ foreach my $f (@testfiles) {
   };
 
   if($@) {
-    my $x = "#** Couldn't parse $f:\n $@";
-    $x =~ s/([\n\r]+)/\n#** /g;
-    print $x, "\n";
+    diag "** Couldn't parse $f:\n $@";
     ok 0;
     ok 0;
     next;
-  } else {
-    print "# OK, parsing $f generated ", length($outstring), " bytes\n";
-    ok 1;
   }
+
+  ok 1, "OK, parsing $f generated " . length($outstring) . " bytes";
 
   die "Null outstring?" unless $outstring;
 
@@ -107,7 +98,7 @@ foreach my $f (@testfiles) {
     close(OUT);
   }
   unless($xml) {
-    print "#  (no comparison done)\n";
+    diag " (no comparison done)";
     ok 1;
     next;
   }
@@ -118,28 +109,19 @@ foreach my $f (@testfiles) {
   my $xmlsource = <IN>;
   close(IN);
 
-  print "# There's errata!\n" if $outstring =~ m/start_line="-321"/;
+  diag "There's errata!" if $outstring =~ m/start_line="-321"/;
 
-  if(
-    $xmlsource eq $outstring
-    or do {
-      $xmlsource =~ s/[\n\r]+/\n/g;
-      $outstring =~ s/[\n\r]+/\n/g;
-      $xmlsource eq $outstring;
-    }
-  ) {
-    print "#  (Perfect match to $xml)\n";
+  $xmlsource =~ s/[\n\r]+/\n/g;
+  $outstring =~ s/[\n\r]+/\n/g;
+  if($xmlsource eq $outstring) {
+    diag " (Perfect match to $xml)";
     unlink $outfilename unless $outfilename =~ m/\.xml$/is;
     ok 1;
     next;
   }
 
-  if($skippy) {
-    skip $skippy, 0;
-  } else {
-    print STDERR "#  $outfilename and $xml don't match!\n";
-    print STDERR `diff $xml $outfilename`;
-    ok 0;
-  }
+  diag " $outfilename and $xml don't match!";
+  print STDERR `diff $xml $outfilename`;
+  ok 0;
 
 }
