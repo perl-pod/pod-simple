@@ -25,9 +25,9 @@ BEGIN {
   my $corpusdir = File::Spec->catdir(File::Basename::dirname(Cwd::abs_path(__FILE__)), 'corpus');
   diag "Corpusdir: $corpusdir";
 
-  opendir(INDIR, $corpusdir) or die "Can't opendir corpusdir : $!";
-  my @f = map File::Spec::->catfile($corpusdir, $_), readdir(INDIR);
-  closedir(INDIR);
+  opendir(my $indir, $corpusdir) or die "Can't opendir $corpusdir : $!";
+  my @f = map File::Spec::->catfile($corpusdir, $_), readdir($indir);
+  closedir($indir);
   my %f;
   @f{@f} = ();
   foreach my $maybetest (sort @f) {
@@ -92,10 +92,10 @@ foreach my $f (@testfiles) {
 
   my $outfilename = ($HACK > 1) ? $wouldxml{$f} : "$wouldxml{$f}\_out";
   if($HACK) {
-    open OUT, ">$outfilename" or die "Can't write-open $outfilename: $!\n";
-    binmode(OUT);
-    print OUT $outstring;
-    close(OUT);
+    open my $out, ">", $outfilename or die "Can't write-open $outfilename: $!\n";
+    binmode($out);
+    print $out $outstring;
+    close($out);
   }
   unless($xml) {
     diag " (no comparison done)";
@@ -103,11 +103,11 @@ foreach my $f (@testfiles) {
     next;
   }
 
-  open(IN, "<$xml") or die "Can't read-open $xml: $!";
+  open(my $in, "<", $xml) or die "Can't read-open $xml: $!";
   #binmode(IN);
   local $/;
-  my $xmlsource = <IN>;
-  close(IN);
+  my $xmlsource = <$in>;
+  close($in);
 
   diag "There's errata!" if $outstring =~ m/start_line="-321"/;
 
