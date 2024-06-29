@@ -13,7 +13,7 @@ require Pod::Simple::HTMLBatch;;
 use File::Spec;
 use Cwd;
 my $cwd = cwd();
-print "# CWD: $cwd\n" if $DEBUG;
+diag "CWD: $cwd" if $DEBUG;
 
 use File::Spec;
 use Cwd ();
@@ -22,7 +22,7 @@ use File::Basename ();
 my $t_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
 my $corpus_dir = File::Spec->catdir($t_dir, 'testlib1');
 
-print "# OK, found the test corpus as $corpus_dir\n" if $DEBUG;
+diag "OK, found the test corpus as $corpus_dir" if $DEBUG;
 
 my $outdir;
 while(1) {
@@ -37,17 +37,17 @@ END {
 }
 
 ok 1;
-print "# Output dir: $outdir\n" if $DEBUG;
+diag "Output dir: $outdir" if $DEBUG;
 
 mkdir $outdir, 0777 or die "Can't mkdir $outdir: $!";
 
-print "# Converting $corpus_dir => $outdir\n" if $DEBUG;
+diag "Converting $corpus_dir => $outdir" if $DEBUG;
 my $conv = Pod::Simple::HTMLBatch->new;
 $conv->verbose(0);
 $conv->index(1);
 $conv->batch_convert( [$corpus_dir], $outdir );
 ok 1;
-print "# OK, back from converting.\n" if $DEBUG;
+diag "OK, back from converting." if $DEBUG;
 
 my @files;
 use File::Find;
@@ -65,7 +65,7 @@ find( sub {
 
 {
   my $long = ( grep m/zikzik\./i, @files )[0];
-  ok($long) or print "# How odd, no zikzik file in $outdir!?\n";
+  ok($long) or diag "How odd, no zikzik file in $outdir!?";
   if($long) {
     $long =~ s{zikzik\.html?$}{}s;
     for(@files) { substr($_, 0, length($long)) = '' }
@@ -74,11 +74,11 @@ find( sub {
 }
 
 if ($DEBUG) {
-    print "#Produced in $outdir ...\n";
+    diag "Produced in $outdir ...";
     foreach my $f (sort @files) {
-        print "#   $f\n";
+        diag "  $f";
     }
-    print "# (", scalar(@files), " items total)\n";
+    diag "(", scalar(@files), " items total)";
 }
 
 # Some minimal sanity checks:
@@ -88,8 +88,8 @@ ok scalar grep m{squaa\W+Glunk.html?}i, @files;
 
 if (my @long = grep { /^[^.]{9,}/ } map { s{^[^/]/}{} } @files) {
     ok 0;
-    print "#    File names too long:\n",
-        map { "#         $_\n" } @long;
+    diag "   File names too long:";
+    diag "        $_" for @long;
 } else {
     ok 1;
 }
