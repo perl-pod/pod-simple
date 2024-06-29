@@ -4,9 +4,9 @@ use warnings;
 
 use Test::More tests => 13;
 
-#sub Pod::Simple::HTMLBatch::DEBUG () {5};
+#sub Pod::Simple::HTMLBatch::DEBUG () {5}
 
-require Pod::Simple::HTMLBatch;;
+require Pod::Simple::HTMLBatch;
 
 use File::Spec;
 use Cwd;
@@ -24,9 +24,9 @@ note "OK, found the test corpus as $corpus_dir";
 
 my $outdir;
 while(1) {
-  my $rand = sprintf "%05x", rand( 0x100000 );
-  $outdir = File::Spec->catdir( $t_dir, "delme-$rand-out" );
-  last unless -e $outdir;
+    my $rand = sprintf "%05x", rand( 0x100000 );
+    $outdir = File::Spec->catdir( $t_dir, "delme-$rand-out" );
+    last unless -e $outdir;
 }
 
 END {
@@ -48,25 +48,24 @@ note "OK, back from converting";
 my @files;
 use File::Find;
 find( sub {
-      push @files, $File::Find::name;
-      if (/[.]html\z/ && !/perl|index/) {
-          # Make sure an index was generated.
-          open my $fh, '<', $_ or die "Cannot open $_: $!\n";
-          my $html = do { local $/; <$fh> };
-          close $fh;
-          like $html, qr/<div class='indexgroup'>/;
-      }
-      return;
+    push @files, $File::Find::name;
+    if (/[.]html\z/ && !/perl|index/) {
+        # Make sure an index was generated.
+        open my $fh, '<', $_ or die "Cannot open $_: $!\n";
+        my $html = do { local $/; <$fh> };
+        close $fh;
+        like $html, qr/<div class='indexgroup'>/;
+    }
 }, $outdir );
 
 {
-  my $long = ( grep m/zikzik\./i, @files )[0];
-  ok($long) or diag "How odd, no zikzik file in $outdir!?";
-  if($long) {
-    $long =~ s{zikzik\.html?\z}{};
-    for(@files) { substr($_, 0, length($long)) = '' }
-    @files = grep length($_), @files;
-  }
+    my $long = ( grep m/zikzik\./i, @files )[0];
+    ok($long) or diag "How odd, no zikzik file in $outdir!?";
+    if($long) {
+        $long =~ s{zikzik\.html?\z}{};
+        for(@files) { substr($_, 0, length($long)) = ''; }
+        @files = grep length($_), @files;
+    }
 }
 
 note "Produced in $outdir ...";
