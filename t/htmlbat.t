@@ -49,11 +49,11 @@ my @files;
 use File::Find;
 find( sub {
       push @files, $File::Find::name;
-      if (/[.]html\z/ && $_ !~ /perl|index/) {
+      if (/[.]html\z/ && !/perl|index/) {
           # Make sure an index was generated.
-          open HTML, $_ or die "Cannot open $_: $!\n";
-          my $html = do { local $/; <HTML> };
-          close HTML;
+          open my $fh, '<', $_ or die "Cannot open $_: $!\n";
+          my $html = do { local $/; <$fh> };
+          close $fh;
           like $html, qr/<div class='indexgroup'>/;
       }
       return;
