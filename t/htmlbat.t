@@ -80,7 +80,7 @@ cmp_ok scalar(grep m/\.css\z/i, @files), '>', 5;
 cmp_ok scalar(grep m/\.html?\z/i, @files), '>', 5;
 cmp_ok scalar(grep m{squaa\W+Glunk.html?\z}i, @files), '>', 0;
 
-if (my @long = grep { /^[^.]{9,}/ } map { s{^[^/]/}{} } @files) {
+if (my @long = grep { /^[^.]{9,}/ } map { File::Basename::basename($_) } @files) {
     ok 0;
     diag "   File names too long:";
     diag "        $_" for @long;
