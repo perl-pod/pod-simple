@@ -49,7 +49,7 @@ my @files;
 use File::Find;
 find( sub {
       push @files, $File::Find::name;
-      if (/[.]html$/ && $_ !~ /perl|index/) {
+      if (/[.]html\z/ && $_ !~ /perl|index/) {
           # Make sure an index was generated.
           open HTML, $_ or die "Cannot open $_: $!\n";
           my $html = do { local $/; <HTML> };
@@ -63,7 +63,7 @@ find( sub {
   my $long = ( grep m/zikzik\./i, @files )[0];
   ok($long) or diag "How odd, no zikzik file in $outdir!?";
   if($long) {
-    $long =~ s{zikzik\.html?$}{}s;
+    $long =~ s{zikzik\.html?\z}{};
     for(@files) { substr($_, 0, length($long)) = '' }
     @files = grep length($_), @files;
   }
@@ -76,9 +76,9 @@ foreach my $f (sort @files) {
 note "(", scalar(@files), " items total)";
 
 # Some minimal sanity checks:
-ok scalar(grep m/\.css/i, @files) > 5;
-ok scalar(grep m/\.html?/i, @files) > 5;
-ok scalar grep m{squaa\W+Glunk.html?}i, @files;
+cmp_ok scalar(grep m/\.css\z/i, @files), '>', 5;
+cmp_ok scalar(grep m/\.html?\z/i, @files), '>', 5;
+cmp_ok scalar(grep m{squaa\W+Glunk.html?\z}i, @files), '>', 0;
 
 if (my @long = grep { /^[^.]{9,}/ } map { s{^[^/]/}{} } @files) {
     ok 0;
