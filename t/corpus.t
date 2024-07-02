@@ -23,7 +23,7 @@ my(@testfiles, %xmlfiles, %wouldxml);
 #use Pod::Simple::Debug (10);
 BEGIN {
   my $corpusdir = File::Spec->catdir(File::Basename::dirname(Cwd::abs_path(__FILE__)), 'corpus');
-  diag "Corpusdir: $corpusdir";
+  note "Corpusdir: $corpusdir";
 
   opendir(my $indir, $corpusdir) or die "Can't opendir $corpusdir : $!";
   my @f = map File::Spec::->catfile($corpusdir, $_), readdir($indir);
@@ -56,8 +56,8 @@ my $HACK = 0;
 
 {
   my @x = @testfiles;
-  diag "Files to test:";
-  while(@x) { diag " ", join(' ', splice @x,0,3); }
+  note "Files to test:";
+  while(@x) { note " ", join(' ', splice @x,0,3); }
 }
 
 require Pod::Simple::DumpAsXML;
@@ -65,11 +65,11 @@ require Pod::Simple::DumpAsXML;
 
 foreach my $f (@testfiles) {
   my $xml = $xmlfiles{$f};
-  diag "";
+  note "";
   if($xml) {
-    diag "To test $f against $xml";
+    note "To test $f against $xml";
   } else {
-    diag "$f has no xml to test it against";
+    note "$f has no xml to test it against";
   }
 
   my $outstring;
@@ -101,7 +101,7 @@ foreach my $f (@testfiles) {
     close($out);
   }
   unless($xml) {
-    diag " (no comparison done)";
+    note " (no comparison done)";
     ok 1;
     next;
   }
@@ -112,12 +112,12 @@ foreach my $f (@testfiles) {
   my $xmlsource = <$in>;
   close($in);
 
-  diag "There's errata!" if $outstring =~ m/start_line="-321"/;
+  note "There's errata!" if $outstring =~ m/start_line="-321"/;
 
   $xmlsource =~ s/[\n\r]+/\n/g;
   $outstring =~ s/[\n\r]+/\n/g;
   if($xmlsource eq $outstring) {
-    diag " (Perfect match to $xml)";
+    note " (Perfect match to $xml)";
     unlink $outfilename if $HACK == 1;
     ok 1;
     next;
