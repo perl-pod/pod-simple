@@ -80,14 +80,12 @@ foreach my $f (@testfiles) {
     undef $p;
   };
 
-  if($@) {
-    diag "** Couldn't parse $f:\n $@";
-    ok 0;
+  is $@, '', "parsed $f without error" or do {
     ok 0;
     next;
-  }
+  };
 
-  ok 1, "OK, parsing $f generated " . length($outstring) . " bytes";
+  note "generated " . length($outstring) . " bytes";
 
   die "Null outstring?" unless $outstring;
 
@@ -116,15 +114,9 @@ foreach my $f (@testfiles) {
 
   $xmlsource =~ s/[\n\r]+/\n/g;
   $outstring =~ s/[\n\r]+/\n/g;
-  if($xmlsource eq $outstring) {
-    note " (Perfect match to $xml)";
-    unlink $outfilename if $HACK == 1;
-    ok 1;
-    next;
-  }
+  ok $xmlsource eq $outstring, "perfect match to $xml" or do {
+    diag `diff $xml $outfilename` if $HACK;
+  };
 
-  diag " $outfilename and $xml don't match!";
-  print STDERR `diff $xml $outfilename` if $HACK;
-  ok 0;
-
+  unlink $outfilename if $HACK == 1;
 }
