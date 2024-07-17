@@ -910,9 +910,6 @@ merchantability or fitness for a particular purpose.
 Thanks to L<Hurricane Electric|http://he.net/> for permission to use its
 L<Linux man pages online|http://man.he.net/> site for man page links.
 
-Thanks to L<search.cpan.org|http://search.cpan.org/> for permission to use the
-site for Perl module links.
-
 =head1 AUTHOR
 
 Pod::Simpele::XHTML was created by Allison Randal <allison@perl.org>.
