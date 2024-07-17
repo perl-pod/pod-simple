@@ -5,7 +5,11 @@ Pod::Simple - framework for parsing Pod
 
 =head1 SYNOPSIS
 
- TODO
+  package Pod::SomeFormatter;
+  use Pod::Simple;
+  @ISA = qw(Pod::Simple);
+  $VERSION = '1.01';
+  use strict;
 
 =head1 DESCRIPTION
 
