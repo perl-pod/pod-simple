@@ -38,10 +38,10 @@ existing Pod formatter, instead see its documentation and see also the
 docs in L<Pod::Simple>.
 
 B<The zeroeth step> in writing a Pod formatter is to make sure that there
-isn't already a decent one in CPAN. See L<http://search.cpan.org/>, and
+isn't already a decent one in CPAN. See L<https://metacpan.org/>, and
 run a search on the name of the format you want to render to. Also
 consider joining the Pod People list
-L<http://lists.perl.org/showlist.cgi?name=pod-people> and asking whether
+L<https://lists.perl.org/showlist.cgi?name=pod-people> and asking whether
 anyone has a formatter for that format -- maybe someone cobbled one
 together but just hasn't released it.
 
