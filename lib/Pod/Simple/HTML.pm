@@ -35,8 +35,8 @@ $Perldoc_URL_Postfix = ''
  unless defined $Perldoc_URL_Postfix;
 
 
-our $Man_URL_Prefix  = 'http://man.he.net/man';
-our $Man_URL_Postfix = '';
+our $Man_URL_Prefix  = 'https://man7.org/linux/man-pages/man';
+our $Man_URL_Postfix = '.html';
 
 our $Title_Prefix;
 $Title_Prefix  = '' unless defined $Title_Prefix;
@@ -59,7 +59,7 @@ __PACKAGE__->_accessorize(
    # In turning L<crontab(5)> into http://whatever/man/1/crontab, what
    #  to put before the "1/crontab".
  'man_url_postfix',
-   #  what to put after the "1/crontab" in the URL. Normally "".
+   #  what to put after the "1/crontab" in the URL. Normally ".html".
 
  'batch_mode', # whether we're in batch mode
  'batch_mode_current_level',
@@ -797,7 +797,7 @@ sub resolve_man_page_link {
   $section ||= 1;
 
   return $self->man_url_prefix . "$section/"
-      . $self->manpage_url_escape($page)
+      . $self->manpage_url_escape($page) . ".$section"
       . $self->man_url_postfix;
 }
 
@@ -1135,11 +1135,6 @@ under the same terms as Perl itself.
 This program is distributed in the hope that it will be useful, but
 without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.
-
-=head1 ACKNOWLEDGEMENTS
-
-Thanks to L<Hurricane Electric|http://he.net/> for permission to use its
-L<Linux man pages online|http://man.he.net/> site for man page links.
 
 =head1 AUTHOR
 
