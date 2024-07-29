@@ -5,7 +5,19 @@ Pod::Simple - framework for parsing Pod
 
 =head1 SYNOPSIS
 
- TODO
+    # using an existing formatter
+    use Pod::Simple::XHTML;
+    my $parser = Pod::Simple::XHTML->new;
+    $parser->parse_file('path/to/file.pod');
+
+    # creating a new formatter
+    package Pod::Simple::SomeFormatter;
+    use parent qw(Pod::Simple);
+    sub _handle_element_start {
+        my ($parser, $element_name, $attr_hash_r) = @_;
+        ...
+    }
+    ...
 
 =head1 DESCRIPTION
 
