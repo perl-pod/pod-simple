@@ -20,7 +20,7 @@ use Pod::Simple::JustPod;
 my @test_files;
 
 BEGIN {
-  my $test_dir = File::Basename::dirname(Cwd::abs_path(__FILE__));
+  my $test_dir = File::Basename::dirname(File::Spec->rel2abs(__FILE__));
 
   print "# TESTDIR: $test_dir\n";
 

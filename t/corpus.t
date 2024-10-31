@@ -16,13 +16,12 @@ BEGIN {
 #use Pod::Simple::Debug (10);
 
 use File::Spec;
-use Cwd ();
 use File::Basename ();
 
 my(@testfiles, %xmlfiles, %wouldxml);
 #use Pod::Simple::Debug (10);
 BEGIN {
-  my $corpusdir = File::Spec->catdir(File::Basename::dirname(Cwd::abs_path(__FILE__)), 'corpus');
+  my $corpusdir = File::Spec->catdir(File::Basename::dirname(File::Spec->rel2abs(__FILE__)), 'corpus');
   note "Corpusdir: $corpusdir";
 
   opendir(my $indir, $corpusdir) or die "Can't opendir $corpusdir : $!";
