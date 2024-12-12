@@ -35,7 +35,7 @@ sub my_qr ($$) {
     my ($input_re, $should_match) = @_;
     # XXX could have a third parameter $shouldnt_match for extra safety
 
-    my $use_utf8 = ($] le 5.006002) ? 'use utf8;' : "";
+    my $use_utf8 = do { no integer; $] <= 5.006002 } ? 'use utf8;' : "";
 
     my $re = eval "no warnings; $use_utf8 qr/$input_re/";
     #print STDERR  __LINE__, ": $input_re: $@\n" if $@;
@@ -93,7 +93,7 @@ my $deprecated_re = my_qr('\p{IsDeprecated}', "\x{149}");
 $deprecated_re = qr/\x{149}/ unless $deprecated_re;
 
 my $utf8_bom;
-if (($] ge 5.007_003)) {
+if ( do { no integer; "$]" >= 5.007_003 }) {
   $utf8_bom = "\x{FEFF}";
   utf8::encode($utf8_bom);
 } else {
@@ -266,13 +266,13 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       # XXX probably if the line has E<foo> that evaluates to illegal CP1252,
       # then it is UTF-8.  But we haven't processed E<> yet.
 
-      goto set_1252 if $] lt 5.006_000;    # No UTF-8 on very early perls
+      goto set_1252 if do { no integer; "$]" < 5.006_000 };    # No UTF-8 on very early perls
 
       my $copy;
 
       no warnings 'utf8';
 
-      if ($] ge 5.007_003) {
+      if ( do { no integer; "$]" >= 5.007_003 } ) {
         $copy = $line;
 
         # On perls that have this function, we can use it to easily see if the
@@ -286,7 +286,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
       }
       else { # ASCII, no decode(): do it ourselves using the fundamental
              # characteristics of UTF-8
-        use if $] le 5.006002, 'utf8';
+        use if do { no integer; "$]" <= 5.006002 }, 'utf8';
 
         my $char_ord;
         my $needed;         # How many continuation bytes to gobble up
