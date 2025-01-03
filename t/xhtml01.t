@@ -11,7 +11,8 @@ isa_ok ($parser, 'Pod::Simple::XHTML');
 my $results;
 
 my $PERLDOC = "https://metacpan.org/pod";
-my $MANURL = "http://man.he.net/man";
+my $MANURL = "https://man7.org/linux/man-pages/man";
+my $MANURL_POSTFIX = ".html";
 
 initialize($parser, $results);
 $parser->parse_string_document( "=head1 Poit!" );
@@ -788,11 +789,11 @@ is $parser->resolve_pod_page_link('perlpod', 'this that'),
     'POD link with fragment with space';
 
 is $parser->resolve_man_page_link('crontab(5)', 'EXAMPLE CRON FILE'),
-    "${MANURL}5/crontab", 'Man link with fragment';
+    "${MANURL}5/crontab.5${MANURL_POSTFIX}", 'Man link with fragment';
 is $parser->resolve_man_page_link('crontab(5)'),
-    "${MANURL}5/crontab", 'Man link without fragment';
+    "${MANURL}5/crontab.5${MANURL_POSTFIX}", 'Man link without fragment';
 is $parser->resolve_man_page_link('crontab'),
-    "${MANURL}1/crontab", 'Man link without section';
+    "${MANURL}1/crontab.1${MANURL_POSTFIX}", 'Man link without section';
 
 # Make sure that batch_mode_page_object_init() works.
 ok $parser->batch_mode_page_object_init(0, 0, 0, 0, 6),

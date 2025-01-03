@@ -129,13 +129,14 @@ default.
 
 =head2 man_url_prefix
 
-In turning C<< L<crontab(5)> >> into http://whatever/man/1/crontab, what
-to put before the "1/crontab". The default value is
-"http://man.he.net/man".
+In turning C<< L<crontab(5)> >> into http://whatever/man/1/crontab.1, what
+to put before the "1/crontab.1". The default value is
+"https://man7.org/linux/man-pages/man".
 
 =head2 man_url_postfix
 
-What to put after "1/crontab" in the URL. This option is not set by default.
+What to put after "1/crontab.1" in the URL.
+This option is set to ".html" by default.
 
 =head2 title_prefix, title_postfix
 
@@ -276,7 +277,8 @@ sub new {
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
   $new->perldoc_url_prefix('https://metacpan.org/pod/');
-  $new->man_url_prefix('http://man.he.net/man');
+  $new->man_url_prefix('https://man7.org/linux/man-pages/man');
+  $new->man_url_postfix('.html');
   $new->html_charset('ISO-8859-1');
   $new->nix_X_codes(1);
   $new->{'scratch'} = '';
@@ -774,25 +776,25 @@ sub resolve_pod_page_link {
 Resolves a man page link target and numeric section to a URL. The resulting
 link will be returned for the above examples as:
 
-    http://man.he.net/man5/crontab
-    http://man.he.net/man1/crontab
+    https://man7.org/linux/man-pages/man5/crontab.5.html
+    https://man7.org/linux/man-pages/man1/crontab.1.html
 
 Note that the first argument is required. The section number will be parsed
 from it, and if it's missing will default to 1. The second argument is
-currently ignored, as L<man.he.net|http://man.he.net> does not currently
-include linkable IDs or anchor names in its pages. Subclass to link to a
-different man page HTTP server.
+currently ignored. Subclass to link to a different man page HTTP server.
 
 =cut
 
 sub resolve_man_page_link {
     my ($self, $to, $section) = @_;
     return undef unless defined $to;
+
     my ($page, $part) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
     return undef unless $page;
+
     return ($self->man_url_prefix || '')
         . ($part || 1) . "/" . $self->encode_entities($page)
-        . ($self->man_url_postfix || '');
+        . "." . ($part || 1) . ($self->man_url_postfix || '');
 
 }
 
@@ -904,11 +906,6 @@ under the same terms as Perl itself.
 This program is distributed in the hope that it will be useful, but
 without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.
-
-=head1 ACKNOWLEDGEMENTS
-
-Thanks to L<Hurricane Electric|http://he.net/> for permission to use its
-L<Linux man pages online|http://man.he.net/> site for man page links.
 
 =head1 AUTHOR
 
