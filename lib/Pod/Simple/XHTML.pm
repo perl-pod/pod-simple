@@ -118,7 +118,7 @@ the call to C<parse_file>:
 
 =head2 perldoc_url_prefix
 
-In turning L<Foo::Bar> into http://whatever/Foo%3a%3aBar, what
+In turning LE<lt>Foo::BarE<gt> into http://whatever/Foo%3a%3aBar, what
 to put before the "Foo%3a%3aBar". The default value is
 "https://metacpan.org/pod/".
 
@@ -129,7 +129,7 @@ default.
 
 =head2 man_url_prefix
 
-In turning C<< L<crontab(5)> >> into http://whatever/man/1/crontab.1, what
+In turning C<< LE<lt>crontab(5)E<gt> >> into http://whatever/man/1/crontab.1, what
 to put before the "1/crontab.1". The default value is
 "https://man7.org/linux/man-pages/man".
 
