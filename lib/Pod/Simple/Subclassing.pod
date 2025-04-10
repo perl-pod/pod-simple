@@ -367,7 +367,7 @@ produces this event structure:
   </L>
 
 In cases of links to a section in a different Pod document,
-there are both a I<section> attribute and a L<to> attribute.
+there are both a I<section> attribute and a I<to> attribute.
 For example, this Pod source:
 
   L<perlsyn/"Basic BLOCKs and Switch Statements">
