@@ -1,12 +1,5 @@
 # This -*- perl -*- script writes the Makefile for Pod::Simple
 #
-# Time-stamp: "2004-05-24 00:21:20 ADT"
-#
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
-#
-
-require 5;
 
 use strict;
 use ExtUtils::MakeMaker;
@@ -32,6 +25,7 @@ my %WriteMakefileArgs = (
         'integer'         => 0,
         'overload'        => 0,
         'strict'          => 0,
+        'warnings'        => 0,
     },
 
     INSTALLDIRS => $] >= 5.009003 && $] <= 5.011000 ? 'perl' : 'site',
