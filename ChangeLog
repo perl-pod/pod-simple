@@ -1,6 +1,25 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
-3.44 2022-xx-yy Karl Williamson <khw@cpan.org>
+3.46 2025-05-xx Karl Williamson <khw@cpan.org>
+	- XHTML: =over without =item should render as a blockquote Graham Knop++
+	- Add support for underlined text U<> formatting Graham Knop++
+	- Make 'temp' name checking more succinct Max Maischein++
+	- github: fix and add tests  Lukas Mai++  rwp0++
+	- Makefile.PL: add missing 'warnings' prereq  Lukas Mai++
+	- Add select method compatible with Pod::Select  Graham Knop++
+	- Modernize htmlbat.t, corpus.t  Lukas Mai++, Graham Knop++
+	- Fix links, typos, acknowledgments  James Keenan++ rwp0++, Dan Book++
+	- Add documentation on sublcassing  Graham Knop++
+	- Fix version checking  Philippe Bruhat++
+	- Fix version number  Thibault Duponchelle++
+	- Use rel2abs instead of abs_path  Andrew Fresh++
+3.45 2023-05-14 Karl Williamson <khw@cpan.org>
+	- fix precedence issue in PullParser mauke++
+	- minor parallelism fixes to test files yves++
+	- refactor XHTML index generation into own method Graham Knop++
+	- fix tab expansion when not 0 nor 8 Graham Knop++
+	- various fixes to links Graham Knop++
+3.44 2022-05-26 Karl Williamson <khw@cpan.org>
 	- Use Test::More and cleanup tests Graham Knop++
 	- reorganize Makefile.PL warnings Graham Knop++
 	- use warnings Graham Knop++
