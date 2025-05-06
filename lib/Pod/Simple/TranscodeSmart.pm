@@ -7,7 +7,7 @@ use strict;
 use warnings;
 use Pod::Simple;
 use Encode;
-our $VERSION = '3.44';
+our $VERSION = '3.46';
 
 sub is_dumb  {0}
 sub is_smart {1}

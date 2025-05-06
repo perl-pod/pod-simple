@@ -8,7 +8,7 @@ use warnings;
 use Carp ();
 use Pod::Simple::Methody ();
 use Pod::Simple ();
-our $VERSION = '3.44';
+our $VERSION = '3.46';
 our @ISA = ('Pod::Simple::Methody');
 BEGIN { *DEBUG = defined(&Pod::Simple::DEBUG)
           ? \&Pod::Simple::DEBUG
