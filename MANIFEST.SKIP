@@ -63,3 +63,8 @@ delme
 
 ^MYMETA\.yml$
 ^MYMETA\.json$
+
+# Avoid git-related files
+.git/
+.github/
+
