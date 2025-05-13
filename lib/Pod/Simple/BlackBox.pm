@@ -604,7 +604,7 @@ sub parse_lines {             # Usage: $parser->parse_lines(@lines)
 sub _maybe_handle_element_start {
   my $self = shift;
   return $self->_handle_element_start(@_)
-    if !$self->{filter};
+    if !$self->{heading_filter};
 
   my ($element_name, $attr) = @_;
 
@@ -631,7 +631,7 @@ sub _maybe_handle_element_start {
 sub _maybe_handle_element_end {
   my $self = shift;
   return $self->_handle_element_end(@_)
-    if !$self->{filter};
+    if !$self->{heading_filter};
 
   my ($element_name, $attr) = @_;
 
@@ -665,7 +665,7 @@ sub _maybe_handle_element_end {
 sub _maybe_handle_text {
   my $self = shift;
   return $self->_handle_text(@_)
-    if !$self->{filter};
+    if !$self->{heading_filter};
 
   my ($text) = @_;
 
@@ -685,7 +685,7 @@ sub _filter_allows {
   my $self = shift;
   my @headings = @_;
 
-  my $filter = $self->{filter}
+  my $filter = $self->{heading_filter}
     or return 1;
 
   SPEC: for my $spec ( @$filter ) {
@@ -707,7 +707,7 @@ sub select {
   my $self = shift;
   my (@selections) = @_;
 
-  my $filter = $self->{filter} ||= [];
+  my $filter = $self->{heading_filter} ||= [];
   if (@selections && $selections[0] eq '+') {
     shift @selections;
   }
