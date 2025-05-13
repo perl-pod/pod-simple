@@ -12,7 +12,7 @@ sub convert {
   $parser->html_header('');
   $parser->html_footer('');
   $parser->output_string(\$out);
-  $parser->select(@$select);
+  $parser->set_heading_select(@$select);
 
   $parser->parse_string_document($pod);
   return $out;
