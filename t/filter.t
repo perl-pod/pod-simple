@@ -9,7 +9,7 @@ sub convert {
   my $out = '';
   my $parser = Pod::Simple::JustPod->new;
   $parser->output_string(\$out);
-  $parser->select(@$select);
+  $parser->set_heading_select(@$select);
 
   $parser->parse_string_document($pod);
   return $out;

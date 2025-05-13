@@ -703,7 +703,7 @@ sub _filter_allows {
   return 0;
 }
 
-sub select {
+sub set_heading_select {
   my $self = shift;
   my (@selections) = @_;
 
