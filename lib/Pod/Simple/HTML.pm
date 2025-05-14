@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Pod::Simple::PullParser ();
 our @ISA = ('Pod::Simple::PullParser');
-our $VERSION = '3.46';
+our $VERSION = '3.47';
 BEGIN {
   if(defined &DEBUG) { } # no-op
   elsif( defined &Pod::Simple::DEBUG ) { *DEBUG = \&Pod::Simple::DEBUG }

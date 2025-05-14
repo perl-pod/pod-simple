@@ -45,7 +45,7 @@ use warnings;
 
 package Pod::Simple::XHTML;
 use strict;
-our $VERSION = '3.46';
+our $VERSION = '3.47';
 use Pod::Simple::Methody ();
 our @ISA = ('Pod::Simple::Methody');
 

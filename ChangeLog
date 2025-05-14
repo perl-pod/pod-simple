@@ -1,6 +1,9 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
-3.46 2025-05-xx Karl Williamson <khw@cpan.org>
+3.47 2025-05-15 Karl Williamson <khw@cpan.org>
+	- No git-related files in MANIFEST  James Keenan++
+	- Rename method and field to avoid conflicts  Graham Knop++
+3.46 2025-05-12 Karl Williamson <khw@cpan.org>
 	- XHTML: =over without =item should render as a blockquote Graham Knop++
 	- Add support for underlined text U<> formatting Graham Knop++
 	- Make 'temp' name checking more succinct Max Maischein++
