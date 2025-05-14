@@ -2,7 +2,7 @@ package Pod::Simple::Progress;
 use strict;
 use warnings;
 
-our $VERSION = '3.46';
+our $VERSION = '3.47';
 
 # Objects of this class are used for noting progress of an
 #  operation every so often.  Messages delivered more often than that

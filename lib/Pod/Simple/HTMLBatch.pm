@@ -1,6 +1,6 @@
 package Pod::Simple::HTMLBatch;
 use strict;
-our $VERSION = '3.46';
+our $VERSION = '3.47';
 our @ISA = ();  # Yup, we're NOT a subclass of Pod::Simple::HTML!
 
 # TODO: nocontents stylesheets. Strike some of the color variations?
