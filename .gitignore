@@ -1,7 +1,6 @@
 _build
 blib
 Pod-Simple-*
-MANIFEST
 MANIFEST.bak
 *META.*
 Build
