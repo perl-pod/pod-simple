@@ -70,10 +70,11 @@ sub encode_entities {
       $ents =~ s,(?<!\\)([]/]),\\$1,g;
       $ents =~ s,(?<!\\)\\\z,\\\\,;
   } else {
-      $ents = join '', keys %entities;
+      # the same set of characters as in HTML::Entities
+      $ents = '^\n\r\t !\#\$%\(-;=?-~';
   }
   my $str = $_[0];
-  $str =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', ord $1) . ';'/ge;
+  $str =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', unpack('U', $1)) . ';'/ge;
   return $str;
 }
 
