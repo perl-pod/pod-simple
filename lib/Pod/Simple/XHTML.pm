@@ -792,10 +792,18 @@ sub resolve_man_page_link {
     my ($page, $part) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
     return undef unless $page;
 
+    if (defined $section) {
+        $section =~ s/\s+/_/g;
+        my $id = $self->idify($section, 1);
+        $section = '#' . $self->encode_url($id);
+    } else {
+        $section = ''
+    }
+
     return ($self->man_url_prefix || '')
         . ($part || 1) . "/" . $self->encode_entities($page)
-        . "." . ($part || 1) . ($self->man_url_postfix || '');
-
+        . "." . ($part || 1) . ($self->man_url_postfix || '')
+        . $section;
 }
 
 =head2 idify

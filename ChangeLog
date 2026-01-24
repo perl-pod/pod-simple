@@ -1,5 +1,7 @@
 # ChangeLog for Pod::Simple dist
 #---------------------------------------------------------------------------
+3.48
+	- Add sections to manpage URLs  Peter Oliver++
 3.47 2025-05-15 Karl Williamson <khw@cpan.org>
 	- No git-related files in MANIFEST  James Keenan++
 	- Rename method and field to avoid conflicts  Graham Knop++

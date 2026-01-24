@@ -789,7 +789,8 @@ is $parser->resolve_pod_page_link('perlpod', 'this that'),
     'POD link with fragment with space';
 
 is $parser->resolve_man_page_link('crontab(5)', 'EXAMPLE CRON FILE'),
-    "${MANURL}5/crontab.5${MANURL_POSTFIX}", 'Man link with fragment';
+    "${MANURL}5/crontab.5${MANURL_POSTFIX}#EXAMPLE_CRON_FILE",
+    'Man link with fragment';
 is $parser->resolve_man_page_link('crontab(5)'),
     "${MANURL}5/crontab.5${MANURL_POSTFIX}", 'Man link without fragment';
 is $parser->resolve_man_page_link('crontab'),

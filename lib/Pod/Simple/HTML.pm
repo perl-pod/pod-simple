@@ -798,7 +798,8 @@ sub resolve_man_page_link {
 
   return $self->man_url_prefix . "$section/"
       . $self->manpage_url_escape($page) . ".$section"
-      . $self->man_url_postfix;
+      . $self->man_url_postfix
+      . (defined $frag ? '#' . $frag : '');
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
